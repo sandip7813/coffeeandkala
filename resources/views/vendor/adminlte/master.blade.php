@@ -91,6 +91,21 @@
         </script>
     @endif
 
+    @can('manage-artisan')
+        @php
+            $artisanRunnerGate = [
+                'unlocked' => \App\Support\ArtisanCatalog::isUnlocked(),
+                'unlockUrl' => route('admin.artisan.unlock'),
+                'targetUrl' => route('admin.artisan.index'),
+                'dashboardUrl' => route('admin.dashboard'),
+                'csrf' => csrf_token(),
+            ];
+        @endphp
+        <script type="application/json" id="artisan-runner-gate">
+            @json($artisanRunnerGate)
+        </script>
+    @endcan
+
     @pluginScripts
     @stack('js')
     @yield('js')

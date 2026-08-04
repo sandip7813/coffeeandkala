@@ -35,7 +35,7 @@
                                                     <tr>
                                                         <td align="center" style="padding:40px 36px 12px;background:#5B3A29;">
                                                             <img
-                                                                src="{{ $message->embed(public_path('images/logo/monogram-email.png')) }}"
+                                                                src="{{ $message->embed(\App\Support\BrandLogo::emailAbsolutePath()) }}"
                                                                 width="96"
                                                                 height="97"
                                                                 alt="Coffee &amp; Kala"

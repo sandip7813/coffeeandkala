@@ -15,11 +15,11 @@ class AdminLteRbacSeeder extends Seeder
             'manage-users' => 'Manage Users',
             'manage-roles' => 'Manage Roles',
             'manage-permissions' => 'Manage Permissions',
-            'manage-settings' => 'Manage Settings',
+            'manage-settings' => 'Manage Artisan Runner',
         ];
 
         foreach ($permissions as $name => $label) {
-            Permission::firstOrCreate(['name' => $name], ['label' => $label]);
+            Permission::updateOrCreate(['name' => $name], ['label' => $label]);
         }
 
         $roles = [
@@ -33,7 +33,6 @@ class AdminLteRbacSeeder extends Seeder
                     'view-dashboard',
                     'manage-users',
                     'manage-roles',
-                    'manage-settings',
                 ],
             ],
             'editor' => [

@@ -8,9 +8,7 @@ class UnlockArtisanRunnerRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user !== null && ($user->isSuperAdmin() || $user->hasPermission('manage-settings'));
+        return $this->user()?->can('manage-artisan') === true;
     }
 
     /**

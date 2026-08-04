@@ -18,7 +18,16 @@
     <div class="{{ $authType }}-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a href="{{ url('/') }}" class="h1">
+                <a href="{{ url('/') }}" class="h1 d-inline-flex flex-column align-items-center gap-2 text-decoration-none">
+                    @if (config('adminlte.auth_logo.enabled'))
+                        <img
+                            src="{{ \App\Support\BrandLogo::url() }}"
+                            alt="{{ config('adminlte.auth_logo.img.alt', 'Logo') }}"
+                            class="{{ config('adminlte.auth_logo.img.class') }}"
+                            width="{{ config('adminlte.auth_logo.img.width', 80) }}"
+                            height="{{ config('adminlte.auth_logo.img.height', 80) }}"
+                        >
+                    @endif
                     {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
                 </a>
             </div>

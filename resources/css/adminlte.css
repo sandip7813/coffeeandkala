@@ -25,6 +25,22 @@
     border-radius: 0.375rem !important;
 }
 
+.swal2-close {
+    font-size: 2rem !important;
+    width: 2rem !important;
+    height: 2rem !important;
+    line-height: 2rem !important;
+    top: 0.65rem !important;
+    right: 0.65rem !important;
+    padding: 0.25rem !important;
+    transition: color 0.15s ease;
+}
+
+.swal2-close:hover {
+    font-size: 2rem !important;
+    transform: none !important;
+}
+
 /* Admin success flash toast — solid success banner */
 .admin-flash-toast.swal2-toast {
     width: auto;

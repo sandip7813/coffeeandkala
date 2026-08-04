@@ -12,11 +12,11 @@
 
         <a href="{{ route('home') }}" class="logo" aria-label="Coffee & Kala home">
             <img
-                src="{{ asset('images/logo/logo.png') }}"
+                src="{{ \App\Support\BrandLogo::url() }}"
                 alt="Coffee & Kala"
                 class="logo-image"
-                width="404"
-                height="179"
+                width="{{ \App\Support\BrandLogo::width() }}"
+                height="{{ \App\Support\BrandLogo::height() }}"
             >
         </a>
     </div>

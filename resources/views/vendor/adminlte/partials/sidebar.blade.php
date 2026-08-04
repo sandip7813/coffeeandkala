@@ -6,11 +6,9 @@
 <aside class="app-sidebar {{ $sidebarClasses }}" @if ($sidebarTheme === 'dark') data-bs-theme="dark" @endif>
     <div class="sidebar-brand {{ config('adminlte.classes_brand') }}">
         <a href="{{ url('/') }}" class="brand-link">
-            @if (config('adminlte.logo_img'))
-                <img src="{{ asset(config('adminlte.logo_img')) }}"
-                     alt="{{ config('adminlte.logo_img_alt', 'Logo') }}"
-                     class="{{ config('adminlte.logo_img_class', 'brand-image opacity-75 shadow') }}">
-            @endif
+            <img src="{{ \App\Support\BrandLogo::url() }}"
+                 alt="{{ config('adminlte.logo_img_alt', 'Logo') }}"
+                 class="{{ config('adminlte.logo_img_class', 'brand-image') }}">
             <span class="brand-text {{ config('adminlte.classes_brand_text', 'fw-light') }}">
                 {!! config('adminlte.logo', '<b>Admin</b>LTE') !!}
             </span>

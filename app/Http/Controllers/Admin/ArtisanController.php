@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\RunArtisanCommandRequest;
 use App\Http\Requests\Admin\UnlockArtisanRunnerRequest;
 use App\Support\ArtisanCatalog;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
 class ArtisanController extends Controller
@@ -28,11 +29,18 @@ class ArtisanController extends Controller
         ]);
     }
 
-    public function unlock(UnlockArtisanRunnerRequest $request): RedirectResponse
+    public function unlock(UnlockArtisanRunnerRequest $request): RedirectResponse|JsonResponse
     {
         $this->authorizeManage();
 
         ArtisanCatalog::unlock();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'unlocked' => true,
+                'redirect' => route('admin.artisan.index'),
+            ]);
+        }
 
         return redirect()
             ->route('admin.artisan.index')
@@ -66,11 +74,6 @@ class ArtisanController extends Controller
 
     private function authorizeManage(): void
     {
-        $user = auth()->user();
-
-        abort_unless(
-            $user !== null && ($user->isSuperAdmin() || $user->hasPermission('manage-settings')),
-            403,
-        );
+        abort_unless(auth()->user()?->can('manage-artisan') === true, 403);
     }
 }

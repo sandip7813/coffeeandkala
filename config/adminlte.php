@@ -55,8 +55,8 @@ return [
     */
 
     'logo' => '<b>Coffee</b> & Kala',
-    'logo_img' => 'vendor/adminlte/img/AdminLTELogo.png',
-    'logo_img_class' => 'brand-image opacity-75 shadow',
+    'logo_img' => 'images/logo/gk-mark.png',
+    'logo_img_class' => 'brand-image',
     'logo_img_alt' => 'Coffee & Kala',
 
     /*
@@ -66,13 +66,13 @@ return [
     */
 
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/img/AdminLTELogo.png',
-            'alt' => 'Auth Logo',
+            'path' => 'images/logo/gk-mark.png',
+            'alt' => 'Coffee & Kala',
             'class' => '',
-            'width' => 50,
-            'height' => 50,
+            'width' => 80,
+            'height' => 80,
         ],
     ],
 
@@ -238,10 +238,16 @@ return [
             'can' => 'manage-permissions',
         ],
         [
+            'text' => 'Settings',
+            'route' => 'admin.settings.edit',
+            'icon' => 'bi bi-gear',
+            'can' => 'manage-brand',
+        ],
+        [
             'text' => 'Artisan Runner',
             'route' => 'admin.artisan.index',
             'icon' => 'bi bi-terminal',
-            'can' => 'manage-settings',
+            'can' => 'manage-artisan',
         ],
     ],
 

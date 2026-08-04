@@ -13,8 +13,7 @@ class RunArtisanCommandRequest extends FormRequest
     {
         $user = $this->user();
 
-        return $user !== null
-            && ($user->isSuperAdmin() || $user->hasPermission('manage-settings'))
+        return $user?->can('manage-artisan') === true
             && ArtisanCatalog::isUnlocked();
     }
 

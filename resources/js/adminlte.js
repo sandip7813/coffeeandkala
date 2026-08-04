@@ -286,29 +286,14 @@ function initConfirmArtisanRuns() {
   })
 }
 
-async function initArtisanGate() {
-  const gate = document.querySelector('[data-artisan-gate]')
-
-  if (!(gate instanceof HTMLElement)) {
-    return
-  }
-
-  const form = gate.querySelector('form')
-  const passwordInput = gate.querySelector('input[name="password"]')
-  const cancelUrl = gate.dataset.cancelUrl || '/'
-
-  if (!(form instanceof HTMLFormElement) || !(passwordInput instanceof HTMLInputElement)) {
-    return
-  }
-
-  // If the server already rendered validation errors, keep the fallback form visible.
-  if (gate.querySelector('.alert-danger')) {
-    return
-  }
+async function promptArtisanUnlock(config, options = {}) {
+  const cancelGoesToDashboard = options.cancelGoesToDashboard === true
+  const cancelButtonText = options.cancelButtonText
+    || (cancelGoesToDashboard ? 'Back to dashboard' : 'Cancel')
 
   const result = await Swal.fire({
-    title: gate.dataset.title || 'Restricted page',
-    text: gate.dataset.text || 'Enter your account password to continue.',
+    title: 'Restricted page',
+    text: 'Artisan Runner can change this application. Enter your account password to continue.',
     icon: 'warning',
     input: 'password',
     inputPlaceholder: 'Account password',
@@ -325,12 +310,14 @@ async function initArtisanGate() {
       return null
     },
     showCancelButton: true,
-    allowOutsideClick: false,
-    allowEscapeKey: true,
+    showCloseButton: true,
+    showLoaderOnConfirm: true,
+    allowOutsideClick: () => !Swal.isLoading(),
+    allowEscapeKey: () => !Swal.isLoading(),
     focusConfirm: false,
     reverseButtons: true,
-    confirmButtonText: gate.dataset.confirmButton || 'Unlock',
-    cancelButtonText: gate.dataset.cancelButton || 'Back to dashboard',
+    confirmButtonText: 'Unlock',
+    cancelButtonText,
     buttonsStyling: false,
     customClass: {
       popup: 'swal2-adminlte',
@@ -338,16 +325,143 @@ async function initArtisanGate() {
       confirmButton: 'btn btn-warning px-3',
       cancelButton: 'btn btn-outline-secondary px-3',
     },
+    preConfirm: async (password) => {
+      try {
+        const response = await fetch(config.unlockUrl, {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': config.csrf,
+            'X-Requested-With': 'XMLHttpRequest',
+          },
+          credentials: 'same-origin',
+          body: JSON.stringify({ password }),
+        })
+
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok) {
+          const message = data?.errors?.password?.[0]
+            || data?.message
+            || 'Unable to unlock Artisan Runner.'
+
+          Swal.showValidationMessage(message)
+
+          return false
+        }
+
+        return data
+      } catch (error) {
+        Swal.showValidationMessage('Unable to unlock Artisan Runner. Please try again.')
+
+        return false
+      }
+    },
   })
 
-  if (!result.isConfirmed) {
-    window.location.href = cancelUrl
+  if (result.isConfirmed) {
+    config.unlocked = true
+    showPageLoader('Opening Artisan Runner…')
+    window.location.href = result.value?.redirect || config.targetUrl
+
+    return true
+  }
+
+  if (cancelGoesToDashboard && result.dismiss === Swal.DismissReason.cancel) {
+    window.location.href = config.dashboardUrl
+  }
+
+  return false
+}
+
+function readArtisanGateConfig() {
+  const el = document.getElementById('artisan-runner-gate')
+
+  if (!el) {
+    return null
+  }
+
+  try {
+    return JSON.parse(el.textContent)
+  } catch (error) {
+    console.warn('AdminLTE: invalid artisan runner gate JSON', error)
+
+    return null
+  }
+}
+
+function isArtisanIndexUrl(url, targetUrl) {
+  try {
+    const href = new URL(url, window.location.origin)
+    const target = new URL(targetUrl, window.location.origin)
+
+    return href.pathname.replace(/\/$/, '') === target.pathname.replace(/\/$/, '')
+  } catch (error) {
+    return false
+  }
+}
+
+function initArtisanSidebarUnlock() {
+  const config = readArtisanGateConfig()
+
+  if (!config) {
     return
   }
 
-  passwordInput.value = String(result.value || '')
-  showPageLoader('Unlocking Artisan Runner…')
-  form.submit()
+  document.addEventListener('click', async (event) => {
+    const link = event.target instanceof Element ? event.target.closest('a') : null
+
+    if (!(link instanceof HTMLAnchorElement)) {
+      return
+    }
+
+    if (!isArtisanIndexUrl(link.href, config.targetUrl)) {
+      return
+    }
+
+    if (config.unlocked) {
+      return
+    }
+
+    if (Swal.isVisible()) {
+      event.preventDefault()
+      event.stopPropagation()
+
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    await promptArtisanUnlock(config, {
+      cancelGoesToDashboard: false,
+      cancelButtonText: 'Cancel',
+    })
+  }, true)
+}
+
+async function initArtisanGate() {
+  const gate = document.querySelector('[data-artisan-gate]')
+  const config = readArtisanGateConfig()
+
+  if (!(gate instanceof HTMLElement) || !config || config.unlocked) {
+    return
+  }
+
+  // If the server already rendered validation errors, keep the fallback form visible.
+  if (gate.querySelector('.alert-danger')) {
+    return
+  }
+
+  if (Swal.isVisible()) {
+    return
+  }
+
+  await promptArtisanUnlock(config, {
+    cancelGoesToDashboard: true,
+    cancelButtonText: gate.dataset.cancelButton || 'Back to dashboard',
+  })
 }
 
 // --- Flash success toasts (SweetAlert2) ------------------------------------
@@ -429,6 +543,7 @@ whenReady(() => {
   initTreeviewA11y()
   initConfirmDeletes()
   initConfirmArtisanRuns()
+  initArtisanSidebarUnlock()
   initArtisanGate()
   initPageLoadingForms()
   initFlashToasts()

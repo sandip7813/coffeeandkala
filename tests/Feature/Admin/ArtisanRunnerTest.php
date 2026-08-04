@@ -11,7 +11,7 @@ test('guests cannot view the artisan runner', function () {
         ->assertRedirect(route('login'));
 });
 
-test('editors without manage-settings cannot view the artisan runner', function () {
+test('editors cannot view the artisan runner', function () {
     $user = User::factory()->editor()->create();
 
     $this->actingAs($user)
@@ -19,8 +19,60 @@ test('editors without manage-settings cannot view the artisan runner', function 
         ->assertForbidden();
 });
 
-test('admins see the restricted gate until they unlock with their password', function () {
+test('admins cannot view the artisan runner', function () {
+    $user = User::factory()->admin()->create();
+
+    $this->actingAs($user)
+        ->get(route('admin.artisan.index'))
+        ->assertForbidden();
+});
+
+test('admins cannot unlock or run artisan commands', function () {
     $user = User::factory()->admin()->create([
+        'password' => 'secret-password',
+    ]);
+
+    $this->actingAs($user)
+        ->post(route('admin.artisan.unlock'), [
+            'password' => 'secret-password',
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($user)
+        ->withSession(unlockedArtisanSession())
+        ->post(route('admin.artisan.run'), [
+            'preset' => 'migrate-status',
+            'confirm' => '1',
+        ])
+        ->assertForbidden();
+});
+
+test('super admins can unlock artisan runner via json for the sidebar modal', function () {
+    $user = User::factory()->superAdmin()->create([
+        'password' => 'secret-password',
+    ]);
+
+    $this->actingAs($user)
+        ->postJson(route('admin.artisan.unlock'), [
+            'password' => 'wrong-password',
+        ])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('password');
+
+    $this->actingAs($user)
+        ->postJson(route('admin.artisan.unlock'), [
+            'password' => 'secret-password',
+        ])
+        ->assertSuccessful()
+        ->assertJson([
+            'unlocked' => true,
+            'redirect' => route('admin.artisan.index'),
+        ])
+        ->assertSessionHas('artisan_runner.confirmed_at');
+});
+
+test('super admins see the restricted gate until they unlock with their password', function () {
+    $user = User::factory()->superAdmin()->create([
         'password' => 'secret-password',
     ]);
 
@@ -58,7 +110,7 @@ test('admins see the restricted gate until they unlock with their password', fun
 });
 
 test('locked sessions cannot run artisan commands', function () {
-    $user = User::factory()->admin()->create();
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->post(route('admin.artisan.run'), [
@@ -69,7 +121,7 @@ test('locked sessions cannot run artisan commands', function () {
 });
 
 test('every artisan run requires confirmation', function () {
-    $user = User::factory()->admin()->create();
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())
@@ -81,8 +133,8 @@ test('every artisan run requires confirmation', function () {
         ->assertSessionHasErrors('confirm');
 });
 
-test('admins can run an allowlisted artisan preset after confirming', function () {
-    $user = User::factory()->admin()->create();
+test('super admins can run an allowlisted artisan preset after confirming', function () {
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())
@@ -96,8 +148,8 @@ test('admins can run an allowlisted artisan preset after confirming', function (
         ->assertSessionHas('artisan_result.command', 'php artisan migrate:status');
 });
 
-test('admins can run a custom allowlisted command string', function () {
-    $user = User::factory()->admin()->create();
+test('super admins can run a custom allowlisted command string', function () {
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())
@@ -110,8 +162,8 @@ test('admins can run a custom allowlisted command string', function () {
         ->assertSessionHas('artisan_result.command', 'php artisan about');
 });
 
-test('admins can seed a specific seeder via preset', function () {
-    $user = User::factory()->admin()->create();
+test('super admins can seed a specific seeder via preset', function () {
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())
@@ -125,7 +177,7 @@ test('admins can seed a specific seeder via preset', function () {
 });
 
 test('disallowed commands are rejected', function () {
-    $user = User::factory()->admin()->create();
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())
@@ -139,7 +191,7 @@ test('disallowed commands are rejected', function () {
 });
 
 test('migrate rollback is not allowed', function () {
-    $user = User::factory()->admin()->create();
+    $user = User::factory()->superAdmin()->create();
 
     $this->actingAs($user)
         ->withSession(unlockedArtisanSession())

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -115,7 +116,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
     });
 
-    Route::middleware('permission:manage-settings')->group(function () {
+    Route::middleware('can:manage-artisan')->group(function () {
         Route::get('artisan', [ArtisanController::class, 'index'])->name('artisan.index');
         Route::post('artisan/unlock', [ArtisanController::class, 'unlock'])
             ->middleware('throttle:10,1')
@@ -123,5 +124,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::post('artisan', [ArtisanController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('artisan.run');
+    });
+
+    Route::middleware('can:manage-brand')->group(function () {
+        Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.logo.update');
+        Route::put('settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
     });
 });

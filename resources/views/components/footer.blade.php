@@ -3,22 +3,32 @@
         <div class="footer-brand">
             <a href="{{ route('home') }}" class="footer-logo" aria-label="Coffee & Kala home">
                 <img
-                    src="{{ asset('images/logo/logo.png') }}"
+                    src="{{ \App\Support\BrandLogo::url() }}"
                     alt="Coffee & Kala"
                     class="footer-logo-image"
-                    width="404"
-                    height="179"
+                    width="{{ \App\Support\BrandLogo::width() }}"
+                    height="{{ \App\Support\BrandLogo::height() }}"
                 >
             </a>
             <p class="footer-tagline">
                 An editorial journal of slow living, art, travel, and quiet stories — brewed with coffee and kala.
             </p>
-            <div class="footer-social">
-                <a href="#" class="footer-social-link" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#" class="footer-social-link" aria-label="Pinterest"><i class="fa-brands fa-pinterest-p"></i></a>
-                <a href="#" class="footer-social-link" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
-                <a href="#" class="footer-social-link" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
-            </div>
+            @php($socialLinks = \App\Support\SocialLinks::filled())
+            @if ($socialLinks !== [])
+                <div class="footer-social">
+                    @foreach ($socialLinks as $social)
+                        <a
+                            href="{{ $social['url'] }}"
+                            class="footer-social-link"
+                            aria-label="{{ $social['label'] }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <i class="{{ $social['icon'] }}" aria-hidden="true"></i>
+                        </a>
+                    @endforeach
+                </div>
+            @endif
         </div>
 
         <nav class="footer-nav" aria-label="Footer">
