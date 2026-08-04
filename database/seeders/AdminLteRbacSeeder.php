@@ -27,6 +27,15 @@ class AdminLteRbacSeeder extends Seeder
                 'label' => 'Super Admin',
                 'permissions' => array_keys($permissions),
             ],
+            'admin' => [
+                'label' => 'Admin',
+                'permissions' => [
+                    'view-dashboard',
+                    'manage-users',
+                    'manage-roles',
+                    'manage-settings',
+                ],
+            ],
             'editor' => [
                 'label' => 'Editor',
                 'permissions' => [

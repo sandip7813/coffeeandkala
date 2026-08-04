@@ -18,10 +18,6 @@
 @stop
 
 @section('content')
-    @if (session('status'))
-        <x-adminlte-alert theme="success" dismissible>{{ session('status') }}</x-adminlte-alert>
-    @endif
-
     <x-adminlte-card icon="bi bi-shield-lock" title="{{ __('adminlte.roles') }}" bodyClass="p-0">
         <x-slot name="tools">
             <a href="{{ route('admin.roles.create') }}" class="btn btn-sm btn-primary">
@@ -36,7 +32,7 @@
                         <th>{{ __('adminlte.name') }}</th>
                         <th>{{ __('adminlte.label') }}</th>
                         <th>{{ __('adminlte.permissions') }}</th>
-                        <th class="text-end">{{ __('adminlte.actions') }}</th>
+                        <th class="text-end" style="width: 4.5rem;">{{ __('adminlte.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,20 +42,34 @@
                             <td class="text-muted">{{ $role->label ?? '—' }}</td>
                             <td><span class="badge bg-secondary">{{ $role->permissions_count }}</span></td>
                             <td class="text-end">
-                                <a href="{{ route('admin.roles.edit', $role) }}"
-                                   class="btn btn-sm btn-outline-secondary" aria-label="{{ __('adminlte.edit') }}">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                @if ($role->name !== 'super_admin')
-                                    <form method="POST" action="{{ route('admin.roles.destroy', $role) }}"
-                                          onsubmit="return confirm('{{ __('adminlte.confirm_delete') }}');" class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-sm btn-outline-danger" aria-label="{{ __('adminlte.delete') }}">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </form>
-                                @endif
+                                <x-admin.row-actions>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                           href="{{ route('admin.roles.edit', $role) }}">
+                                            <i class="bi bi-pencil" aria-hidden="true"></i>
+                                            <span>{{ __('adminlte.edit') }}</span>
+                                        </a>
+                                    </li>
+                                    @if ($role->name !== 'super_admin')
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.roles.destroy', $role) }}"
+                                                  data-confirm-delete
+                                                  data-confirm-title="Delete this role?"
+                                                  data-confirm-text="{{ $role->label ?? $role->name }} will be permanently removed. This cannot be undone."
+                                                  data-confirm-button="Yes, delete role"
+                                                  data-cancel-button="{{ __('adminlte.cancel') }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                    <span>{{ __('adminlte.delete') }}</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
+                                </x-admin.row-actions>
                             </td>
                         </tr>
                     @empty

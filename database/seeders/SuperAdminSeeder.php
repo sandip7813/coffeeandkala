@@ -21,10 +21,13 @@ class SuperAdminSeeder extends Seeder
             return;
         }
 
+        $parts = preg_split('/\s+/', trim((string) $name), 2) ?: [];
+
         $user = User::query()->firstOrCreate(
             ['email' => $email],
             [
-                'name' => $name,
+                'first_name' => ($parts[0] ?? '') !== '' ? $parts[0] : 'Super',
+                'last_name' => $parts[1] ?? 'Admin',
                 'password' => Hash::make($password),
                 'email_verified_at' => now(),
             ],

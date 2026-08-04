@@ -1,0 +1,175 @@
+<?php
+
+namespace App\Support;
+
+class JournalCatalog
+{
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public static function all(): array
+    {
+        return [
+            [
+                'role' => 'lead',
+                'tag' => 'Travel Diaries',
+                'category_id' => 'travel-diaries',
+                'title' => 'Letters from a Slow Train',
+                'excerpt' => 'Windows blur into watercolour somewhere between stations. A story finds its pace in the clatter of rails, the steam of a borrowed thermos, and the quiet courage of going nowhere in a hurry. This dispatch follows the long way — the seats that face backwards, the towns that pass without announcement, and the sentences that only arrive when the landscape softens.',
+                'caption' => 'Afternoon light along the northern corridor.',
+                'date' => '2026-02-28',
+                'date_label' => '28 Feb 2026',
+                'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1400',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Destination Guides',
+                'category_id' => 'destination-guides',
+                'title' => 'Where the Coast Still Speaks Softly',
+                'excerpt' => 'Cliff light, salt air, and the kind of afternoon that asks you to put the map away. A guide for those who prefer the quieter shore.',
+                'date' => '2026-01-30',
+                'date_label' => '30 Jan 2026',
+                'image' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Local Stories',
+                'category_id' => 'local-stories',
+                'title' => 'The Colour of Quiet Markets',
+                'excerpt' => 'Spice, cloth, and conversation — a living collage of mornings that refuse haste, and vendors who know your order before you speak.',
+                'date' => '2026-02-14',
+                'date_label' => '14 Feb 2026',
+                'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Life on the Road',
+                'category_id' => 'life-on-the-road',
+                'title' => 'Brewing Between Pages',
+                'excerpt' => 'Steam rising over unfinished sentences. The day begins before the world asks for anything, one pour at a time.',
+                'date' => '2026-02-02',
+                'date_label' => '02 Feb 2026',
+                'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Photography',
+                'category_id' => null,
+                'title' => 'Valley After Rain',
+                'excerpt' => 'Clouds lift like a curtain. The land remembers every drop, and the road shines just long enough to invite another mile.',
+                'date' => '2026-01-05',
+                'date_label' => '05 Jan 2026',
+                'image' => 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Culture',
+                'category_id' => null,
+                'title' => 'Lantern Hour in the Old Quarter',
+                'excerpt' => 'Night softens the edges. Light becomes a companion rather than a spectacle, and conversation returns to the courtyard.',
+                'date' => '2025-12-29',
+                'date_label' => '29 Dec 2025',
+                'image' => 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Travel Diaries',
+                'category_id' => null,
+                'title' => 'Empty Road, Full Horizon',
+                'excerpt' => 'Horizon as invitation. The kind of silence that makes room for wondering what the next town will smell like.',
+                'date' => '2025-12-12',
+                'date_label' => '12 Dec 2025',
+                'image' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Photo Essay',
+                'category_id' => null,
+                'title' => 'Weathered Light',
+                'excerpt' => 'A portrait study from the road — eyes that refuse to look away from the story, hands that have held weather and work.',
+                'date' => '2025-11-08',
+                'date_label' => '08 Nov 2025',
+                'image' => 'https://images.unsplash.com/photo-1566616213894-2d4e1baee5d8?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Dispatch',
+                'category_id' => null,
+                'title' => 'Rain on Glass',
+                'excerpt' => 'The city dissolves into watercolour — travel as a soft blur of elsewhere, seen from a window seat.',
+                'date' => '2025-10-30',
+                'date_label' => '30 Oct 2025',
+                'image' => 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'feature',
+                'tag' => 'Local Stories',
+                'category_id' => null,
+                'title' => 'Market Breath at First Light',
+                'excerpt' => 'Spice, cloth, and conversation layered like a living collage — the city waking one stall at a time.',
+                'date' => '2025-11-22',
+                'date_label' => '22 Nov 2025',
+                'image' => 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1000',
+                'href' => '#',
+            ],
+            [
+                'role' => 'column',
+                'tag' => 'Essay',
+                'category_id' => null,
+                'title' => 'A Note from a Rainy Evening',
+                'excerpt' => 'Raindrops, old songs and a notebook. The perfect recipe for clarity when the world softens outside the window.',
+                'date' => '2026-03-12',
+                'date_label' => '12 Mar 2026',
+                'image' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=900',
+                'href' => '#',
+            ],
+            [
+                'role' => 'column',
+                'tag' => 'Notes',
+                'category_id' => null,
+                'title' => 'Midnight Margins',
+                'excerpt' => 'Ink still drying. Thoughts that only arrive when the house has gone quiet and the kettle has one last whisper left.',
+                'date' => '2026-01-09',
+                'date_label' => '09 Jan 2026',
+                'image' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=900',
+                'href' => '#',
+            ],
+            [
+                'role' => 'brief',
+                'tag' => 'Travel Diaries',
+                'category_id' => null,
+                'title' => 'Holding Soft Light',
+                'excerpt' => 'A frame that waits. The kind of silence that makes room for wondering.',
+                'date' => '2026-01-21',
+                'date_label' => '21 Jan 2026',
+                'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=900',
+                'href' => '#',
+            ],
+            [
+                'role' => 'brief',
+                'tag' => 'Destination Guides',
+                'category_id' => null,
+                'title' => 'Bicycle Against the Old Door',
+                'excerpt' => 'A street corner that remembers every departure.',
+                'date' => '2025-12-18',
+                'date_label' => '18 Dec 2025',
+                'image' => 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?q=80&w=900',
+                'href' => '#',
+            ],
+        ];
+    }
+
+    public static function count(): int
+    {
+        return count(self::all());
+    }
+}

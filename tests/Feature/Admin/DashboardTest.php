@@ -16,6 +16,10 @@ test('authenticated staff can view the admin dashboard', function () {
 
     $response->assertSuccessful();
     $response->assertSee('Dashboard', false);
-    $response->assertSee('Admin panel', false);
-    $response->assertSee('adminlte', false);
+    $response->assertSee('Coffee &amp; Kala site overview', false);
+    $response->assertSee('Gallery plates', false);
+    $response->assertSee('Studio works', false);
+    $response->assertSee('Journal entries', false);
+    $response->assertSee('Feature chapters', false);
+    $response->assertSee('Recent journal', false);
 });

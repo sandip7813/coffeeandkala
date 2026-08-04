@@ -3,35 +3,27 @@
 @section('title', __('New Permission'))
 
 @section('content_header')
-    <div class="row">
-        <div class="col-sm-6">
-            <h1 class="m-0">{{ __('New Permission') }}</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('adminlte.home') }}</a></li>
-                <li class="breadcrumb-item">{{ __('adminlte.administration') }}</li>
-                <li class="breadcrumb-item"><a href="{{ route('admin.permissions.index') }}">{{ __('adminlte.permissions') }}</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{ __('adminlte.create') }}</li>
-            </ol>
-        </div>
-    </div>
+    <h3 class="mb-0 text-center">{{ __('New Permission') }}</h3>
 @stop
 
 @section('content')
-    <x-adminlte-card icon="bi bi-key" title="{{ __('New Permission') }}">
-        <form method="POST" action="{{ route('admin.permissions.store') }}">
-            @csrf
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <x-adminlte-card icon="bi bi-key" title="{{ __('New Permission') }}">
+                <form method="POST" action="{{ route('admin.permissions.store') }}">
+                    @csrf
 
-            <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" placeholder="e.g. manage-articles" required />
-            <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" placeholder="e.g. Manage Articles" />
+                    <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" placeholder="e.g. manage-articles" required />
+                    <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" placeholder="e.g. Manage Articles" />
 
-            <div class="d-flex gap-2">
-                <a href="{{ route('admin.permissions.index') }}" class="btn btn-outline-secondary">{{ __('adminlte.cancel') }}</a>
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ __('adminlte.save') }}
-                </button>
-            </div>
-        </form>
-    </x-adminlte-card>
+                    <div class="d-flex gap-2">
+                        <a href="{{ route('admin.permissions.index') }}" class="btn btn-outline-secondary">{{ __('adminlte.cancel') }}</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ __('adminlte.save') }}
+                        </button>
+                    </div>
+                </form>
+            </x-adminlte-card>
+        </div>
+    </div>
 @stop

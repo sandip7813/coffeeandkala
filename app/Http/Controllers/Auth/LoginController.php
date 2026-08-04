@@ -35,7 +35,15 @@ class LoginController extends Controller
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $user = Auth::user();
 
-            if ($user === null || (! $user->isSuperAdmin() && ! $user->hasPermission('view-dashboard'))) {
+            if ($user === null || ! $user->is_active) {
+                Auth::logout();
+
+                throw ValidationException::withMessages([
+                    'email' => 'Your account is inactive. Please contact an administrator.',
+                ]);
+            }
+
+            if (! $user->isSuperAdmin() && ! $user->hasPermission('view-dashboard')) {
                 Auth::logout();
 
                 throw ValidationException::withMessages([
@@ -45,6 +53,10 @@ class LoginController extends Controller
 
             RateLimiter::clear($this->throttleKey($request));
             $request->session()->regenerate();
+
+            if ($user->must_change_password) {
+                return redirect()->route('password.force.edit');
+            }
 
             return redirect()->intended(route('admin.dashboard'));
         }

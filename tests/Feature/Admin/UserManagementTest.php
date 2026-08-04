@@ -2,27 +2,58 @@
 
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\Mail;
 
 beforeEach(fn () => seedRbac());
 
-test('super admin can create a sub admin with multiple roles', function () {
+test('cannot create a user with the super admin role', function () {
+    Mail::fake();
+
+    $superAdmin = User::factory()->superAdmin()->create();
+    $superAdminRoleId = Role::query()->where('name', 'super_admin')->value('id');
+
+    $this->actingAs($superAdmin)
+        ->from(route('admin.users.create'))
+        ->post(route('admin.users.store'), [
+            'first_name' => 'Another',
+            'last_name' => 'Super',
+            'email' => 'another-super@example.com',
+            'role' => $superAdminRoleId,
+        ])
+        ->assertRedirect(route('admin.users.create'))
+        ->assertSessionHasErrors('role');
+
+    expect(User::query()->where('email', 'another-super@example.com')->exists())->toBeFalse();
+});
+
+test('super admin can create an admin user', function () {
+    Mail::fake();
+
+    $superAdmin = User::factory()->superAdmin()->create();
+    $adminId = Role::query()->where('name', 'admin')->value('id');
+
+    $this->actingAs($superAdmin)->post(route('admin.users.store'), [
+        'first_name' => 'Site',
+        'last_name' => 'Admin',
+        'email' => 'site-admin@example.com',
+        'role' => $adminId,
+    ])->assertRedirect(route('admin.users.index'));
+
+    $user = User::query()->where('email', 'site-admin@example.com')->firstOrFail();
+
+    expect($user->hasRole('admin'))->toBeTrue()
+        ->and($user->hasRole('super_admin'))->toBeFalse();
+});
+
+test('create user form does not offer the super admin role', function () {
     $superAdmin = User::factory()->superAdmin()->create();
 
-    $editorId = Role::query()->where('name', 'editor')->value('id');
-    $viewerId = Role::query()->where('name', 'viewer')->value('id');
-
-    $response = $this->actingAs($superAdmin)->post(route('admin.users.store'), [
-        'name' => 'Sub Admin',
-        'email' => 'subadmin@example.com',
-        'roles' => [$editorId, $viewerId],
-    ]);
-
-    $response->assertRedirect(route('admin.users.index'));
-
-    $subAdmin = User::query()->where('email', 'subadmin@example.com')->firstOrFail();
-
-    expect($subAdmin->hasRole(['editor', 'viewer']))->toBeTrue();
-    expect($subAdmin->hasPermission('view-dashboard'))->toBeTrue();
+    $this->actingAs($superAdmin)
+        ->get(route('admin.users.create'))
+        ->assertSuccessful()
+        ->assertDontSee('value="'.Role::query()->where('name', 'super_admin')->value('id').'"', false)
+        ->assertSee('Admin', false)
+        ->assertSee('data-page-loading="Creating user…"', false);
 });
 
 test('cannot delete own account even as super admin', function () {
@@ -52,21 +83,43 @@ test('cannot delete the last remaining super admin', function () {
     )->toBe(1);
 });
 
-test('cannot remove super admin role from the last super admin', function () {
+test('cannot change a super admin to another role', function () {
     $superAdmin = User::factory()->superAdmin()->create();
     $editorId = Role::query()->where('name', 'editor')->value('id');
 
     $this->actingAs($superAdmin)
         ->from(route('admin.users.edit', $superAdmin))
         ->put(route('admin.users.update', $superAdmin), [
-            'name' => $superAdmin->name,
+            'first_name' => $superAdmin->first_name,
+            'last_name' => $superAdmin->last_name,
             'email' => $superAdmin->email,
-            'roles' => [$editorId],
+            'role' => $editorId,
         ])
         ->assertRedirect()
-        ->assertSessionHasErrors('roles');
+        ->assertSessionHasErrors('role');
 
     expect($superAdmin->fresh()->isSuperAdmin())->toBeTrue();
+});
+
+test('users index exposes the branded delete loader asset', function () {
+    $superAdmin = User::factory()->superAdmin()->create();
+
+    expect(is_file(public_path('logo-spinner.gif')))->toBeTrue();
+
+    $this->actingAs($superAdmin)
+        ->get(route('admin.users.index'))
+        ->assertSuccessful()
+        ->assertSee('data-page-loader-src="'.asset('logo-spinner.gif').'"', false);
+});
+
+test('edit user form shows a saving page loader attribute', function () {
+    $superAdmin = User::factory()->superAdmin()->create();
+    $user = User::factory()->editor()->create();
+
+    $this->actingAs($superAdmin)
+        ->get(route('admin.users.edit', $user))
+        ->assertSuccessful()
+        ->assertSee('data-page-loading="Saving user…"', false);
 });
 
 test('super admin role cannot be deleted', function () {

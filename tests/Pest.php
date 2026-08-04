@@ -1,5 +1,6 @@
 <?php
 
+use Database\Seeders\AdminLteRbacSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -46,5 +47,13 @@ expect()->extend('toBeOne', function () {
 
 function seedRbac(): void
 {
-    test()->seed(\Database\Seeders\AdminLteRbacSeeder::class);
+    test()->seed(AdminLteRbacSeeder::class);
+}
+
+/**
+ * @return array<string, int>
+ */
+function unlockedArtisanSession(): array
+{
+    return ['artisan_runner.confirmed_at' => time()];
 }

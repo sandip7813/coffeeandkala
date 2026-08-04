@@ -4,7 +4,6 @@ namespace Database\Factories;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -25,10 +24,14 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'first_name' => fake()->firstName(),
+            'last_name' => fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
+            'phone' => null,
             'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => static::$password ??= 'password',
+            'is_active' => true,
+            'must_change_password' => false,
             'remember_token' => Str::random(10),
         ];
     }
@@ -73,5 +76,13 @@ class UserFactory extends Factory
     public function editor(): static
     {
         return $this->withRoles('editor');
+    }
+
+    /**
+     * Create an admin user (requires RBAC seeded roles).
+     */
+    public function admin(): static
+    {
+        return $this->withRoles('admin');
     }
 }

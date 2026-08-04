@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\IssueOneTimePassword;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
@@ -32,30 +35,39 @@ class UserController extends Controller
         return view('admin.users.create', compact('roles'));
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, IssueOneTimePassword $issueOneTimePassword): RedirectResponse
     {
         $this->authorizeManage();
 
         $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
-            'roles' => ['nullable', 'array'],
-            'roles.*' => ['integer', 'exists:adminlte_roles,id'],
+            'phone' => ['nullable', 'digits_between:1,10'],
+            'role' => ['nullable', 'integer', $this->assignableRoleRule()],
         ]);
 
-        $roleIds = $this->sanitizeRoleIds($data['roles'] ?? []);
+        $roleIds = $this->sanitizeRoleIds(
+            isset($data['role']) ? [(int) $data['role']] : []
+        );
 
         $user = User::create([
-            'name' => $data['name'],
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
-            'password' => Hash::make(Str::random(32)),
-            'email_verified_at' => now(),
+            'phone' => filled($data['phone'] ?? null) ? $data['phone'] : null,
+            'password' => Str::random(32),
+            'is_active' => true,
+            'must_change_password' => true,
+            'email_verified_at' => null,
         ]);
 
         $user->roles()->sync($roleIds);
 
+        $issueOneTimePassword->handle($user, 'account');
+
         return redirect()->route('admin.users.index')
-            ->with('status', __('adminlte.user_created'));
+            ->with('status', __('adminlte.user_created').' A one-time password has been emailed to the user.');
     }
 
     public function edit(User $user): View
@@ -68,35 +80,74 @@ class UserController extends Controller
         return view('admin.users.edit', compact('user', 'roles'));
     }
 
-    public function update(Request $request, User $user): RedirectResponse
+    public function update(Request $request, User $user, IssueOneTimePassword $issueOneTimePassword): RedirectResponse
     {
         $this->authorizeManage();
 
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
+        $rules = [
+            'first_name' => ['required', 'string', 'max:255'],
+            'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-            'roles' => ['nullable', 'array'],
-            'roles.*' => ['integer', 'exists:adminlte_roles,id'],
-        ]);
+            'phone' => ['nullable', 'digits_between:1,10'],
+            'role' => ['nullable', 'integer', $this->assignableRoleRule()],
+        ];
 
-        $roleIds = $this->sanitizeRoleIds($data['roles'] ?? []);
+        if (auth()->user()?->isSuperAdmin()) {
+            $rules['is_active'] = ['sometimes', 'boolean'];
+        }
 
-        $this->guardLastSuperAdminRoleChange($user, $roleIds);
+        $data = $request->validate($rules);
 
-        $user->update([
-            'name' => $data['name'],
+        $emailChanged = $user->email !== $data['email'];
+
+        $attributes = [
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
             'email' => $data['email'],
-        ]);
+            'phone' => filled($data['phone'] ?? null) ? $data['phone'] : null,
+        ];
 
-        $user->roles()->sync($roleIds);
+        if (auth()->user()?->isSuperAdmin()
+            && array_key_exists('is_active', $data)
+            && ! $user->is(auth()->user())) {
+            $attributes['is_active'] = $request->boolean('is_active');
+        }
+
+        $user->update($attributes);
+
+        if ($emailChanged) {
+            $user->forceFill(['email_verified_at' => null])->save();
+        }
+
+        if ($user->isSuperAdmin()) {
+            if (array_key_exists('role', $data) && $data['role'] !== null) {
+                throw ValidationException::withMessages([
+                    'role' => 'Super admin accounts cannot be changed to another role.',
+                ]);
+            }
+        } else {
+            $roleIds = $this->sanitizeRoleIds(
+                isset($data['role']) ? [(int) $data['role']] : []
+            );
+
+            $user->roles()->sync($roleIds);
+        }
+
+        $status = __('adminlte.user_updated');
+
+        if ($emailChanged) {
+            $issueOneTimePassword->handle($user->fresh(), 'email_changed');
+            $status .= ' A one-time password has been emailed to the new address.';
+        }
 
         return redirect()->route('admin.users.index')
-            ->with('status', __('adminlte.user_updated'));
+            ->with('status', $status);
     }
 
     public function destroy(User $user): RedirectResponse
     {
         $this->authorizeManage();
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
 
         if ($user->is(auth()->user())) {
             throw ValidationException::withMessages([
@@ -118,17 +169,24 @@ class UserController extends Controller
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Collection<int, Role>
+     * Roles that may be assigned when creating or editing users.
+     * Super Admin is seeded only and cannot be assigned from the UI.
+     *
+     * @return Collection<int, Role>
      */
     private function assignableRoles()
     {
-        $query = Role::query()->orderBy('name');
+        return Role::query()
+            ->where('name', '!=', 'super_admin')
+            ->orderBy('name')
+            ->get();
+    }
 
-        if (! auth()->user()?->isSuperAdmin()) {
-            $query->where('name', '!=', 'super_admin');
-        }
-
-        return $query->get();
+    private function assignableRoleRule(): Exists
+    {
+        return Rule::exists('adminlte_roles', 'id')->where(
+            fn ($query) => $query->where('name', '!=', 'super_admin')
+        );
     }
 
     /**
@@ -138,39 +196,12 @@ class UserController extends Controller
     private function sanitizeRoleIds(array $roleIds): array
     {
         $roleIds = array_map('intval', $roleIds);
-
-        if (auth()->user()?->isSuperAdmin()) {
-            return $roleIds;
-        }
-
-        $superAdminRoleId = Role::query()->where('name', 'super_admin')->value('id');
+        $superAdminRoleId = (int) Role::query()->where('name', 'super_admin')->value('id');
 
         return array_values(array_filter(
             $roleIds,
-            fn (int $id): bool => $id !== (int) $superAdminRoleId,
+            fn (int $id): bool => $id !== $superAdminRoleId,
         ));
-    }
-
-    /**
-     * @param  array<int, int>  $roleIds
-     */
-    private function guardLastSuperAdminRoleChange(User $user, array $roleIds): void
-    {
-        if (! $user->isSuperAdmin()) {
-            return;
-        }
-
-        $superAdminRoleId = Role::query()->where('name', 'super_admin')->value('id');
-
-        if ($superAdminRoleId === null || in_array((int) $superAdminRoleId, $roleIds, true)) {
-            return;
-        }
-
-        if ($this->superAdminCount() <= 1) {
-            throw ValidationException::withMessages([
-                'roles' => 'Cannot remove the super admin role from the last super admin.',
-            ]);
-        }
     }
 
     private function guardLastSuperAdminDeletion(User $user): void

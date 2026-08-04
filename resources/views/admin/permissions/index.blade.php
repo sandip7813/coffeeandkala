@@ -18,10 +18,6 @@
 @stop
 
 @section('content')
-    @if (session('status'))
-        <x-adminlte-alert theme="success" dismissible>{{ session('status') }}</x-adminlte-alert>
-    @endif
-
     <x-adminlte-card icon="bi bi-key" title="{{ __('adminlte.permissions') }}" bodyClass="p-0">
         <div class="p-3 border-bottom">
             <a href="{{ route('admin.permissions.create') }}" class="btn btn-sm btn-primary">
@@ -29,12 +25,12 @@
             </a>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead>
                     <tr>
                         <th>{{ __('adminlte.name') }}</th>
                         <th>{{ __('adminlte.label') }}</th>
-                        <th class="text-end">{{ __('adminlte.actions') }}</th>
+                        <th class="text-end" style="width: 4.5rem;">{{ __('adminlte.actions') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -43,18 +39,32 @@
                             <td><code>{{ $permission->name }}</code></td>
                             <td>{{ $permission->label }}</td>
                             <td class="text-end">
-                                <a href="{{ route('admin.permissions.edit', $permission) }}"
-                                   class="btn btn-sm btn-outline-secondary" aria-label="{{ __('adminlte.edit') }}">
-                                    <i class="bi bi-pencil" aria-hidden="true"></i>
-                                </a>
-                                <form method="POST" action="{{ route('admin.permissions.destroy', $permission) }}"
-                                      onsubmit="return confirm('{{ __('adminlte.confirm_delete') }}');" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="btn btn-sm btn-outline-danger" aria-label="{{ __('adminlte.delete') }}">
-                                        <i class="bi bi-trash" aria-hidden="true"></i>
-                                    </button>
-                                </form>
+                                <x-admin.row-actions>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2"
+                                           href="{{ route('admin.permissions.edit', $permission) }}">
+                                            <i class="bi bi-pencil" aria-hidden="true"></i>
+                                            <span>{{ __('adminlte.edit') }}</span>
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <form method="POST" action="{{ route('admin.permissions.destroy', $permission) }}"
+                                              data-confirm-delete
+                                              data-confirm-title="Delete this permission?"
+                                              data-confirm-text="{{ $permission->label ?? $permission->name }} will be permanently removed. This cannot be undone."
+                                              data-confirm-button="Yes, delete permission"
+                                              data-cancel-button="{{ __('adminlte.cancel') }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                                <i class="bi bi-trash" aria-hidden="true"></i>
+                                                <span>{{ __('adminlte.delete') }}</span>
+                                            </button>
+                                        </form>
+                                    </li>
+                                </x-admin.row-actions>
                             </td>
                         </tr>
                     @empty

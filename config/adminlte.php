@@ -186,7 +186,7 @@ return [
     |
     */
 
-    'color_mode_toggle' => true,
+    'color_mode_toggle' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -236,6 +236,12 @@ return [
             'route' => 'admin.permissions.index',
             'icon' => 'bi bi-key',
             'can' => 'manage-permissions',
+        ],
+        [
+            'text' => 'Artisan Runner',
+            'route' => 'admin.artisan.index',
+            'icon' => 'bi bi-terminal',
+            'can' => 'manage-settings',
         ],
     ],
 
