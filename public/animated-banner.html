@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slow Publishing — Stories Worth Sitting Down For</title>
+  
+  <!-- Importing Juana-style Serif font and clean Sans-Serif font -->
+  <link rel="preconnect" href="https://googleapis.com">
+  <link rel="preconnect" href="https://gstatic.com" crossorigin>
+  <link href="https://googleapis.com/css2?family=Inter:wght@300;400&family=Playfair+Display:ital,wght@0,500;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* Reset & Core Styling */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #110d0b;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Fullscreen Viewport Container */
+    .hero-container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Animation Canvas Canvas Background */
+    #coffeeCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    /* Elegant Text Overlay */
+    .text-overlay {
+      position: relative;
+      left: 8%;
+      max-width: 600px;
+      color: #f7f4f0;
+      z-index: 10;
+      pointer-events: none; /* Let user clicks pass through if needed */
+      user-select: none;
+    }
+
+    .tagline {
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0.6;
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    /* Emulating the premium 'Juana' typeface look */
+    .main-headline {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 500;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 28px;
+    }
+
+    .subtext {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    /* Gentle Floating Scroll Indicator */
+    .scroll-container {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      z-index: 10;
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .scroll-arrow {
+      display: block;
+      margin-top: 8px;
+      font-size: 16px;
+      font-family: 'Playfair Display', serif;
+      animation: gentleFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes gentleFloat {
+      0%, 100% {
+        transform: translateY(0);
+        opacity: 0.3;
+      }
+      50% {
+        transform: translateY(8px);
+        opacity: 0.8;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-container">
+    <!-- The Meditative Animation Layer -->
+    <canvas id="coffeeCanvas"></canvas>
+    
+    <!-- Editorial Typography Layer -->
+    <div class="text-overlay">
+      <p class="tagline">Art. Culture. Travel. People. Ideas.</p>
+      <h1 class="main-headline">Stories Worth<br>Sitting Down For.</h1>
+      <p class="subtext">Brewing Art & Words, One Cup At A Time</p>
+    </div>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-container">
+      <span>SCROLL</span>
+      <span class="scroll-arrow">↓</span>
+    </div>
+  </div>
+
+    <script>
+    // Wrap everything in a DOMContentLoaded listener to prevent 'null' errors
+document.addEventListener('DOMContentLoaded', () => {
+  const canvas = document.getElementById('coffeeCanvas');
+  
+  // Double-check that the canvas exists before trying to use it
+  if (!canvas) {
+    console.error("Canvas element '#coffeeCanvas' not found in the HTML.");
+    return;
+  }
+  
+  const ctx = canvas.getContext('2d');
+
+  // 1. LOAD YOUR IMAGE ASSET
+  const bgImage = new Image();
+  bgImage.src = 'hero-bg.jpg'; // Ensure this image is in the same folder
+
+  const config = {
+    baseDuration: 7000,    // 7 seconds loop cycle = ultra slow & steady
+    fallDuration: 750,     // 0.75 seconds to hit the bottom once detached
+    dripScaleMax: 1.5,     
+  };
+
+  let layout = {
+    startX: 0,
+    startY: 0,
+    endY: 0
+  };
+
+  function updateLayoutMetrics() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    
+    // ADJUST THESE NUMBERS to align the droplet perfectly with your image layout
+    layout.startX = canvas.width * 0.72; // Left-to-right position (72% from the left)
+    layout.startY = canvas.height * 0.38; // Starting height position (38% from the top)
+    layout.endY = canvas.height * 0.65;   // Where the drop disappears (65% from the top)
+  }
+
+  function drawDroplet(x, y, scaleY, scaleX, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.translate(x, y);
+    ctx.scale(scaleX, scaleY);
+
+    // Procedural amber coffee droplet
+    let dropGrad = ctx.createRadialGradient(-2, 4, 1, 0, 4, 12);
+    dropGrad.addColorStop(0, '#e5a967'); 
+    dropGrad.addColorStop(0.3, '#78441b'); 
+    dropGrad.addColorStop(1, '#361904'); 
+    ctx.fillStyle = dropGrad;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.bezierCurveTo(-9, 12, -9, 22, 0, 22);
+    ctx.bezierCurveTo(9, 22, 9, 12, 0, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+  }
+
+  let startTime = null;
+
+  function renderLoop(timestamp) {
+    if (!startTime) startTime = timestamp;
+    let elapsed = timestamp - startTime;
+    let progress = (elapsed % config.baseDuration) / config.baseDuration;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 2. DRAW YOUR BACKGROUND IMAGE STRETCHED TO FULL SCREEN
+    if (bgImage.complete) {
+      ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+    }
+
+    let currentY = layout.startY;
+    let scaleX = 0.2;
+    let scaleY = 0.2;
+    let opacity = 1.0;
+
+    if (progress < 0.85) {
+      let accumulateProgress = progress / 0.85;
+      scaleX = 0.2 + (accumulateProgress * (config.dripScaleMax - 0.5));
+      scaleY = 0.2 + (accumulateProgress * config.dripScaleMax);
+      currentY = layout.startY + (accumulateProgress * 4); 
+    } else {
+      let fallProgress = (progress - 0.85) / 0.15;
+      let acceleration = fallProgress * fallProgress;
+      scaleX = config.dripScaleMax - 0.3;
+      scaleY = config.dripScaleMax + 0.2; 
+      let totalTravelDistance = layout.endY - layout.startY - 4;
+      currentY = (layout.startY + 4) + (acceleration * totalTravelDistance);
+
+      if (fallProgress > 0.85) {
+        opacity = 1 - ((fallProgress - 0.85) / 0.15);
+      }
+    }
+
+    // Draw the animated droplet layered precisely over your photograph
+    drawDroplet(layout.startX, currentY, scaleY, scaleX, opacity);
+
+    requestAnimationFrame(renderLoop);
+  }
+
+  window.addEventListener('resize', updateLayoutMetrics);
+  
+  // Start animation metrics immediately and let the loop run
+  updateLayoutMetrics();
+  requestAnimationFrame(renderLoop);
+});
+
+  </script>
+
+</body>
+</html>
+

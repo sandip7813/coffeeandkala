@@ -1,6 +1,78 @@
 import EmblaCarousel from 'embla-carousel';
+import { smoothScrollTo } from './smooth-scroll';
 
-document.addEventListener('DOMContentLoaded', () => {
+const reduceMotionQuery = () => window.matchMedia('(prefers-reduced-motion: reduce)');
+
+const initHeroEditorialReveal = () => {
+    const root = document.querySelector('[data-hero-editorial]');
+
+    if (!root) {
+        return;
+    }
+
+    const nodes = Array.from(root.querySelectorAll('[data-hero-reveal]'));
+    const reduceMotion = reduceMotionQuery().matches;
+    const wordStep = reduceMotion ? 45 : 90;
+    const startLag = reduceMotion ? 80 : 120;
+
+    nodes.forEach((node) => {
+        const raw = node.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+
+        if (raw === '') {
+            return;
+        }
+
+        const baseDelay = Number(node.getAttribute('data-reveal-delay') ?? 0);
+        const words = raw.split(' ');
+
+        node.setAttribute('aria-label', raw);
+        node.textContent = '';
+
+        words.forEach((word, index) => {
+            const wordWrap = document.createElement('span');
+            wordWrap.className = 'hero-reveal-word';
+            wordWrap.style.setProperty('--word-delay', `${baseDelay + startLag + index * wordStep}ms`);
+
+            const wordInner = document.createElement('span');
+            wordInner.className = 'hero-reveal-word-inner';
+            wordInner.textContent = word;
+
+            wordWrap.appendChild(wordInner);
+            node.appendChild(wordWrap);
+
+            if (index < words.length - 1) {
+                node.appendChild(document.createTextNode(' '));
+            }
+        });
+    });
+
+    window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+            root.classList.add('is-revealed');
+        });
+    });
+};
+
+const initHeroScrollCue = () => {
+    const button = document.querySelector('[data-hero-scroll-to]');
+
+    if (!button) {
+        return;
+    }
+
+    button.addEventListener('click', () => {
+        const targetId = button.getAttribute('data-hero-scroll-to');
+        const target = targetId ? document.getElementById(targetId) : null;
+
+        if (!target) {
+            return;
+        }
+
+        smoothScrollTo(target);
+    });
+};
+
+const initHeroBanner = () => {
     const root = document.querySelector('[data-hero-banner]');
     const viewport = root?.querySelector('[data-hero-viewport]');
 
@@ -13,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const progressBar = root.querySelector('[data-hero-progress]');
     const prevBtn = root.querySelector('[data-hero-prev]');
     const nextBtn = root.querySelector('[data-hero-next]');
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reduceMotion = reduceMotionQuery().matches;
     const autoplayDelay = 5500;
     const tweenFactorBase = 0.92;
     let autoplayTimer = null;
@@ -213,4 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     onSelect();
     startAutoplay();
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+    initHeroEditorialReveal();
+    initHeroScrollCue();
+    initHeroBanner();
 });

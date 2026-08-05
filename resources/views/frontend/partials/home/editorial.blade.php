@@ -1,5 +1,5 @@
 {{-- SECTION 04: THE STORY SO FAR --}}
-<section id="sec-04" class="section-editorial">
+<section id="sec-06" class="section-editorial">
     <div class="editorial-left animate-on-scroll animate-on-scroll--left">
         <div class="editorial-scroll">
             <h2 class="editorial-title">The Story So Far</h2>

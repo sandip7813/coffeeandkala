@@ -1,3 +1,5 @@
+import { smoothScrollTo } from './smooth-scroll';
+
 document.addEventListener('DOMContentLoaded', () => {
     const sidebar = document.getElementById('editorialSidebar');
     const rightDrawer = document.getElementById('mobileDrawerRight');
@@ -215,65 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
-    let scrollAnimationFrame = null;
-
-    function cancelScrollAnimation() {
-        if (scrollAnimationFrame !== null) {
-            cancelAnimationFrame(scrollAnimationFrame);
-            scrollAnimationFrame = null;
-        }
-    }
-
-    function getScrollTop() {
-        return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
-    }
-
-    function smoothScrollTo(target, offset = null) {
-        const header = document.querySelector('.site-header');
-        const headerOffset = offset ?? (header ? header.offsetHeight : 0);
-        const targetY = Math.max(
-            0,
-            target.getBoundingClientRect().top + getScrollTop() - headerOffset,
-        );
-
-        animateWindowScroll(targetY, 900);
-    }
-
-    function animateWindowScroll(targetY, durationMs) {
-        cancelScrollAnimation();
-
-        const startY = getScrollTop();
-        const distance = targetY - startY;
-
-        if (Math.abs(distance) < 1) {
-            return;
-        }
-
-        const duration = durationMs;
-        const startTime = performance.now();
-
-        function easeInOutCubic(t) {
-            return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-        }
-
-        function step(now) {
-            const progress = Math.min(1, (now - startTime) / duration);
-            const nextY = startY + distance * easeInOutCubic(progress);
-
-            window.scrollTo(0, nextY);
-
-            if (progress < 1) {
-                scrollAnimationFrame = requestAnimationFrame(step);
-                return;
-            }
-
-            window.scrollTo(0, targetY);
-            scrollAnimationFrame = null;
-        }
-
-        scrollAnimationFrame = requestAnimationFrame(step);
-    }
 
     function handleScroll() {
         const scrollPos = window.scrollY + window.innerHeight / 2;

@@ -60,19 +60,27 @@
                 <li><a href="{{ route('features.show', 'coffee-classics') }}">Coffee &amp; Classics</a></li>
             </ul>
         </li>
-        <li>
+        <li class="nav-item-has-dropdown">
             <a
                 href="{{ route('journal') }}"
                 @class([
+                    'nav-dropdown-toggle',
                     'nav-link-with-sub',
                     'is-active' => request()->routeIs('journal'),
                 ])
+                aria-haspopup="true"
+                aria-expanded="false"
             >
                 Journal
+                <i class="fa-solid fa-chevron-down nav-dropdown-caret" aria-hidden="true"></i>
                 <span class="nav-link-muted">Blogs</span>
             </a>
+            <ul class="nav-dropdown" aria-label="Journal">
+                <li><a href="javascript:void(0)">The Bigger Picture</a></li>
+                <li><a href="javascript:void(0)">Worth Knowing</a></li>
+                <li><a href="javascript:void(0)">Chapters Over Coffee</a></li>
+            </ul>
         </li>
-        <li><a href="javascript:void(0)">Conversations</a></li>
         <li>
             <a
                 href="{{ route('studio') }}"
@@ -86,6 +94,7 @@
             >Gallery</a>
         </li>
         <li><a href="javascript:void(0)">Poetry</a></li>
+        <li><a href="javascript:void(0)">The Mailbox</a></li>
     </ul>
 
     <div class="header-actions">

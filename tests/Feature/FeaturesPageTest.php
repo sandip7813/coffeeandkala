@@ -38,4 +38,5 @@ test('features links from the header and footer navigation', function () {
     $home->assertSuccessful();
     $home->assertSee(route('features', absolute: false), false);
     $home->assertSee(route('features.show', 'art-culture', absolute: false), false);
+    $home->assertSee('>Articles</h3>', false);
 });

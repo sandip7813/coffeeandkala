@@ -1,84 +1,102 @@
-{{-- SECTION 06: JOURNAL — Post carousel --}}
+{{-- SECTION 07: FROM THE JOURNAL — editorial feature slider --}}
 @php
     $journalPosts = [
         [
-            'tag' => 'ESSAY',
+            'tag' => 'Essay',
+            'collection' => 'Quiet Hours',
             'title' => 'A Note from a Rainy Evening',
-            'excerpt' => 'Raindrops, old songs and a notebook. The perfect recipe for clarity.',
+            'excerpt' => 'Raindrops, old songs and a notebook. The perfect recipe for clarity — a slow pour of thoughts that only arrive when the house has gone quiet.',
             'date' => '12 Mar 2026',
-            'image' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=900',
+            'image' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1600',
         ],
         [
-            'tag' => 'TRAVEL',
+            'tag' => 'Travel',
+            'collection' => 'Slow Corridors',
             'title' => 'Letters from a Slow Train',
-            'excerpt' => 'Windows blur into watercolour. Somewhere between stations, a story finds its pace.',
+            'excerpt' => 'Windows blur into watercolour. Somewhere between stations, a story finds its pace — and the journey becomes the essay.',
             'date' => '28 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=900',
+            'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1600',
         ],
         [
-            'tag' => 'CULTURE',
+            'tag' => 'Culture',
+            'collection' => 'Market Light',
             'title' => 'The Colour of Quiet Markets',
-            'excerpt' => 'Spice, cloth, and conversation — a living collage of mornings that refuse haste.',
+            'excerpt' => 'Spice, cloth, and conversation — a living collage of mornings that refuse haste, and colours that linger long after the stall is packed away.',
             'date' => '14 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=900',
+            'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600',
         ],
         [
-            'tag' => 'LIFESTYLE',
+            'tag' => 'Lifestyle',
+            'collection' => 'Morning Ritual',
             'title' => 'Brewing Between Pages',
-            'excerpt' => 'Steam rising over unfinished sentences. The day begins before the world asks for anything.',
+            'excerpt' => 'Steam rising over unfinished sentences. The day begins before the world asks for anything — cup warm, page open, mind unhurried.',
             'date' => '02 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=900',
-        ],
-        [
-            'tag' => 'PHOTOGRAPHY',
-            'title' => 'Holding Soft Light',
-            'excerpt' => 'A frame that waits. The kind of silence that makes room for wondering.',
-            'date' => '21 Jan 2026',
-            'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=900',
-        ],
-        [
-            'tag' => 'NOTES',
-            'title' => 'Midnight Margins',
-            'excerpt' => 'Ink still drying. Thoughts that only arrive when the house has gone quiet.',
-            'date' => '09 Jan 2026',
-            'image' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=900',
+            'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600',
         ],
     ];
 @endphp
 
-<section id="sec-06" class="section-home-carousel section-journal-carousel" aria-label="From the Journal">
-    <div class="home-carousel-header animate-on-scroll animate-on-scroll--text">
-        <div class="home-carousel-heading">
-            <h2 class="home-carousel-title">From the Journal</h2>
+<section
+    id="sec-07"
+    class="section-journal-feature"
+    aria-label="From the Journal"
+    data-journal-feature
+>
+    <header class="journal-feature-header">
+        <div class="journal-feature-heading">
+            <p class="journal-feature-eyebrow">Blogs</p>
+            <h2 class="journal-feature-title">From the Journal</h2>
         </div>
-    </div>
+        <a href="{{ route('journal') }}" class="journal-feature-view-all">
+            Read the Journal
+            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+        </a>
+    </header>
 
-    <div class="home-embla home-embla--journal" data-home-carousel data-slides-visible="3">
-        <div class="home-embla__viewport">
-            <div class="home-embla__container">
+    <div class="journal-feature-slider">
+        <div class="journal-feature-viewport" data-journal-feature-viewport>
+            <div class="journal-feature-container">
                 @foreach ($journalPosts as $post)
-                    <article class="home-embla__slide">
-                        <a href="{{ route('journal') }}" class="home-journal-card">
-                            <div class="home-journal-card-media" style="background-image: url('{{ $post['image'] }}')"></div>
-                            <div class="home-journal-card-body">
-                                <div class="home-journal-card-meta">
-                                    <span class="section-tag">{{ $post['tag'] }}</span>
-                                    <time datetime="{{ $post['date'] }}">{{ $post['date'] }}</time>
-                                </div>
-                                <h3 class="home-journal-card-title">{{ $post['title'] }}</h3>
-                                <p class="home-journal-card-excerpt">{{ $post['excerpt'] }}</p>
-                                <span class="cta-link cta-light">READ NOTE <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></span>
+                    <article class="journal-feature-slide">
+                        <div class="journal-feature-stage">
+                            <div
+                                class="journal-feature-media"
+                                style="background-image: url('{{ $post['image'] }}')"
+                                role="img"
+                                aria-label="{{ $post['title'] }}"
+                            >
+                                <span class="journal-feature-corner journal-feature-corner--tl" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--tr" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--bl" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--br" aria-hidden="true"></span>
                             </div>
-                        </a>
+
+                            <div class="journal-feature-panel">
+                                <span class="journal-feature-corner journal-feature-corner--tl" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--tr" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--bl" aria-hidden="true"></span>
+                                <span class="journal-feature-corner journal-feature-corner--br" aria-hidden="true"></span>
+
+                                <p class="journal-feature-meta">
+                                    {{ strtoupper($post['collection']) }} — {{ strtoupper($post['tag']) }}
+                                </p>
+                                <h3 class="journal-feature-card-title">
+                                    <a href="{{ route('journal') }}">{{ $post['title'] }}</a>
+                                </h3>
+                                <p class="journal-feature-excerpt">{{ $post['excerpt'] }}</p>
+                                <time class="journal-feature-date" datetime="{{ $post['date'] }}">{{ $post['date'] }}</time>
+                            </div>
+                        </div>
                     </article>
                 @endforeach
             </div>
         </div>
-        <button type="button" class="home-embla-arrow home-embla-arrow--prev" data-home-prev aria-label="Previous">
-            <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+
+        <button type="button" class="journal-feature-nav journal-feature-nav--prev" data-journal-feature-prev aria-label="Previous">
+            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
         </button>
-        <button type="button" class="home-embla-arrow home-embla-arrow--next" data-home-next aria-label="Next">
-            <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+        <button type="button" class="journal-feature-nav journal-feature-nav--next" data-journal-feature-next aria-label="Next">
+            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
         </button>
     </div>
 </section>

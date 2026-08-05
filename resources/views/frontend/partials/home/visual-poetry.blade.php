@@ -34,7 +34,7 @@
     ];
 @endphp
 
-<section id="sec-05" class="section-home-carousel section-visual-poetry" aria-label="Gallery of visual poetry">
+<section id="sec-08" class="section-home-carousel section-visual-poetry" aria-label="Gallery of visual poetry">
     <div class="home-carousel-header animate-on-scroll animate-on-scroll--text">
         <div class="home-carousel-heading">
             <h2 class="home-carousel-title">Gallery of visual poetry</h2>

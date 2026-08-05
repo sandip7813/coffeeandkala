@@ -52,8 +52,14 @@ test('journal links from the header, footer, and home navigation', function () {
 
     $home->assertSuccessful();
     $home->assertSee(route('journal', absolute: false), false);
+    $home->assertSee('The Bigger Picture', false);
+    $home->assertSee('Worth Knowing', false);
+    $home->assertSee('Chapters Over Coffee', false);
 
     $journal = $this->get(route('journal'));
     $journal->assertSuccessful();
     $journal->assertSee('is-active', false);
+    $journal->assertSee('The Bigger Picture', false);
+    $journal->assertSee('Worth Knowing', false);
+    $journal->assertSee('Chapters Over Coffee', false);
 });

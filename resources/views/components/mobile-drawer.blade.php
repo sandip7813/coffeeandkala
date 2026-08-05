@@ -35,13 +35,17 @@
                 <li><a href="{{ route('features.show', 'coffee-classics') }}">Coffee &amp; Classics</a></li>
             </ul>
         </li>
-        <li>
-            <a
-                href="{{ route('journal') }}"
-                @class(['is-active' => request()->routeIs('journal')])
-            >Journal</a>
+        <li @class(['drawer-item-has-children', 'is-open' => request()->routeIs('journal')])>
+            <button type="button" class="drawer-submenu-toggle" aria-expanded="{{ request()->routeIs('journal') ? 'true' : 'false' }}">
+                Journal
+                <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <ul class="drawer-submenu">
+                <li><a href="javascript:void(0)">The Bigger Picture</a></li>
+                <li><a href="javascript:void(0)">Worth Knowing</a></li>
+                <li><a href="javascript:void(0)">Chapters Over Coffee</a></li>
+            </ul>
         </li>
-        <li><a href="javascript:void(0)">Conversations</a></li>
         <li>
             <a
                 href="{{ route('studio') }}"
@@ -55,5 +59,6 @@
             >Gallery</a>
         </li>
         <li><a href="javascript:void(0)">Poetry</a></li>
+        <li><a href="javascript:void(0)">The Mailbox</a></li>
     </ul>
 </div>
