@@ -114,6 +114,7 @@ test('the home page includes a features unfolded article slider', function () {
     $response->assertSee('Unfold the Stories', false);
     $response->assertSee(route('features', absolute: false), false);
     $response->assertSee('visual-feature-panel', false);
+    $response->assertSee('visual-feature-corner', false);
     $response->assertSee('visual-feature-rule', false);
     $response->assertSee('visual-feature-nav', false);
     $response->assertSee('visual-feature-header', false);

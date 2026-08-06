@@ -57,13 +57,22 @@
                             role="img"
                             aria-label="{{ $story['title'] }}"
                         ></div>
-                        <div class="visual-feature-shade" aria-hidden="true"></div>
+                        <div class="visual-feature-shade" aria-hidden="true">
+                            <span class="visual-feature-corner visual-feature-corner--tl"></span>
+                            <span class="visual-feature-corner visual-feature-corner--tr"></span>
+                            <span class="visual-feature-corner visual-feature-corner--bl"></span>
+                            <span class="visual-feature-corner visual-feature-corner--br"></span>
+                        </div>
 
                         <div class="visual-feature-stage">
                             <div class="visual-feature-panel-stack">
                                 <div class="visual-feature-rule visual-feature-rule--top" aria-hidden="true"></div>
 
                                 <div class="visual-feature-panel">
+                                    <span class="visual-feature-corner visual-feature-corner--tl" aria-hidden="true"></span>
+                                    <span class="visual-feature-corner visual-feature-corner--tr" aria-hidden="true"></span>
+                                    <span class="visual-feature-corner visual-feature-corner--bl" aria-hidden="true"></span>
+                                    <span class="visual-feature-corner visual-feature-corner--br" aria-hidden="true"></span>
                                     <p class="visual-feature-meta">
                                         <time datetime="{{ $story['date'] }}">{{ $story['date'] }}</time>
                                         <span aria-hidden="true">•</span>

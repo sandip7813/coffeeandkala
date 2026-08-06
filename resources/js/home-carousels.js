@@ -152,7 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         indexButtons.forEach((button) => {
-            button.addEventListener('click', () => {
+            button.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+
                 const index = Number(button.dataset.galleryStoryIndex);
 
                 if (!Number.isNaN(index)) {
