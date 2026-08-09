@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\RunArtisanCommand;
+use App\Actions\RunComposerCommand;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\RunArtisanCommandRequest;
 use App\Http\Requests\Admin\UnlockArtisanRunnerRequest;
@@ -24,6 +25,7 @@ class ArtisanController extends Controller
         return view('admin.artisan.index', [
             'groups' => ArtisanCatalog::groupedPresets(),
             'allowed' => ArtisanCatalog::allowedCommands(),
+            'composerAllowed' => ArtisanCatalog::composerAllowedCommands(),
             'seeders' => ArtisanCatalog::seeders(),
             'result' => session('artisan_result'),
         ]);
@@ -47,7 +49,7 @@ class ArtisanController extends Controller
             ->with('status', 'Artisan Runner unlocked for this session.');
     }
 
-    public function store(RunArtisanCommandRequest $request, RunArtisanCommand $runner): RedirectResponse
+    public function store(RunArtisanCommandRequest $request, RunArtisanCommand $runner, RunComposerCommand $composerRunner): RedirectResponse
     {
         $this->authorizeManage();
 
@@ -57,9 +59,11 @@ class ArtisanController extends Controller
 
         abort_unless($invocation !== null, 422);
 
-        [$command, $parameters] = $invocation;
+        [$type, $command, $parameters] = $invocation;
 
-        $result = $runner->handle($command, $parameters);
+        $result = $type === 'composer'
+            ? $composerRunner->handle($command, $parameters)
+            : $runner->handle($command, $parameters);
 
         return redirect()
             ->route('admin.artisan.index')

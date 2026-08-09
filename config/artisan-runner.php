@@ -76,6 +76,53 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Composer binary
+    |--------------------------------------------------------------------------
+    |
+    | Executable used to run allowlisted Composer commands. Override via env
+    | if Composer isn't available as a bare `composer` on the PATH.
+    |
+    */
+
+    'composer_binary' => env('ARTISAN_RUNNER_COMPOSER_BINARY', 'composer'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Allowed Composer commands
+    |--------------------------------------------------------------------------
+    |
+    | Only these Composer subcommands may be executed from the admin runner.
+    | Commands that add/remove packages (require, remove) or touch the
+    | global Composer installation (self-update) are omitted on purpose.
+    |
+    */
+
+    'composer_allowed' => [
+        'audit',
+        'check-platform-reqs',
+        'clear-cache',
+        'diagnose',
+        'dump-autoload',
+        'install',
+        'outdated',
+        'show',
+        'update',
+        'validate',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Composer commands that receive --no-interaction automatically
+    |--------------------------------------------------------------------------
+    */
+
+    'composer_force' => [
+        'install',
+        'update',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Accordion group labels
     |--------------------------------------------------------------------------
     */
@@ -86,6 +133,7 @@ return [
         'scheduler' => 'Scheduler',
         'cache' => 'Cache & optimize',
         'queue' => 'Queue & storage',
+        'composer' => 'Composer',
         'info' => 'Application info',
     ],
 
@@ -271,6 +319,98 @@ return [
             'label' => 'List events',
             'description' => 'php artisan event:list',
             'command' => 'event:list',
+        ],
+        [
+            'key' => 'composer-install',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Install dependencies',
+            'description' => 'composer install --no-interaction --prefer-dist',
+            'command' => 'install',
+            'parameters' => ['--prefer-dist'],
+        ],
+        [
+            'key' => 'composer-update',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Update dependencies',
+            'description' => 'composer update --no-interaction',
+            'command' => 'update',
+            'danger' => true,
+        ],
+        [
+            'key' => 'composer-dump-autoload',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Dump autoload',
+            'description' => 'composer dump-autoload',
+            'command' => 'dump-autoload',
+        ],
+        [
+            'key' => 'composer-dump-autoload-optimized',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Dump autoload (optimized)',
+            'description' => 'composer dump-autoload --optimize',
+            'command' => 'dump-autoload',
+            'parameters' => ['--optimize'],
+        ],
+        [
+            'key' => 'composer-outdated',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'List outdated packages',
+            'description' => 'composer outdated --direct',
+            'command' => 'outdated',
+            'parameters' => ['--direct'],
+        ],
+        [
+            'key' => 'composer-show',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'List installed packages',
+            'description' => 'composer show',
+            'command' => 'show',
+        ],
+        [
+            'key' => 'composer-validate',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Validate composer.json',
+            'description' => 'composer validate',
+            'command' => 'validate',
+        ],
+        [
+            'key' => 'composer-diagnose',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Diagnose environment',
+            'description' => 'composer diagnose',
+            'command' => 'diagnose',
+        ],
+        [
+            'key' => 'composer-audit',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Audit for vulnerabilities',
+            'description' => 'composer audit',
+            'command' => 'audit',
+        ],
+        [
+            'key' => 'composer-check-platform-reqs',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Check platform requirements',
+            'description' => 'composer check-platform-reqs',
+            'command' => 'check-platform-reqs',
+        ],
+        [
+            'key' => 'composer-clear-cache',
+            'group' => 'composer',
+            'type' => 'composer',
+            'label' => 'Clear Composer cache',
+            'description' => 'composer clear-cache',
+            'command' => 'clear-cache',
         ],
     ],
 

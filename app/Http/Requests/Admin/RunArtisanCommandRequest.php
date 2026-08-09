@@ -25,6 +25,7 @@ class RunArtisanCommandRequest extends FormRequest
         return [
             'preset' => ['nullable', 'string', 'max:100'],
             'command' => ['nullable', 'string', 'max:500'],
+            'type' => ['nullable', 'string', Rule::in(['artisan', 'composer'])],
             'seeder' => ['nullable', 'string', Rule::in(ArtisanCatalog::seeders())],
             'confirm' => ['accepted'],
         ];
@@ -63,7 +64,7 @@ class RunArtisanCommandRequest extends FormRequest
     }
 
     /**
-     * @return array{0: string, 1: array<string|int, mixed>}|null
+     * @return array{0: string, 1: string, 2: array<string|int, mixed>}|null
      */
     public function resolvedInvocation(): ?array
     {
@@ -76,13 +77,14 @@ class RunArtisanCommandRequest extends FormRequest
                 return null;
             }
 
+            $type = ArtisanCatalog::presetType($preset);
             $parameters = $preset['parameters'] ?? [];
 
-            if ($preset['command'] === 'db:seed' && $this->filled('seeder')) {
+            if ($type === 'artisan' && $preset['command'] === 'db:seed' && $this->filled('seeder')) {
                 $parameters['--class'] = $this->string('seeder')->toString();
             }
 
-            return [$preset['command'], $parameters];
+            return [$type, $preset['command'], $parameters];
         }
 
         $command = $this->string('command')->toString();
@@ -91,6 +93,12 @@ class RunArtisanCommandRequest extends FormRequest
             return null;
         }
 
-        return ArtisanCatalog::parse($command);
+        $type = $this->string('type')->toString() ?: 'artisan';
+
+        if ($type === 'composer') {
+            return ['composer', ...ArtisanCatalog::parseComposer($command)];
+        }
+
+        return ['artisan', ...ArtisanCatalog::parse($command)];
     }
 }

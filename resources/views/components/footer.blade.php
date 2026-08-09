@@ -13,6 +13,28 @@
             <p class="footer-tagline">
                 An editorial journal of slow living, art, travel, and quiet stories — brewed with coffee and kala.
             </p>
+            @php($contactInfo = \App\Support\ContactInfo::filled())
+            @if ($contactInfo !== [])
+                <div class="footer-contact-block">
+                    <p class="footer-contact-label">Get in Touch</p>
+                    <ul class="footer-contact">
+                        @foreach ($contactInfo as $contact)
+                            <li>
+                                <a
+                                    href="{{ $contact['href'] }}"
+                                    class="footer-contact-link"
+                                    @if ($contact['key'] === 'address') target="_blank" rel="noopener noreferrer" @endif
+                                >
+                                    <span class="footer-contact-icon">
+                                        <i class="{{ $contact['icon'] }}" aria-hidden="true"></i>
+                                    </span>
+                                    <span>{{ $contact['value'] }}</span>
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             @php($socialLinks = \App\Support\SocialLinks::filled())
             @if ($socialLinks !== [])
                 <div class="footer-social">
@@ -72,7 +94,6 @@
                         >Gallery</a>
                     </li>
                     <li><a href="#">Poetry</a></li>
-                    <li><a href="#">The Mailbox</a></li>
                 </ul>
             </div>
 

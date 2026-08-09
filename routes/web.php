@@ -130,5 +130,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
         Route::put('settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.logo.update');
         Route::put('settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
+        Route::put('settings/contact', [SettingsController::class, 'updateContact'])->name('settings.contact.update');
     });
 });

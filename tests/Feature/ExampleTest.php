@@ -57,7 +57,7 @@ test('the home page places the thought of the day quotes between the hero and th
     $response->assertSee('data-thought-reveal', false);
     $response->assertSee('Thought of the day', false);
     $response->assertSee('images/home/paper-texture.jpg', false);
-    $response->assertSee('images/home/quote-logo-watermark.png', false);
+    $response->assertDontSee('images/home/quote-logo-watermark.png', false);
     $response->assertSee('You can\'t stop me unless I decide it\'s time to.', false);
     $response->assertSee('Coffee &amp; Kala', false);
     $response->assertSee('data-target="sec-02"', false);
@@ -91,7 +91,7 @@ test('the home page includes three small stories without a carousel', function (
     $response->assertSee('Tableside Echoes', false);
     $response->assertSee('three-story-card', false);
     $response->assertSee('three-story-overlay', false);
-    $response->assertSee('three-story-corner', false);
+    $response->assertSee('three-story-border', false);
     $response->assertDontSee('The Creative Pulse', false);
     $response->assertDontSee('section-giant-photo', false);
 
@@ -114,7 +114,7 @@ test('the home page includes a features unfolded article slider', function () {
     $response->assertSee('Unfold the Stories', false);
     $response->assertSee(route('features', absolute: false), false);
     $response->assertSee('visual-feature-panel', false);
-    $response->assertSee('visual-feature-corner', false);
+    $response->assertDontSee('visual-feature-corner', false);
     $response->assertSee('visual-feature-rule', false);
     $response->assertSee('visual-feature-nav', false);
     $response->assertSee('visual-feature-header', false);
@@ -152,7 +152,7 @@ test('the home page includes a from the journal editorial feature above visual p
     $response->assertSee('Read the Journal', false);
     $response->assertSee('journal-feature-panel', false);
     $response->assertSee('journal-feature-media', false);
-    $response->assertSee('journal-feature-corner', false);
+    $response->assertDontSee('journal-feature-corner', false);
     $response->assertSee(route('journal', absolute: false), false);
     $response->assertDontSee('home-embla--journal', false);
     $response->assertDontSee('section-journal-carousel', false);
@@ -168,11 +168,11 @@ test('the home page includes a from the journal editorial feature above visual p
         ->and($html)->toContain('Gallery of visual poetry');
 });
 
-test('the home page header navigation lists the mailbox instead of conversations', function () {
+test('the home page header navigation omits the mailbox and conversations', function () {
     $response = $this->get(route('home'));
 
     $response->assertSuccessful();
-    $response->assertSee('The Mailbox', false);
+    $response->assertDontSee('The Mailbox', false);
     $response->assertSee('Articles', false);
     $response->assertSee('Blogs', false);
     $response->assertSee('The Bigger Picture', false);

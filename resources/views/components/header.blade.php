@@ -94,7 +94,6 @@
             >Gallery</a>
         </li>
         <li><a href="javascript:void(0)">Poetry</a></li>
-        <li><a href="javascript:void(0)">The Mailbox</a></li>
     </ul>
 
     <div class="header-actions">

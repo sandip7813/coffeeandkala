@@ -34,7 +34,7 @@ test('settings page shows icon inputs for social networks including facebook', f
     $this->actingAs($user)
         ->get(route('admin.settings.edit'))
         ->assertSuccessful()
-        ->assertSee('input-group-text social-link-icon', false)
+        ->assertSee('input-group-text settings-field-icon', false)
         ->assertSee('bi bi-instagram', false)
         ->assertSee('bi bi-facebook', false)
         ->assertSee('bi bi-pinterest', false)

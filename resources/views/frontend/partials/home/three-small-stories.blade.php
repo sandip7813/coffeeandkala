@@ -53,10 +53,7 @@
                         aria-label="{{ $story['title'] }}"
                     ></div>
 
-                    <span class="three-story-corner three-story-corner--tl" aria-hidden="true"></span>
-                    <span class="three-story-corner three-story-corner--tr" aria-hidden="true"></span>
-                    <span class="three-story-corner three-story-corner--bl" aria-hidden="true"></span>
-                    <span class="three-story-corner three-story-corner--br" aria-hidden="true"></span>
+                    <span class="three-story-border" aria-hidden="true"></span>
 
                     <span class="three-story-number">{{ $story['number'] }}</span>
 

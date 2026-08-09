@@ -145,12 +145,13 @@
                       data-cancel-button="Cancel"
                       data-loading-text="Running Artisan command…">
                     @csrf
+                    <input type="hidden" name="type" value="artisan">
                     <input type="hidden" name="confirm" value="0" data-artisan-confirm>
 
                     <div class="mb-3">
                         <label class="form-label" for="artisan-command">Command</label>
                         <input type="text" class="form-control font-monospace" id="artisan-command" name="command"
-                               value="{{ old('command') }}"
+                               value="{{ old('type', 'artisan') === 'artisan' ? old('command') : '' }}"
                                placeholder="e.g. migrate:status or db:seed --class=AdminLteRbacSeeder"
                                autocomplete="off"
                                data-artisan-command>
@@ -165,12 +166,49 @@
                 </form>
             </x-adminlte-card>
 
+            <x-adminlte-card icon="bi bi-box-seam" title="Custom composer command" class="mb-3">
+                <form method="POST"
+                      action="{{ route('admin.artisan.run') }}"
+                      data-confirm-artisan
+                      data-confirm-title="Run this Composer command?"
+                      data-confirm-text="Only allowlisted commands can run. Double-check the command before continuing."
+                      data-confirm-button="Yes, run it"
+                      data-cancel-button="Cancel"
+                      data-loading-text="Running Composer command…">
+                    @csrf
+                    <input type="hidden" name="type" value="composer">
+                    <input type="hidden" name="confirm" value="0" data-artisan-confirm>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="composer-command">Command</label>
+                        <input type="text" class="form-control font-monospace" id="composer-command" name="command"
+                               value="{{ old('type') === 'composer' ? old('command') : '' }}"
+                               placeholder="e.g. show or dump-autoload --optimize"
+                               autocomplete="off">
+                        <div class="form-text">
+                            The <code>composer</code> prefix is optional. Shell operators are blocked.
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-play-fill me-1" aria-hidden="true"></i> Run command
+                    </button>
+                </form>
+            </x-adminlte-card>
+
             <x-adminlte-card icon="bi bi-shield-check" title="Allowed commands" theme="secondary">
                 <p class="small text-body-secondary mb-2">
                     Only these commands can run. Edit <code>config/artisan-runner.php</code> to change the list.
                 </p>
-                <div class="small" style="max-height: 16rem; overflow: auto;">
+                <div class="small mb-3" style="max-height: 12rem; overflow: auto;">
+                    <div class="text-uppercase text-body-secondary fw-semibold mb-1" style="font-size: .7rem;">Artisan</div>
                     @foreach ($allowed as $command)
+                        <code class="d-inline-block me-1 mb-1">{{ $command }}</code>
+                    @endforeach
+                </div>
+                <div class="small" style="max-height: 12rem; overflow: auto;">
+                    <div class="text-uppercase text-body-secondary fw-semibold mb-1" style="font-size: .7rem;">Composer</div>
+                    @foreach ($composerAllowed as $command)
                         <code class="d-inline-block me-1 mb-1">{{ $command }}</code>
                     @endforeach
                 </div>

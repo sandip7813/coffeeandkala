@@ -224,3 +224,71 @@ test('artisan catalog lists application seeders', function () {
         ->toContain('AdminLteRbacSeeder')
         ->toContain('SuperAdminSeeder');
 });
+
+test('artisan catalog groups composer presets together', function () {
+    $groups = ArtisanCatalog::groupedPresets();
+
+    expect($groups)->toHaveKey('composer')
+        ->and(collect($groups['composer']['presets'])->pluck('command')->all())
+        ->toContain('install', 'update', 'dump-autoload', 'show');
+});
+
+test('composer catalog parses a custom command string', function () {
+    expect(ArtisanCatalog::parseComposer('dump-autoload --optimize'))
+        ->toBe(['dump-autoload', ['--optimize']]);
+});
+
+test('disallowed composer commands are rejected', function () {
+    expect(fn () => ArtisanCatalog::parseComposer('require some/package'))
+        ->toThrow(ValidationException::class);
+});
+
+test('composer shell metacharacters are rejected', function () {
+    expect(fn () => ArtisanCatalog::parseComposer('show; rm -rf /'))
+        ->toThrow(ValidationException::class);
+});
+
+test('super admins can run an allowlisted composer preset after confirming', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->actingAs($user)
+        ->withSession(unlockedArtisanSession())
+        ->post(route('admin.artisan.run'), [
+            'preset' => 'composer-show',
+            'confirm' => '1',
+        ])
+        ->assertRedirect(route('admin.artisan.index'))
+        ->assertSessionHas('status')
+        ->assertSessionHas('artisan_result.succeeded', true)
+        ->assertSessionHas('artisan_result.command', 'composer show');
+});
+
+test('super admins can run a custom allowlisted composer command string', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->actingAs($user)
+        ->withSession(unlockedArtisanSession())
+        ->post(route('admin.artisan.run'), [
+            'type' => 'composer',
+            'command' => 'show',
+            'confirm' => '1',
+        ])
+        ->assertRedirect(route('admin.artisan.index'))
+        ->assertSessionHas('artisan_result.succeeded', true)
+        ->assertSessionHas('artisan_result.command', 'composer show');
+});
+
+test('disallowed composer commands are rejected via the runner form', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->actingAs($user)
+        ->withSession(unlockedArtisanSession())
+        ->from(route('admin.artisan.index'))
+        ->post(route('admin.artisan.run'), [
+            'type' => 'composer',
+            'command' => 'require some/package',
+            'confirm' => '1',
+        ])
+        ->assertRedirect(route('admin.artisan.index'))
+        ->assertSessionHasErrors('command');
+});

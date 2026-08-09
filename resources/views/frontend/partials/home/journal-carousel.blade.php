@@ -64,19 +64,9 @@
                                 style="background-image: url('{{ $post['image'] }}')"
                                 role="img"
                                 aria-label="{{ $post['title'] }}"
-                            >
-                                <span class="journal-feature-corner journal-feature-corner--tl" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--tr" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--bl" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--br" aria-hidden="true"></span>
-                            </div>
+                            ></div>
 
                             <div class="journal-feature-panel">
-                                <span class="journal-feature-corner journal-feature-corner--tl" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--tr" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--bl" aria-hidden="true"></span>
-                                <span class="journal-feature-corner journal-feature-corner--br" aria-hidden="true"></span>
-
                                 <p class="journal-feature-meta">
                                     {{ strtoupper($post['collection']) }} — {{ strtoupper($post['tag']) }}
                                 </p>

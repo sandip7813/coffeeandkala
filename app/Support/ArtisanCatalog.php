@@ -16,7 +16,15 @@ class ArtisanCatalog
     }
 
     /**
-     * @return list<array{key: string, group?: string, label: string, description: string, command: string, parameters?: array<string, mixed>, danger?: bool}>
+     * @return list<string>
+     */
+    public static function composerAllowedCommands(): array
+    {
+        return array_values(config('artisan-runner.composer_allowed', []));
+    }
+
+    /**
+     * @return list<array{key: string, group?: string, type?: string, label: string, description: string, command: string, parameters?: array<string, mixed>, danger?: bool}>
      */
     public static function presets(): array
     {
@@ -61,7 +69,7 @@ class ArtisanCatalog
     }
 
     /**
-     * @return array{key: string, group?: string, label: string, description: string, command: string, parameters?: array<string, mixed>, danger?: bool}|null
+     * @return array{key: string, group?: string, type?: string, label: string, description: string, command: string, parameters?: array<string, mixed>, danger?: bool}|null
      */
     public static function preset(string $key): ?array
     {
@@ -74,9 +82,22 @@ class ArtisanCatalog
         return null;
     }
 
+    /**
+     * @param  array{type?: string}  $preset
+     */
+    public static function presetType(array $preset): string
+    {
+        return $preset['type'] ?? 'artisan';
+    }
+
     public static function isAllowed(string $command): bool
     {
         return in_array($command, static::allowedCommands(), true);
+    }
+
+    public static function isAllowedComposer(string $command): bool
+    {
+        return in_array($command, static::composerAllowedCommands(), true);
     }
 
     public static function isUnlocked(): bool
@@ -125,35 +146,7 @@ class ArtisanCatalog
      */
     public static function parse(string $raw): array
     {
-        $raw = trim(preg_replace('/\s+/', ' ', $raw) ?? '');
-
-        if ($raw === '') {
-            throw ValidationException::withMessages([
-                'command' => 'Please enter an Artisan command.',
-            ]);
-        }
-
-        if (preg_match('/[;&|`$()<>\\\\]/', $raw) === 1) {
-            throw ValidationException::withMessages([
-                'command' => 'Shell metacharacters are not allowed.',
-            ]);
-        }
-
-        if (str_starts_with(strtolower($raw), 'php artisan ')) {
-            $raw = substr($raw, strlen('php artisan '));
-        } elseif (str_starts_with(strtolower($raw), 'artisan ')) {
-            $raw = substr($raw, strlen('artisan '));
-        }
-
-        $tokens = str_getcsv($raw, ' ', '"', '\\');
-        $tokens = array_values(array_filter($tokens, fn ($token) => $token !== null && $token !== ''));
-
-        if ($tokens === []) {
-            throw ValidationException::withMessages([
-                'command' => 'Please enter an Artisan command.',
-            ]);
-        }
-
+        $tokens = static::tokenize($raw, ['php artisan ', 'artisan ']);
         $command = array_shift($tokens);
 
         if (! is_string($command) || ! static::isAllowed($command)) {
@@ -194,6 +187,66 @@ class ArtisanCatalog
         }
 
         return [$command, $parameters];
+    }
+
+    /**
+     * Parse a free-form Composer invocation into a command name and arguments.
+     *
+     * @return array{0: string, 1: list<string>}
+     */
+    public static function parseComposer(string $raw): array
+    {
+        $tokens = static::tokenize($raw, ['composer ']);
+        $command = array_shift($tokens);
+
+        if (! is_string($command) || ! static::isAllowedComposer($command)) {
+            throw ValidationException::withMessages([
+                'command' => "The composer command [{$command}] is not allowed. Allowed commands: ".implode(', ', static::composerAllowedCommands()),
+            ]);
+        }
+
+        return [$command, array_values($tokens)];
+    }
+
+    /**
+     * Normalize, guard, and split a raw command string into tokens.
+     *
+     * @param  list<string>  $prefixes  Case-insensitive leading prefixes to strip (e.g. "php artisan ").
+     * @return list<string>
+     */
+    private static function tokenize(string $raw, array $prefixes): array
+    {
+        $raw = trim(preg_replace('/\s+/', ' ', $raw) ?? '');
+
+        if ($raw === '') {
+            throw ValidationException::withMessages([
+                'command' => 'Please enter a command.',
+            ]);
+        }
+
+        if (preg_match('/[;&|`$()<>\\\\]/', $raw) === 1) {
+            throw ValidationException::withMessages([
+                'command' => 'Shell metacharacters are not allowed.',
+            ]);
+        }
+
+        foreach ($prefixes as $prefix) {
+            if (str_starts_with(strtolower($raw), $prefix)) {
+                $raw = substr($raw, strlen($prefix));
+                break;
+            }
+        }
+
+        $tokens = str_getcsv($raw, ' ', '"', '\\');
+        $tokens = array_values(array_filter($tokens, fn ($token) => $token !== null && $token !== ''));
+
+        if ($tokens === []) {
+            throw ValidationException::withMessages([
+                'command' => 'Please enter a command.',
+            ]);
+        }
+
+        return $tokens;
     }
 
     public static function assertAllowedSeeder(string $class): void

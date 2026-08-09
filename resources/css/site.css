@@ -10,9 +10,9 @@
     --border-light: rgba(91, 58, 41, 0.15);
     --font-serif: 'Cormorant Garamond', Georgia, serif;
     --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    --font-hero-pillars: 'Glacial Indifference', 'Plus Jakarta Sans', sans-serif;
+    --font-hero-pillars: 'Jost', 'Plus Jakarta Sans', sans-serif;
     --font-hero-display: 'Italiana', 'Cormorant Garamond', Georgia, serif;
-    --font-hero-script: 'Great Vibes', 'Cormorant Garamond', cursive;
+    --font-hero-script: 'Beau Rivage', 'Cormorant Garamond', cursive;
     --font-hero-tagline: 'Radley', 'Cormorant Garamond', Georgia, serif;
     --font-quote: 'Carra', 'Radley', 'Cormorant Garamond', Georgia, serif;
     --font-quote-byline: 'Manhattan', 'Cinzel', 'Italiana', Georgia, serif;
@@ -24,16 +24,6 @@
     --font-size-section-title: clamp(32px, 4vw, 48px);
     --section-inline: clamp(28px, 5vw, 64px);
     --radius-media: 12px;
-}
-
-@font-face {
-    font-family: 'Glacial Indifference';
-    font-style: normal;
-    font-display: swap;
-    font-weight: 400;
-    src:
-        url('/fonts/glacial-indifference/glacial-indifference-400.woff2') format('woff2'),
-        url('/fonts/glacial-indifference/glacial-indifference-400.woff') format('woff');
 }
 
 * {
@@ -767,17 +757,54 @@ body.layout-no-sidebar .site-header {
     display: inline-flex;
     color: #fff8ef;
     filter: drop-shadow(0 1px 10px rgba(17, 17, 17, 0.35));
-    animation: hero-scroll-dance 1.8s ease-in-out 5.2s infinite;
 }
 
 .hero-scroll-icon {
-    width: 26px;
-    height: 46px;
     display: block;
+    width: 16px;
+    height: 44px;
 }
 
-.hero-scroll-dot {
-    animation: hero-scroll-dot 1.8s ease-in-out 5.2s infinite;
+.hero-scroll-line {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+    animation: hero-scroll-draw 2.4s ease-in-out 3.6s infinite;
+}
+
+.hero-scroll-head {
+    transform-origin: 10px 38px;
+    opacity: 0;
+    animation: hero-scroll-head-pulse 2.4s ease-in-out 3.6s infinite;
+}
+
+@keyframes hero-scroll-draw {
+    0% {
+        stroke-dashoffset: 40;
+    }
+
+    45%,
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+@keyframes hero-scroll-head-pulse {
+    0%,
+    35% {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+
+    55% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    85%,
+    100% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
 }
 
 @keyframes hero-scroll-enter {
@@ -789,30 +816,6 @@ body.layout-no-sidebar .site-header {
     to {
         opacity: 1;
         transform: translate(-50%, 0);
-    }
-}
-
-@keyframes hero-scroll-dance {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(10px);
-    }
-}
-
-@keyframes hero-scroll-dot {
-    0%,
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
-
-    55% {
-        transform: translateY(8px);
-        opacity: 0.25;
     }
 }
 
@@ -890,10 +893,15 @@ body.layout-no-sidebar .site-header {
         animation: hero-scroll-enter 1s ease 1.4s both;
     }
 
-    .hero-scroll-arrow,
-    .hero-scroll-dot {
-        animation-duration: 2.2s;
-        animation-delay: 2.2s;
+    .hero-scroll-line {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+
+    .hero-scroll-head {
+        animation: none;
+        opacity: 1;
+        transform: none;
     }
 }
 
@@ -1423,52 +1431,6 @@ body.layout-no-sidebar .site-header {
     box-shadow: var(--shadow-section-image);
 }
 
-.visual-feature-corner {
-    position: absolute;
-    z-index: 4;
-    width: 22px;
-    height: 22px;
-    border-style: solid;
-    pointer-events: none;
-}
-
-.visual-feature-media .visual-feature-corner,
-.visual-feature-shade .visual-feature-corner {
-    border-color: rgba(247, 245, 241, 0.9);
-}
-
-.visual-feature-panel .visual-feature-corner {
-    border-color: rgba(91, 58, 41, 0.45);
-}
-
-.visual-feature-corner--tl {
-    top: 14px;
-    left: 14px;
-    border-width: 1.5px 0 0 1.5px;
-    border-top-left-radius: 8px;
-}
-
-.visual-feature-corner--tr {
-    top: 14px;
-    right: 14px;
-    border-width: 1.5px 1.5px 0 0;
-    border-top-right-radius: 8px;
-}
-
-.visual-feature-corner--bl {
-    bottom: 14px;
-    left: 14px;
-    border-width: 0 0 1.5px 1.5px;
-    border-bottom-left-radius: 8px;
-}
-
-.visual-feature-corner--br {
-    bottom: 14px;
-    right: 14px;
-    border-width: 0 1.5px 1.5px 0;
-    border-bottom-right-radius: 8px;
-}
-
 .visual-feature-meta {
     margin: 0 0 16px;
     display: flex;
@@ -1958,51 +1920,6 @@ body.layout-no-sidebar .site-header {
     display: none;
 }
 
-.journal-feature-corner {
-    position: absolute;
-    z-index: 4;
-    width: 22px;
-    height: 22px;
-    border-style: solid;
-    pointer-events: none;
-}
-
-.journal-feature-panel .journal-feature-corner {
-    border-color: rgba(91, 58, 41, 0.45);
-}
-
-.journal-feature-media .journal-feature-corner {
-    border-color: rgba(247, 245, 241, 0.9);
-}
-
-.journal-feature-corner--tl {
-    top: 14px;
-    left: 14px;
-    border-width: 1.5px 0 0 1.5px;
-    border-top-left-radius: 8px;
-}
-
-.journal-feature-corner--tr {
-    top: 14px;
-    right: 14px;
-    border-width: 1.5px 1.5px 0 0;
-    border-top-right-radius: 8px;
-}
-
-.journal-feature-corner--bl {
-    bottom: 14px;
-    left: 14px;
-    border-width: 0 0 1.5px 1.5px;
-    border-bottom-left-radius: 8px;
-}
-
-.journal-feature-corner--br {
-    bottom: 14px;
-    right: 14px;
-    border-width: 0 1.5px 1.5px 0;
-    border-bottom-right-radius: 8px;
-}
-
 .journal-feature-meta {
     margin: 0 0 18px;
     font-size: 11px;
@@ -2482,42 +2399,13 @@ body.layout-no-sidebar .site-header {
     background-repeat: no-repeat;
 }
 
-.three-story-corner {
+.three-story-border {
     position: absolute;
+    inset: 14px;
     z-index: 3;
-    width: 22px;
-    height: 22px;
-    border-color: rgba(247, 245, 241, 0.88);
-    border-style: solid;
+    border: 1px solid rgba(247, 245, 241, 0.88);
+    border-radius: 8px;
     pointer-events: none;
-}
-
-.three-story-corner--tl {
-    top: 14px;
-    left: 14px;
-    border-width: 1.5px 0 0 1.5px;
-    border-top-left-radius: 8px;
-}
-
-.three-story-corner--tr {
-    top: 14px;
-    right: 14px;
-    border-width: 1.5px 1.5px 0 0;
-    border-top-right-radius: 8px;
-}
-
-.three-story-corner--bl {
-    bottom: 14px;
-    left: 14px;
-    border-width: 0 0 1.5px 1.5px;
-    border-bottom-left-radius: 8px;
-}
-
-.three-story-corner--br {
-    bottom: 14px;
-    right: 14px;
-    border-width: 0 1.5px 1.5px 0;
-    border-bottom-right-radius: 8px;
 }
 
 .three-story-number {
@@ -2709,15 +2597,15 @@ body.layout-no-sidebar .site-header {
     background-size: 480px 480px;
     background-repeat: repeat;
     color: #2a1c14;
-    /* Intentional pause after the hero — absorb the opening message */
-    margin-top: clamp(56px, 9vh, 120px);
+    /* Intentional pause after the hero — absorb the opening message, but kept brief */
+    margin-top: clamp(20px, 3vh, 40px);
     margin-bottom: 0;
-    padding: clamp(24px, 3.5vh, 40px) clamp(8px, 1.5vw, 16px);
+    padding: clamp(16px, 2.5vh, 28px) clamp(20px, 4vw, 32px);
     border: none;
     outline: none;
     box-shadow: none;
-    display: block;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;
 }
 
 .section-thought::before {
@@ -2736,29 +2624,104 @@ body.layout-no-sidebar .site-header {
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    background-image: var(--thought-logo);
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: min(680px, 62%);
-    opacity: 0.09;
+    /* Gentle glow behind the card — a warm spotlight on the paper grain */
+    background: radial-gradient(ellipse at center, rgba(255, 252, 246, 0.55) 0%, rgba(255, 252, 246, 0) 60%);
+}
+
+.thought-svg-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.thought-frame-shadow {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    /* Layered drop-shadows follow the deckled silhouette of the clipped card below
+       (unlike box-shadow, which only knows rectangles) — a tight contact shadow plus
+       a broad ambient one, so the torn sides read as lifted paper */
+    filter:
+        drop-shadow(0 2px 3px rgba(26, 17, 12, 0.22))
+        drop-shadow(0 16px 26px rgba(26, 17, 12, 0.32))
+        drop-shadow(0 34px 60px rgba(26, 17, 12, 0.26));
 }
 
 .thought-frame {
     position: relative;
-    z-index: 1;
     width: 100%;
-    max-width: none;
-    margin: 0;
-    padding: clamp(28px, 4vh, 48px) clamp(28px, 4.5vw, 72px);
-    /* Elegant double-line inset frame (restored) */
-    box-shadow:
-        inset 0 0 0 1px rgba(26, 17, 12, 0.45),
-        inset 0 0 0 10px var(--coffee-beige),
-        inset 0 0 0 11px rgba(26, 17, 12, 0.22);
+    padding: clamp(30px, 4.5vh, 44px) clamp(24px, 6vw, 64px) clamp(32px, 5vh, 48px);
+    /* A note dropped on the table — tilted, deckled at the edges */
+    transform: rotate(-1deg);
+    background-color: #f2e9d8;
+    background-image: var(--thought-paper);
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    /* Irregular, feathery deckled edge — many small fiber-like points, not a clean zigzag */
+    clip-path: polygon(
+        0% 4.36%, 4.55% 2.93%, 9.09% 3.31%, 13.64% 3.29%, 18.18% 4.32%, 22.73% 4.15%,
+        27.27% 3.87%, 31.82% 4.15%, 36.36% 3.27%, 40.91% 3.57%, 45.45% 6.87%, 50% 7.36%,
+        54.55% 4.06%, 59.09% 3.67%, 63.64% 4.36%, 68.18% 8.41%, 72.73% 4.13%, 77.27% 2.27%,
+        81.82% 3.95%, 86.36% 2.38%, 90.91% 2.27%, 95.45% 3.93%, 96.63% 0%, 92.35% 4.55%,
+        92.17% 9.09%, 95.67% 13.64%, 91.95% 18.18%, 96.15% 22.73%, 97.19% 27.27%, 96.11% 31.82%,
+        95.47% 36.36%, 92.42% 40.91%, 92.73% 45.45%, 95.95% 50%, 96.19% 54.55%, 97.44% 59.09%,
+        97.55% 63.64%, 95.57% 68.18%, 96.88% 72.73%, 95.74% 77.27%, 96.88% 81.82%, 97.25% 86.36%,
+        97.27% 90.91%, 93.16% 95.45%, 100% 97.47%, 95.45% 96.08%, 90.91% 97.28%, 86.36% 96.68%,
+        81.82% 97.11%, 77.27% 97.17%, 72.73% 95.89%, 68.18% 95.64%, 63.64% 95.64%, 59.09% 97.69%,
+        54.55% 96.13%, 50% 92.96%, 45.45% 97.44%, 40.91% 95.97%, 36.36% 95.44%, 31.82% 97.42%,
+        27.27% 96.12%, 22.73% 95.6%, 18.18% 96.05%, 13.64% 97.17%, 9.09% 91.68%, 4.55% 95.84%,
+        2.34% 100%, 3.28% 95.45%, 8.56% 90.91%, 8.33% 86.36%, 4.54% 81.82%, 2.67% 77.27%,
+        4.51% 72.73%, 6.44% 68.18%, 2.78% 63.64%, 2.59% 59.09%, 2.45% 54.55%, 3.18% 50%,
+        4.2% 45.45%, 2.47% 40.91%, 4.32% 36.36%, 3.17% 31.82%, 6.01% 27.27%, 4.13% 22.73%,
+        3.8% 18.18%, 4.44% 13.64%, 2.88% 9.09%, 4.45% 4.55%
+    );
+    /* Layered drop-shadows follow the deckled silhouette (unlike box-shadow) —
+       a tight contact shadow plus a broad ambient one, so the torn sides read as lifted paper */
+    filter:
+        drop-shadow(0 2px 3px rgba(26, 17, 12, 0.14))
+        drop-shadow(0 14px 22px rgba(26, 17, 12, 0.22))
+        drop-shadow(0 30px 54px rgba(26, 17, 12, 0.18));
+}
+
+.thought-frame-texture {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-color: #fff;
+    /* Procedural bump-mapped crumple — real creases and dents, not painted-on streaks */
+    filter: url(#thought-crumple);
+    mix-blend-mode: multiply;
+    opacity: 0.6;
+}
+
+.thought-frame-tape {
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    z-index: 2;
+    width: 116px;
+    height: 36px;
+    transform: translateX(-50%) rotate(-2.5deg);
+    background:
+        repeating-linear-gradient(
+            128deg,
+            rgba(26, 17, 12, 0.07) 0,
+            rgba(26, 17, 12, 0.07) 1px,
+            transparent 1px,
+            transparent 6px
+        ),
+        linear-gradient(180deg, rgba(255, 252, 244, 0.92), rgba(240, 231, 210, 0.78));
+    box-shadow: 0 4px 8px rgba(26, 17, 12, 0.22);
+    pointer-events: none;
 }
 
 .thought-quote {
     position: relative;
+    z-index: 1;
     width: 100%;
     margin: 0;
     display: flex;
@@ -2769,55 +2732,53 @@ body.layout-no-sidebar .site-header {
 .thought-quote-body {
     position: relative;
     display: inline-block;
-    width: min(100%, 92ch);
-    max-width: 92ch;
-    /* Keep side room for marks; tighten top/bottom for a shorter box */
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
     padding:
-        clamp(36px, 4vw, 56px)
-        clamp(72px, 8vw, 120px)
-        clamp(40px, 4.5vw, 60px);
+        clamp(12px, 2vh, 20px)
+        clamp(36px, 6vw, 48px)
+        clamp(10px, 1.8vh, 16px);
     text-align: center;
 }
 
 .thought-quote-mark {
     position: absolute;
     z-index: 0;
-    font-family: var(--font-serif);
-    font-weight: 600;
-    font-style: normal;
-    font-size: clamp(56px, 7.5vw, 96px);
+    display: inline-flex;
+    font-size: clamp(36px, 4.6vw, 52px);
     line-height: 1;
-    color: #111111;
+    color: #3b2415;
+    opacity: 0;
     user-select: none;
     pointer-events: none;
-    opacity: 0;
     transform: translate3d(0, 12px, 0);
 }
 
 .thought-quote-mark--open {
-    top: clamp(8px, 1vw, 18px);
-    left: clamp(10px, 1.2vw, 22px);
+    top: clamp(-14px, -1vw, -6px);
+    left: clamp(-4px, 0vw, 4px);
 }
 
 .thought-quote-mark--close {
-    right: clamp(12px, 1.4vw, 26px);
-    bottom: clamp(6px, 1vw, 16px);
+    right: clamp(-4px, 0vw, 4px);
+    bottom: clamp(-10px, -0.4vw, 0px);
 }
 
 .thought-quote-text {
     position: relative;
     z-index: 1;
     margin: 0;
-    padding: 0 clamp(8px, 1vw, 16px);
+    padding: 0 clamp(4px, 1vw, 10px);
     font-family: var(--font-quote);
-    font-size: clamp(22px, 2.6vw, 34px);
+    font-size: clamp(22px, 2.6vw, 30px);
     font-weight: 400;
-    font-style: normal;
-    line-height: 1.4;
+    font-style: italic;
+    line-height: 1.5;
     letter-spacing: 0.01em;
     color: #2a1c14;
     /* Thin darker edge for letter definition on beige */
-    -webkit-text-stroke: 0.35px #1a110c;
+    -webkit-text-stroke: 0.3px #1a110c;
     paint-order: stroke fill;
 }
 
@@ -2840,21 +2801,18 @@ body.layout-no-sidebar .site-header {
     display: inline-flex;
     align-items: center;
     align-self: flex-end;
-    gap: 14px;
-    margin: 1.75rem clamp(12px, 3vw, 48px) 0 0;
+    gap: 10px;
+    margin: clamp(4px, 1vh, 8px) clamp(16px, 4vw, 56px) 0 0;
     padding: 0;
     opacity: 0;
-    transform: translate3d(18px, 0, 0);
+    transform: translate3d(0, 10px, 0);
 }
 
-.thought-quote-rule {
-    display: block;
-    width: clamp(48px, 7vw, 88px);
-    height: 1px;
-    background-color: #111111;
-    flex-shrink: 0;
-    transform: scaleX(0);
-    transform-origin: left center;
+.thought-quote-icon {
+    display: inline-block;
+    font-size: 16px;
+    line-height: 1;
+    transform: rotate(-8deg);
 }
 
 .thought-quote-brand {
@@ -2863,7 +2821,7 @@ body.layout-no-sidebar .site-header {
     font-weight: 400;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: #111111;
+    color: #3b2415;
     white-space: nowrap;
 }
 
@@ -2881,10 +2839,6 @@ body.layout-no-sidebar .site-header {
 
 .thought-quote.is-revealed .thought-quote-byline {
     animation: thought-byline-in 1.1s cubic-bezier(0.16, 1, 0.3, 1) 1.35s both;
-}
-
-.thought-quote.is-revealed .thought-quote-rule {
-    animation: thought-rule-draw 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
 }
 
 @keyframes thought-mark-in {
@@ -2914,22 +2868,12 @@ body.layout-no-sidebar .site-header {
 @keyframes thought-byline-in {
     from {
         opacity: 0;
-        transform: translate3d(18px, 0, 0);
+        transform: translate3d(0, 10px, 0);
     }
 
     to {
         opacity: 1;
         transform: translate3d(0, 0, 0);
-    }
-}
-
-@keyframes thought-rule-draw {
-    from {
-        transform: scaleX(0);
-    }
-
-    to {
-        transform: scaleX(1);
     }
 }
 
@@ -2939,26 +2883,46 @@ body.layout-no-sidebar .site-header {
     }
 
     .section-thought {
-        padding: 24px 14px;
+        padding: 20px 14px;
+    }
+
+    .thought-frame-shadow {
+        max-width: 100%;
     }
 
     .thought-frame {
-        padding: 28px 16px 32px;
-        box-shadow:
-            inset 0 0 0 1px rgba(26, 17, 12, 0.45),
-            inset 0 0 0 7px var(--coffee-beige),
-            inset 0 0 0 8px rgba(26, 17, 12, 0.22);
+        padding: 26px 18px 30px;
+        transform: rotate(-0.6deg);
+    }
+
+    .thought-frame-tape {
+        width: 68px;
+        height: 22px;
     }
 
     .thought-quote-body {
-        width: 100%;
-        max-width: 100%;
-        padding: 36px 52px 40px;
+        /* Extra side padding keeps the (now smaller) quote marks well clear of the deckled edge */
+        padding: 16px 34px 12px;
+    }
+
+    /* Smaller, inset marks — the floating oversized corners that work on a wide desktop
+       card have no room to breathe on a narrow one and end up clipped by the deckled edge */
+    .thought-quote-mark {
+        font-size: 26px;
+    }
+
+    .thought-quote-mark--open {
+        top: 2px;
+        left: 2px;
+    }
+
+    .thought-quote-mark--close {
+        right: 2px;
+        bottom: 2px;
     }
 
     .thought-quote-byline {
-        margin-right: 4px;
-        gap: 10px;
+        gap: 8px;
     }
 
     .gallery-story-header {
@@ -3016,8 +2980,7 @@ body.layout-no-sidebar .site-header {
 @media (prefers-reduced-motion: reduce) {
     .thought-quote-mark,
     .thought-reveal-word-inner,
-    .thought-quote-byline,
-    .thought-quote-rule {
+    .thought-quote-byline {
         opacity: 1;
         transform: none;
     }
@@ -3025,8 +2988,7 @@ body.layout-no-sidebar .site-header {
     .thought-quote.is-revealed .thought-quote-mark--open,
     .thought-quote.is-revealed .thought-quote-mark--close,
     .thought-quote.is-revealed .thought-reveal-word-inner,
-    .thought-quote.is-revealed .thought-quote-byline,
-    .thought-quote.is-revealed .thought-quote-rule {
+    .thought-quote.is-revealed .thought-quote-byline {
         animation-duration: 0.55s;
     }
 }
@@ -3244,6 +3206,68 @@ body:has(.galleria-modal:not([hidden])) .site-header {
     line-height: 1.7;
     color: var(--coffee-beige);
     opacity: 0.85;
+}
+
+.footer-contact-block {
+    margin: 4px 0 0;
+    padding-top: 18px;
+    border-top: 1px solid var(--border-dark);
+}
+
+.footer-contact-label {
+    margin: 0 0 12px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--coffee-beige);
+    opacity: 0.65;
+}
+
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-contact-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--coffee-beige);
+    text-decoration: none;
+    font-size: 13px;
+    line-height: 1.5;
+    opacity: 0.9;
+    transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.footer-contact-link:hover {
+    color: var(--white);
+    opacity: 1;
+}
+
+.footer-contact-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    flex-shrink: 0;
+    border: 1px solid var(--border-dark);
+    border-radius: 50%;
+    color: var(--warm-paper);
+    font-size: 12px;
+    transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease;
+}
+
+.footer-contact-link:hover .footer-contact-icon {
+    color: var(--espresso);
+    background-color: var(--coffee-beige);
+    border-color: var(--coffee-beige);
 }
 
 .footer-social {
