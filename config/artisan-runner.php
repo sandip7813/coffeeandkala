@@ -88,6 +88,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Composer home directory
+    |--------------------------------------------------------------------------
+    |
+    | Some environments (e.g. PHP-FPM workers) don't have HOME set, which
+    | makes Composer refuse to run. We give it a dedicated, writable home
+    | directory via the HOME and COMPOSER_HOME environment variables.
+    |
+    */
+
+    'composer_home' => env('ARTISAN_RUNNER_COMPOSER_HOME', storage_path('framework/composer-home')),
+
+    /*
+    |--------------------------------------------------------------------------
     | Allowed Composer commands
     |--------------------------------------------------------------------------
     |
