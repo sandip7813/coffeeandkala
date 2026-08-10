@@ -35,15 +35,15 @@
                 <li><a href="{{ route('features.show', 'coffee-classics') }}">Coffee &amp; Classics</a></li>
             </ul>
         </li>
-        <li @class(['drawer-item-has-children', 'is-open' => request()->routeIs('journal')])>
-            <button type="button" class="drawer-submenu-toggle" aria-expanded="{{ request()->routeIs('journal') ? 'true' : 'false' }}">
+        <li @class(['drawer-item-has-children', 'is-open' => request()->routeIs('journal', 'journal.category')])>
+            <button type="button" class="drawer-submenu-toggle" aria-expanded="{{ request()->routeIs('journal', 'journal.category') ? 'true' : 'false' }}">
                 Journal
                 <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
             </button>
             <ul class="drawer-submenu">
-                <li><a href="javascript:void(0)">The Bigger Picture</a></li>
-                <li><a href="javascript:void(0)">Worth Knowing</a></li>
-                <li><a href="javascript:void(0)">Chapters Over Coffee</a></li>
+                <li><a href="{{ route('journal.category', 'the-bigger-picture') }}">The Bigger Picture</a></li>
+                <li><a href="{{ route('journal.category', 'worth-knowing') }}">Worth Knowing</a></li>
+                <li><a href="{{ route('journal.category', 'chapters-over-coffee') }}">Chapters Over Coffee</a></li>
             </ul>
         </li>
         <li>

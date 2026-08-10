@@ -66,7 +66,7 @@
                 @class([
                     'nav-dropdown-toggle',
                     'nav-link-with-sub',
-                    'is-active' => request()->routeIs('journal'),
+                    'is-active' => request()->routeIs('journal', 'journal.category'),
                 ])
                 aria-haspopup="true"
                 aria-expanded="false"
@@ -76,9 +76,9 @@
                 <span class="nav-link-muted">Blogs</span>
             </a>
             <ul class="nav-dropdown" aria-label="Journal">
-                <li><a href="javascript:void(0)">The Bigger Picture</a></li>
-                <li><a href="javascript:void(0)">Worth Knowing</a></li>
-                <li><a href="javascript:void(0)">Chapters Over Coffee</a></li>
+                <li><a href="{{ route('journal.category', 'the-bigger-picture') }}">The Bigger Picture</a></li>
+                <li><a href="{{ route('journal.category', 'worth-knowing') }}">Worth Knowing</a></li>
+                <li><a href="{{ route('journal.category', 'chapters-over-coffee') }}">Chapters Over Coffee</a></li>
             </ul>
         </li>
         <li>

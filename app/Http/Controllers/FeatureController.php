@@ -9,8 +9,15 @@ class FeatureController extends Controller
 {
     public function index(): View
     {
+        $entries = collect(FeatureCatalog::edition())
+            ->map(fn (array $entry): array => [
+                ...$entry,
+                'href' => route('features.show', $entry['category_id']),
+            ])
+            ->all();
+
         return view('frontend.features', [
-            'categories' => FeatureCatalog::all(),
+            'entries' => $entries,
         ]);
     }
 

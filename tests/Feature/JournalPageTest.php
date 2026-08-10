@@ -1,39 +1,41 @@
 <?php
 
+use App\Support\JournalCatalog;
+
 test('the journal page returns a successful response', function () {
     $response = $this->get(route('journal'));
+    $highlights = JournalCatalog::categoryHighlights();
 
     $response->assertSuccessful();
     $response->assertSee('Journal — Coffee &amp; Kala', false);
-    $response->assertSee('images/journal/banner.jpg', false);
+    $response->assertSee('images/journal/hero.png', false);
+    $response->assertSee('journal-hero-image', false);
     $response->assertSee('journalBannerZoom', false);
     $response->assertSee('Show full banner image', false);
-    $response->assertSee('journal-banner-divider-stroke', false);
     $response->assertSee('The Journal', false);
-    $response->assertSee('Thoughts. Experiences. Stories that stay.', false);
-    $response->assertSee('Travel Diaries', false);
-    $response->assertSee('Destination Guides', false);
-    $response->assertSee('Local Stories', false);
-    $response->assertSee('Life on the Road', false);
-    $response->assertSee('Letters from a Slow Train', false);
-    $response->assertSee('A Note from a Rainy Evening', false);
-    $response->assertSee('Valley After Rain', false);
-    $response->assertSee('Weathered Light', false);
-    $response->assertSee('journal-sheet', false);
-    $response->assertSee('journal-lead', false);
-    $response->assertSee('journal-columns', false);
-    $response->assertSee('journal-column-media', false);
-    $response->assertSee('journal-brief-media', false);
-    $response->assertSee('photo-1501339847302', false);
-    $response->assertSee('photo-1455390582262', false);
-    $response->assertSee('photo-1506744038136', false);
-    $response->assertSee('photo-1488646953014', false);
+    $response->assertSee('Explore by Category', false);
+    $response->assertSee('journal-categories', false);
+    $response->assertSee('journal-category-index', false);
+    $response->assertSee('journal-category-date', false);
+    $response->assertSee('Read the story', false);
+
+    // The highlight shown per category is always the newest entry in it,
+    // its category name is hyperlinked to the category page, and its date
+    // renders alongside it.
+    foreach ($highlights as $entry) {
+        $response->assertSee($entry['title'], false);
+        $response->assertSee($entry['date_label'], false);
+        $response->assertSee(route('journal.category', $entry['category_id']), false);
+    }
+
+    // Only entries carrying a named category are eligible as highlights —
+    // uncategorised dispatches never appear here.
+    $response->assertDontSee('A Note from a Rainy Evening', false);
+    $response->assertDontSee('Weathered Light', false);
+    $response->assertDontSee('Midnight Margins', false);
     $response->assertDontSee('journal-departments', false);
     $response->assertDontSee('Center spread', false);
     $response->assertDontSee('Inside this edition', false);
-    $response->assertSee('journal-pagination', false);
-    $response->assertSee('Page 1 of 3', false);
-    $response->assertSee('javascript:void(0)', false);
     $response->assertSee('Collect moments,', false);
     $response->assertSee('End of edition', false);
     $response->assertDontSee('editorialSidebar', false);
@@ -47,19 +49,29 @@ test('the journal page returns a successful response', function () {
     )->toBeTrue();
 });
 
-test('journal links from the header, footer, and home navigation', function () {
+test('journal category links from the header, footer, and home navigation are real, not placeholders', function () {
     $home = $this->get(route('home'));
 
     $home->assertSuccessful();
     $home->assertSee(route('journal', absolute: false), false);
-    $home->assertSee('The Bigger Picture', false);
-    $home->assertSee('Worth Knowing', false);
-    $home->assertSee('Chapters Over Coffee', false);
+
+    foreach (JournalCatalog::categories() as $category) {
+        $home->assertSee($category['name'], false);
+        $home->assertSee(route('journal.category', $category['id'], absolute: false), false);
+    }
+
+    // The nav dropdown once shipped with "javascript:void(0)" placeholders —
+    // guard against that regressing.
+    $home->assertDontSee('javascript:void(0)">The Bigger Picture', false);
+    $home->assertDontSee('javascript:void(0)">Worth Knowing', false);
+    $home->assertDontSee('javascript:void(0)">Chapters Over Coffee', false);
 
     $journal = $this->get(route('journal'));
     $journal->assertSuccessful();
     $journal->assertSee('is-active', false);
-    $journal->assertSee('The Bigger Picture', false);
-    $journal->assertSee('Worth Knowing', false);
-    $journal->assertSee('Chapters Over Coffee', false);
+
+    foreach (JournalCatalog::categories() as $category) {
+        $journal->assertSee($category['name'], false);
+        $journal->assertSee(route('journal.category', $category['id'], absolute: false), false);
+    }
 });

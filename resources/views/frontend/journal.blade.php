@@ -4,9 +4,8 @@
 
 @section('content')
     <div class="journal-page">
-        @include('frontend.partials.journal.banner')
-        @include('frontend.partials.journal.intro')
-        @include('frontend.partials.journal.edition', ['entries' => $entries])
+        @include('frontend.partials.journal.hero')
+        @include('frontend.partials.journal.categories', ['categoryHighlights' => $categoryHighlights])
         @include('frontend.partials.journal.closing')
     </div>
 @endsection

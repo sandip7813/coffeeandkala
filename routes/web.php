@@ -14,6 +14,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\JournalController;
 use App\Support\FeatureCatalog;
 use App\Support\GalleryCatalog;
 use App\Support\JournalCatalog;
@@ -40,13 +41,10 @@ Route::get('/studio', function () {
     return view('frontend.studio', ['works' => $works]);
 })->name('studio');
 
-Route::get('/journal', function () {
-    $entries = JournalCatalog::all();
-
-    return view('frontend.journal', [
-        'entries' => $entries,
-    ]);
-})->name('journal');
+Route::get('/journal', [JournalController::class, 'index'])->name('journal');
+Route::get('/journal/{category}', [JournalController::class, 'show'])
+    ->whereIn('category', JournalCatalog::categorySlugs())
+    ->name('journal.category');
 
 Route::get('/features', [FeatureController::class, 'index'])->name('features');
 Route::get('/features/{category}', [FeatureController::class, 'show'])

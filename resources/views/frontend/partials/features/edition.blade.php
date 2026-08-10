@@ -1,28 +1,29 @@
-<section class="journal-edition" aria-label="Journal edition">
-    <div class="journal-sheet">
+<section class="features-edition" aria-label="Features edition">
+    <div class="features-sheet">
         @php
             $lead = collect($entries)->firstWhere('role', 'lead');
             $features = collect($entries)->where('role', 'feature')->values();
             $columns = collect($entries)->where('role', 'column')->values();
             $briefs = collect($entries)->where('role', 'brief')->values();
+            $spotlight = collect($entries)->firstWhere('role', 'spotlight');
         @endphp
 
         @if ($lead)
-            <article
-                class="journal-lead journal-reveal journal-reveal--up"
-                @if (! empty($lead['category_id'])) id="{{ $lead['category_id'] }}" @endif
-            >
-                <div class="journal-kicker">
-                    <span>{{ $lead['tag'] }}</span>
+            <article class="features-lead features-reveal features-reveal--up">
+                <div class="features-kicker">
+                    <span class="features-kicker-badge">Article of the day</span>
                     <time datetime="{{ $lead['date'] }}">{{ $lead['date_label'] }}</time>
                 </div>
-                <h3 class="journal-lead-headline">
+                <h3 class="features-lead-headline">
                     <a href="{{ $lead['href'] }}">{{ $lead['title'] }}</a>
                 </h3>
-                <p class="journal-byline">By the Coffee &amp; Kala desk</p>
+                <p class="features-byline">
+                    <a href="{{ route('features.show', $lead['category_id']) }}">{{ $lead['category_name'] }}</a>
+                    · {{ $lead['tag'] }}
+                </p>
 
-                <div class="journal-lead-grid">
-                    <figure class="journal-lead-figure">
+                <div class="features-lead-grid">
+                    <figure class="features-lead-figure">
                         <img
                             src="{{ $lead['image'] }}"
                             alt=""
@@ -31,13 +32,13 @@
                             height="720"
                             decoding="async"
                         >
-                        <figcaption>{{ $lead['caption'] ?? $lead['title'] }}</figcaption>
+                        <figcaption>{{ $lead['title'] }}</figcaption>
                     </figure>
 
-                    <div class="journal-lead-copy">
-                        <p class="journal-dropcap">{{ $lead['excerpt'] }}</p>
-                        <a href="{{ $lead['href'] }}" class="journal-continued">
-                            Continued on page two
+                    <div class="features-lead-copy">
+                        <p class="features-dropcap">{{ $lead['excerpt'] }}</p>
+                        <a href="{{ $lead['href'] }}" class="features-continued">
+                            Read the full chapter
                             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
                         </a>
                     </div>
@@ -45,22 +46,21 @@
             </article>
         @endif
 
-        <div class="journal-rule journal-rule--thick" aria-hidden="true"></div>
+        <div class="features-rule features-rule--thick" aria-hidden="true"></div>
 
-        <div class="journal-front">
-            <div class="journal-columns">
+        <div class="features-front">
+            <div class="features-columns">
                 @foreach ($features as $entry)
                     <article
-                        class="journal-story journal-reveal journal-reveal--up"
+                        class="features-story-card features-reveal features-reveal--up"
                         style="--portal-delay: {{ $loop->index * 0.08 }}s"
-                        @if (! empty($entry['category_id'])) id="{{ $entry['category_id'] }}" @endif
                     >
-                        <div class="journal-kicker">
-                            <span>{{ $entry['tag'] }}</span>
+                        <div class="features-kicker">
+                            <a href="{{ route('features.show', $entry['category_id']) }}">{{ $entry['category_name'] }}</a>
                             <time datetime="{{ $entry['date'] }}">{{ $entry['date_label'] }}</time>
                         </div>
 
-                        <a href="{{ $entry['href'] }}" class="journal-story-media" tabindex="-1" aria-hidden="true">
+                        <a href="{{ $entry['href'] }}" class="features-story-card-media" tabindex="-1" aria-hidden="true">
                             <img
                                 src="{{ $entry['image'] }}"
                                 alt=""
@@ -71,23 +71,23 @@
                             >
                         </a>
 
-                        <h3 class="journal-story-headline">
+                        <h3 class="features-story-card-headline">
                             <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
                         </h3>
-                        <p class="journal-story-excerpt">{{ $entry['excerpt'] }}</p>
-                        <a href="{{ $entry['href'] }}" class="journal-continued">Read the dispatch</a>
+                        <p class="features-story-card-excerpt">{{ $entry['excerpt'] }}</p>
+                        <a href="{{ $entry['href'] }}" class="features-continued">Read the dispatch</a>
                     </article>
                 @endforeach
             </div>
 
-            <aside class="journal-sidebar journal-reveal journal-reveal--up journal-reveal-delay-1" aria-label="Column &amp; briefs">
+            <aside class="features-sidebar features-reveal features-reveal--up" aria-label="Column &amp; briefs">
                 @foreach ($columns as $entry)
-                    <article class="journal-column-piece">
-                        <div class="journal-kicker">
-                            <span>{{ $entry['tag'] }}</span>
+                    <article class="features-column-piece">
+                        <div class="features-kicker">
+                            <a href="{{ route('features.show', $entry['category_id']) }}">{{ $entry['category_name'] }}</a>
                             <time datetime="{{ $entry['date'] }}">{{ $entry['date_label'] }}</time>
                         </div>
-                        <a href="{{ $entry['href'] }}" class="journal-column-media" tabindex="-1" aria-hidden="true">
+                        <a href="{{ $entry['href'] }}" class="features-column-media" tabindex="-1" aria-hidden="true">
                             <img
                                 src="{{ $entry['image'] }}"
                                 alt=""
@@ -104,13 +104,13 @@
                     </article>
                 @endforeach
 
-                <div class="journal-briefs">
-                    <h3 class="journal-briefs-title">In brief</h3>
+                <div class="features-briefs">
+                    <h3 class="features-briefs-title">In brief</h3>
                     <ul>
                         @foreach ($briefs as $entry)
                             <li>
-                                <a href="{{ $entry['href'] }}" class="journal-brief-link">
-                                    <span class="journal-brief-media">
+                                <a href="{{ $entry['href'] }}" class="features-brief-link">
+                                    <span class="features-brief-media">
                                         <img
                                             src="{{ $entry['image'] }}"
                                             alt=""
@@ -120,7 +120,7 @@
                                             decoding="async"
                                         >
                                     </span>
-                                    <span class="journal-brief-copy">
+                                    <span class="features-brief-copy">
                                         <strong>{{ $entry['title'] }}</strong>
                                         <span>{{ $entry['excerpt'] }}</span>
                                     </span>
@@ -130,13 +130,20 @@
                     </ul>
                 </div>
 
-                <blockquote class="journal-pullquote">
-                    Every place has a story.<br>
-                    We just write it down.
-                </blockquote>
+                @if ($spotlight)
+                    <article class="features-spotlight">
+                        <div class="features-kicker">
+                            <a href="{{ route('features.show', $spotlight['category_id']) }}">{{ $spotlight['category_name'] }}</a>
+                            <time datetime="{{ $spotlight['date'] }}">{{ $spotlight['date_label'] }}</time>
+                        </div>
+                        <h3 class="features-spotlight-headline">
+                            <a href="{{ $spotlight['href'] }}">{{ $spotlight['title'] }}</a>
+                        </h3>
+                        <p class="features-spotlight-excerpt">{{ $spotlight['excerpt'] }}</p>
+                        <a href="{{ $spotlight['href'] }}" class="features-continued">Read the dispatch</a>
+                    </article>
+                @endif
             </aside>
         </div>
-
-        @include('frontend.partials.journal.pagination')
     </div>
 </section>

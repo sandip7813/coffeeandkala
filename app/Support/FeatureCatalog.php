@@ -474,4 +474,73 @@ class FeatureCatalog
 
         return null;
     }
+
+    /**
+     * Pull a curated edition of articles from across every chapter and
+     * arrange them the way the journal arranges its front page: the main
+     * section carries exactly one article per chapter — one "Article of the
+     * day" lead plus a feature card for every other chapter — while the
+     * sidebar fills with whatever wasn't used, newest first.
+     *
+     * @return list<array{
+     *     role: string,
+     *     tag: string,
+     *     category_id: string,
+     *     category_name: string,
+     *     title: string,
+     *     excerpt: string,
+     *     date: string,
+     *     date_label: string,
+     *     image: string,
+     *     href: string
+     * }>
+     */
+    public static function edition(): array
+    {
+        $categories = collect(self::all());
+
+        $main = $categories->map(fn (array $category): array => [
+            ...$category['articles'][0],
+            'category_id' => $category['id'],
+            'category_name' => $category['name'],
+        ]);
+
+        $lead = [...$main->first(), 'role' => 'lead'];
+
+        $features = $main->skip(1)
+            ->map(fn (array $entry): array => [...$entry, 'role' => 'feature'])
+            ->values();
+
+        // Whatever wasn't chosen for the main section fills the sidebar,
+        // most recently dated first.
+        $leftovers = $categories
+            ->flatMap(fn (array $category): array => collect($category['articles'])
+                ->skip(1)
+                ->map(fn (array $article): array => [
+                    ...$article,
+                    'category_id' => $category['id'],
+                    'category_name' => $category['name'],
+                ])
+                ->all())
+            ->sortByDesc('date')
+            ->values();
+
+        $columns = $leftovers->take(2)
+            ->map(fn (array $entry): array => [...$entry, 'role' => 'column']);
+
+        $briefs = $leftovers->slice(2, 2)
+            ->map(fn (array $entry): array => [...$entry, 'role' => 'brief']);
+
+        // One more leftover article closes out the sidebar in place of a
+        // static pullquote — its own heading and excerpt, not fixed copy.
+        $spotlight = $leftovers->slice(4, 1)
+            ->map(fn (array $entry): array => [...$entry, 'role' => 'spotlight']);
+
+        return collect([$lead])
+            ->concat($features)
+            ->concat($columns)
+            ->concat($briefs)
+            ->concat($spotlight)
+            ->all();
+    }
 }
