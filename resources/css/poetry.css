@@ -253,14 +253,9 @@
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.poetry-door:hover .poetry-door-frame,
-.poetry-door:focus-visible .poetry-door-frame {
-    transform: perspective(900px) rotateX(16deg) translateZ(36px) translateY(-12px);
-    filter:
-        drop-shadow(0 6px 6px rgba(20, 13, 9, 0.46))
-        drop-shadow(0 30px 30px rgba(20, 13, 9, 0.4))
-        drop-shadow(0 68px 56px rgba(20, 13, 9, 0.36));
-}
+/* The door itself stays put on hover — only the room beyond it (the photo)
+   draws you in, as if you leaned forward to look through the gap rather
+   than the door coming loose from the wall. */
 
 /* The photograph sits behind the doorway art, masked to the doorway's own
    silhouette so nothing shows past the stone — only the open gap between
