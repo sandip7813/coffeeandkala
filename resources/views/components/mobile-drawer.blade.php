@@ -58,6 +58,11 @@
                 @class(['is-active' => request()->routeIs('gallery')])
             >Gallery</a>
         </li>
-        <li><a href="javascript:void(0)">Poetry</a></li>
+        <li>
+            <a
+                href="{{ route('poetry') }}"
+                @class(['is-active' => request()->routeIs('poetry', 'poetry.show')])
+            >Poetry</a>
+        </li>
     </ul>
 </div>

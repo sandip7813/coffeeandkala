@@ -15,9 +15,11 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\FeatureController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\PoetryController;
 use App\Support\FeatureCatalog;
 use App\Support\GalleryCatalog;
 use App\Support\JournalCatalog;
+use App\Support\PoetryCatalog;
 use App\Support\StudioCatalog;
 use Illuminate\Support\Facades\Route;
 
@@ -50,6 +52,11 @@ Route::get('/features', [FeatureController::class, 'index'])->name('features');
 Route::get('/features/{category}', [FeatureController::class, 'show'])
     ->whereIn('category', FeatureCatalog::slugs())
     ->name('features.show');
+
+Route::get('/poetry', [PoetryController::class, 'index'])->name('poetry');
+Route::get('/poetry/{poem}', [PoetryController::class, 'show'])
+    ->whereIn('poem', PoetryCatalog::slugs())
+    ->name('poetry.show');
 
 // AdminLTE authentication routes (public registration disabled — admins are created by super admin)
 Route::middleware('guest')->group(function () {

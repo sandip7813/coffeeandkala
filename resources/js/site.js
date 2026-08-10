@@ -315,6 +315,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const featuresBannerZoomBtn = document.getElementById('featuresBannerZoom');
     const categoryBanner = document.getElementById('categoryBanner');
     const categoryBannerZoomBtn = document.getElementById('categoryBannerZoom');
+    const poetryBanner = document.getElementById('poetryBanner');
+    const poetryBannerZoomBtn = document.getElementById('poetryBannerZoom');
 
     function setBannerExpanded(banner, button, expanded) {
         if (!banner || !button) {
@@ -366,6 +368,11 @@ document.addEventListener('DOMContentLoaded', () => {
     categoryBannerZoomBtn?.addEventListener('click', () => {
         const expanded = !categoryBanner?.classList.contains('is-expanded');
         setBannerExpanded(categoryBanner, categoryBannerZoomBtn, expanded);
+    });
+
+    poetryBannerZoomBtn?.addEventListener('click', () => {
+        const expanded = !poetryBanner?.classList.contains('is-expanded');
+        setBannerExpanded(poetryBanner, poetryBannerZoomBtn, expanded);
     });
 
     const aboutReveals = document.querySelectorAll('.about-page .about-reveal');
@@ -488,6 +495,30 @@ document.addEventListener('DOMContentLoaded', () => {
         featuresReveals.forEach((element) => element.classList.add('is-inview'));
     }
 
+    const poetryReveals = document.querySelectorAll('.poetry-page .poetry-reveal');
+
+    if (poetryReveals.length > 0 && 'IntersectionObserver' in window) {
+        const poetryRevealObserver = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-inview');
+                        poetryRevealObserver.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                root: null,
+                rootMargin: '0px 0px -8% 0px',
+                threshold: 0.12,
+            },
+        );
+
+        poetryReveals.forEach((element) => poetryRevealObserver.observe(element));
+    } else {
+        poetryReveals.forEach((element) => element.classList.add('is-inview'));
+    }
+
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             searchModal?.classList.remove('active');
@@ -497,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setBannerExpanded(journalBanner, journalBannerZoomBtn, false);
             setBannerExpanded(featuresBanner, featuresBannerZoomBtn, false);
             setBannerExpanded(categoryBanner, categoryBannerZoomBtn, false);
+            setBannerExpanded(poetryBanner, poetryBannerZoomBtn, false);
             closeAllDrawers();
         }
     });

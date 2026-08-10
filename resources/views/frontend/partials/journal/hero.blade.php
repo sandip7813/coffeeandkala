@@ -25,15 +25,5 @@
         >
             <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
         </button>
-
-        <button type="button" class="hero-scroll" data-hero-scroll-to="journalIntro" aria-label="Scroll to the journal">
-            <span class="hero-scroll-label">SCROLL</span>
-            <span class="hero-scroll-arrow" aria-hidden="true">
-                <svg class="hero-scroll-icon" viewBox="0 0 20 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <line class="hero-scroll-line" x1="10" y1="0" x2="10" y2="40" stroke="currentColor" stroke-width="1.4"/>
-                    <path class="hero-scroll-head" d="M2 32L10 44L18 32" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </span>
-        </button>
     </div>
 </section>
