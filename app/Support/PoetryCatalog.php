@@ -16,6 +16,7 @@ class PoetryCatalog
                 'title' => 'The Weight Of Rain',
                 'mood' => 'Longing',
                 'excerpt' => 'It rained the day you left, and the sky hasn\'t stopped since.',
+                'narration' => 'Written for the ones who measure time in weather — and know a sky doesn\'t have to be crying to be doing exactly that.',
                 'src' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800',
                 'stanzas' => [
@@ -48,6 +49,7 @@ class PoetryCatalog
                 'title' => 'Things We Left Unspoken',
                 'mood' => 'Unspoken',
                 'excerpt' => 'Some words are not meant to be spoken. They are meant to stay.',
+                'narration' => 'For the drawer in every house that keeps what was never sent — some letters were only ever meant to be written, not read.',
                 'src' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800',
                 'stanzas' => [
@@ -77,6 +79,7 @@ class PoetryCatalog
                 'title' => 'The Colour Of Silence',
                 'mood' => 'Reflections',
                 'excerpt' => 'Silence isn\'t empty. It\'s full of everything we couldn\'t explain.',
+                'narration' => 'A study of the hours after a room goes quiet — when nothing is said, and somehow everything still is.',
                 'src' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=800',
                 'stanzas' => [
@@ -109,6 +112,7 @@ class PoetryCatalog
                 'title' => 'Before The Morning Arrives',
                 'mood' => 'Hope',
                 'excerpt' => 'There is a quiet that lives between the dark and the dawn.',
+                'narration' => 'For the last hour of the night, before the birds have decided anything. Quietly, it is the most hopeful hour there is.',
                 'src' => 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?q=80&w=800',
                 'stanzas' => [
@@ -140,6 +144,7 @@ class PoetryCatalog
                 'title' => 'Paper Boats And Other Drifts',
                 'mood' => 'Dreams',
                 'excerpt' => 'We sent our dreams away, hoping they\'d find their own shore.',
+                'narration' => 'A small elegy for every wish we ever set loose on water, trusting it to carry what we couldn\'t.',
                 'src' => 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=800',
                 'stanzas' => [
@@ -172,6 +177,7 @@ class PoetryCatalog
                 'title' => 'The Door I Kept Closed',
                 'mood' => 'Threshold',
                 'excerpt' => 'Every doorway holds a version of me I haven\'t met yet.',
+                'narration' => 'On the rooms we avoid inside ourselves — and what happens the one night we\'re finally tired enough to knock.',
                 'src' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1600',
                 'thumb' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=800',
                 'stanzas' => [
@@ -243,5 +249,33 @@ class PoetryCatalog
             'prev' => $poems[($index - 1 + $count) % $count],
             'next' => $poems[($index + 1) % $count],
         ];
+    }
+
+    /**
+     * The `$each` poems before and after the given slug, in reading order
+     * (furthest-back first, nearest-ahead last), wrapping at either end.
+     * Never returns the poem itself, and never repeats a poem even if the
+     * catalog is smaller than `$each * 2`.
+     *
+     * @return array{prev: list<array<string, mixed>>, next: list<array<string, mixed>>}
+     */
+    public static function nearby(string $slug, int $each = 2): array
+    {
+        $poems = self::all();
+        $index = array_search($slug, array_column($poems, 'slug'), true);
+        $count = count($poems);
+        $each = min($each, intdiv($count - 1, 2));
+
+        $prev = [];
+        for ($i = $each; $i >= 1; $i--) {
+            $prev[] = $poems[($index - $i + $count) % $count];
+        }
+
+        $next = [];
+        for ($i = 1; $i <= $each; $i++) {
+            $next[] = $poems[($index + $i) % $count];
+        }
+
+        return ['prev' => $prev, 'next' => $next];
     }
 }

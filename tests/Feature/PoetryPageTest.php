@@ -41,16 +41,29 @@ test('poetry links from the header and home navigation', function () {
     $home->assertSee(route('poetry', absolute: false), false);
 });
 
-test('a poem page reads as a single, distraction-free room', function () {
-    $poem = PoetryCatalog::find('the-weight-of-rain');
-    $neighbours = PoetryCatalog::neighbours('the-weight-of-rain');
+test('a poem page opens the book at that poem\'s page', function () {
+    $poems = PoetryCatalog::all();
+    $slug = 'the-weight-of-rain';
+    $poem = PoetryCatalog::find($slug);
+    $pageIndex = 3 + array_search($slug, array_column($poems, 'slug'), true) * 2;
 
-    $response = $this->get(route('poetry.show', 'the-weight-of-rain'));
+    $response = $this->get(route('poetry.show', $slug));
 
     $response->assertSuccessful();
-    $response->assertSee($poem['title'].' — The Poetry Collection — Coffee &amp; Kala', false);
+    $response->assertSee($poem['title'].' — The Poetry Shelf — Coffee &amp; Kala', false);
+    $response->assertSee('data-poetry-book', false);
+    $response->assertSee('data-start="'.$pageIndex.'"', false);
+    $response->assertSee('poetry-book-page--cover', false);
+    $response->assertSee('poetry-book-page--card', false);
+    $response->assertSee('poetry-book-page--poem', false);
+    $response->assertSee('poetry-book-page--closing', false);
+    $response->assertSee('poetry-book-vine', false);
+    $response->assertSee('The Poetry Shelf', false);
+    $response->assertSee('a bound collection, kept for slow reading', false);
+    $response->assertSee('Lean into the book', false);
+    $response->assertSee('to read more heartfelt poems.', false);
     $response->assertSee($poem['mood'], false);
-    $response->assertSee('poetry-room', false);
+    $response->assertSee(e($poem['narration']), false);
     $response->assertSee('poetry-stanza', false);
 
     foreach ($poem['stanzas'] as $stanza) {
@@ -59,10 +72,11 @@ test('a poem page reads as a single, distraction-free room', function () {
         }
     }
 
-    $response->assertSee(route('poetry.show', $neighbours['prev']['slug']), false);
-    $response->assertSee(route('poetry.show', $neighbours['next']['slug']), false);
-    $response->assertSee($neighbours['prev']['title'], false);
-    $response->assertSee($neighbours['next']['title'], false);
+    // Every poem is reachable from the table of contents, on every page.
+    foreach ($poems as $p) {
+        $response->assertSee($p['title'], false);
+    }
+
     $response->assertSee(route('poetry'), false);
 });
 

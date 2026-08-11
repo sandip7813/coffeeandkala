@@ -519,23 +519,31 @@
     transform: translateY(-2px);
 }
 
-/* ─── The reading room — a single poem, alone on the page ─── */
 
-.poetry-reader {
-    padding-bottom: clamp(48px, 8vw, 88px);
+/* ─── The Poetry Shelf — a bound book, turned with a real 3D page-flip ─── */
+
+.poetry-book-shell {
+    padding-bottom: clamp(32px, 6vw, 64px);
 }
 
-.poetry-reader-bar {
+.poetry-page.poetry-book-shell {
+    background:
+        radial-gradient(ellipse at 50% 15%, rgba(156, 107, 63, 0.22), transparent 55%),
+        linear-gradient(180deg, #1e150d 0%, #150e09 55%, #110b07 100%);
+    color: #f1e8dc;
+}
+
+.poetry-book-topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 16px;
-    max-width: 900px;
+    max-width: 1240px;
     margin: 0 auto;
-    padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 36px) 0;
+    padding: clamp(20px, 4vw, 36px) clamp(20px, 4vw, 48px) 0;
 }
 
-.poetry-reader-back {
+.poetry-book-exit {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -544,169 +552,673 @@
     letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 600;
-    color: var(--poetry-muted);
+    color: rgba(241, 232, 220, 0.68);
     text-decoration: none;
     transition: color 0.3s ease, gap 0.3s ease;
 }
 
-.poetry-reader-back:hover,
-.poetry-reader-back:focus-visible {
-    color: var(--poetry-ember);
+.poetry-book-exit:hover,
+.poetry-book-exit:focus-visible {
+    color: var(--poetry-gold);
     gap: 14px;
 }
 
-.poetry-reader-count {
+.poetry-book-progress {
+    margin: 0;
     font-family: var(--font-sans);
     font-size: 12px;
-    letter-spacing: 0.16em;
-    color: var(--poetry-faint);
+    letter-spacing: 0.14em;
+    color: rgba(241, 232, 220, 0.5);
 }
 
-.poetry-room {
+.poetry-book-toc-btn {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: rgba(241, 232, 220, 0.85);
+    background: transparent;
+    border: 1px solid rgba(241, 232, 220, 0.28);
+    padding: 10px 18px;
+    cursor: pointer;
+    transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.poetry-book-toc-btn:hover,
+.poetry-book-toc-btn:focus-visible {
+    background: rgba(241, 232, 220, 0.08);
+    border-color: rgba(241, 232, 220, 0.5);
+}
+
+/* page-flip's own required base styles (from its src/Style/stPageFlip.css,
+   which the npm package does not ship pre-built or documented anywhere —
+   without these, it still runs, but with no perspective on the flipping
+   pages and its shadow overlays unpositioned, which is what read as
+   "transparent" pages showing whatever sat behind them mid-flip. */
+.stf__parent {
     position: relative;
-    max-width: 720px;
-    margin: clamp(20px, 4vw, 40px) auto 0;
-    padding: clamp(48px, 9vw, 96px) clamp(24px, 6vw, 56px) clamp(56px, 8vw, 88px);
+    display: block;
+    box-sizing: border-box;
+    transform: translateZ(0);
+    touch-action: pan-y;
 }
 
-.poetry-room-arch {
+.stf__block {
     position: absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    perspective: 2000px;
+}
+
+.stf__item {
+    display: none;
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+.stf__outerShadow,
+.stf__innerShadow,
+.stf__hardShadow,
+.stf__hardInnerShadow {
+    position: absolute;
+    left: 0;
     top: 0;
+}
+
+.poetry-book-stage {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 56px) clamp(48px, 8vw, 96px);
+    min-height: 76vh;
+}
+
+/* A persistent gutter crease down the spine, and a soft contact shadow
+   beneath the book — both pinned to the stage's own centre, not to
+   .poetry-book's box, so they can't fight page-flip over sizing (it needs
+   to read a real, un-shrunk parent to "stretch" into). The book is always
+   centred in the stage, so a stage-centred spine lines up with the real
+   one regardless of how wide page-flip ends up making the pages. */
+.poetry-book-stage::before {
+    content: '';
+    position: absolute;
+    top: 12%;
+    bottom: 12%;
     left: 50%;
-    width: min(88%, 560px);
-    height: clamp(120px, 20vw, 200px);
-    transform: translateX(-50%);
-    border: 1px solid var(--poetry-line);
-    border-bottom: 0;
-    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    width: 34px;
+    margin-left: -17px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(20, 13, 9, 0.14) 45%,
+        rgba(20, 13, 9, 0.24) 50%,
+        rgba(20, 13, 9, 0.14) 55%,
+        transparent
+    );
+    pointer-events: none;
+    z-index: 5;
+}
+
+.poetry-book-stage::after {
+    content: '';
+    position: absolute;
+    left: 18%;
+    right: 18%;
+    bottom: 6%;
+    height: 46px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, 0.38), transparent 72%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* page-flip sizes and positions this element itself (size: 'stretch'); we
+   only add the resting shadow that makes it read as a physical object. */
+.poetry-book {
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 30px 46px rgba(0, 0, 0, 0.45)) drop-shadow(0 10px 18px rgba(0, 0, 0, 0.32));
+}
+
+/* page-flip moves each .poetry-book-page into its own managed wrapper and
+   drives the 3D transform/shadow itself — we only style the paper surface
+   and the content sitting on it. */
+.poetry-book-page {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: clamp(26px, 4.6vw, 48px) clamp(22px, 4.2vw, 40px);
+    background-color: var(--poetry-paper);
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}
+
+/* ─── Cover & Closing — solo, centred pages ─── */
+
+.poetry-book-page--cover,
+.poetry-book-page--closing {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.poetry-book-cover-title {
+    font-family: var(--font-hero-display);
+    font-size: clamp(34px, 4.6vw, 52px);
+    font-weight: 500;
+    line-height: 1.05;
+    color: var(--poetry-ink);
+    margin: 4px 0 10px;
+}
+
+.poetry-book-cover-title--small {
+    font-size: clamp(24px, 3.2vw, 34px);
+    margin-top: 2px;
+}
+
+.poetry-book-cover-tagline {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(15px, 1.6vw, 18px);
+    color: var(--poetry-muted);
+    margin: 0 0 20px;
+}
+
+.poetry-book-page--cover .poetry-ornament,
+.poetry-book-page--closing .poetry-ornament {
+    margin: 0 auto 20px;
+}
+
+.poetry-book-cover-copy {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--poetry-muted);
+    max-width: 32ch;
+    margin: 0 auto 26px;
+}
+
+.poetry-book-closing-quote {
+    margin: 18px auto 0;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(16px, 1.8vw, 19px);
+    line-height: 1.5;
+    color: var(--poetry-muted);
+    max-width: 30ch;
+}
+
+.poetry-book-closing-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin-top: 26px;
+}
+
+/* ─── Contents ─── */
+
+.poetry-book-page-title {
+    font-family: var(--font-serif);
+    font-size: clamp(21px, 2.6vw, 28px);
+    font-weight: 500;
+    line-height: 1.22;
+    color: var(--poetry-ink);
+    margin: 0 0 16px;
+}
+
+.poetry-book-page-copy {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 300;
+    line-height: 1.7;
+    color: var(--poetry-muted);
+    margin: 16px 0 0;
+    max-width: 34ch;
+}
+
+.poetry-book-toc {
+    list-style: none;
+    margin: auto 0;
+    padding: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.poetry-book-toc-link {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    width: 100%;
+    padding: 9px 2px;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--poetry-line);
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-sans);
+    color: inherit;
+    transition: opacity 0.3s ease;
+}
+
+.poetry-book-toc-link:hover,
+.poetry-book-toc-link:focus-visible {
+    opacity: 0.6;
+}
+
+.poetry-book-toc-number {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--poetry-ember);
+    flex-shrink: 0;
+}
+
+.poetry-book-toc-title {
+    font-family: var(--font-serif);
+    font-size: clamp(14px, 1.6vw, 17px);
+    color: var(--poetry-ink);
+    white-space: nowrap;
+}
+
+.poetry-book-toc-leader {
+    flex: 1;
+    border-bottom: 1px dotted var(--poetry-faint);
+    margin-bottom: 5px;
+}
+
+.poetry-book-toc-page {
+    font-size: 13px;
+    color: var(--poetry-faint);
+    flex-shrink: 0;
+}
+
+/* ─── The botanical vine — runs down the spine edge of every left-hand
+   page: contents, and each poem's preview card. A faint repeating sprig
+   pattern washes the whole page behind it, so the page reads as pressed
+   botanical stationery rather than plain paper. ─── */
+
+.poetry-book-page--vined {
+    padding-left: clamp(52px, 8.6vw, 84px);
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%233c2a1a' stroke-width='1' opacity='0.22'%3E%3Cpath d='M18,150 C10,130 22,118 16,100'/%3E%3Cpath d='M16,128 C8,122 4,114 7,106'/%3E%3Cpath d='M18,116 C27,111 31,103 28,95'/%3E%3C/g%3E%3Cg fill='%233c2a1a' opacity='0.18'%3E%3Ccircle cx='180' cy='34' r='2.4'/%3E%3Ccircle cx='180' cy='25.8' r='3'/%3E%3Ccircle cx='188.2' cy='31.2' r='3'/%3E%3Ccircle cx='185.1' cy='40.7' r='3'/%3E%3Ccircle cx='174.9' cy='40.7' r='3'/%3E%3Ccircle cx='171.8' cy='31.2' r='3'/%3E%3C/g%3E%3C/svg%3E"),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+    background-repeat: repeat, repeat;
+    background-size: 220px 220px, 220px 220px;
+}
+
+.poetry-book-vine {
+    position: absolute;
+    left: clamp(10px, 2.2vw, 24px);
+    top: 5%;
+    height: 90%;
+    width: clamp(22px, 3vw, 34px);
+    color: var(--poetry-ember);
+    opacity: 0.5;
     pointer-events: none;
 }
 
-.poetry-room-header {
-    text-align: center;
-    margin-bottom: clamp(32px, 6vw, 52px);
-}
-
-.poetry-room-mood {
-    font-family: var(--font-sans);
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--poetry-ember);
-    margin-bottom: 14px;
-}
-
-.poetry-room-title {
-    font-family: var(--font-serif);
-    font-size: clamp(34px, 6vw, 54px);
-    font-weight: 500;
-    font-style: italic;
-    line-height: 1.12;
-    color: var(--poetry-ink);
-    margin-bottom: 20px;
-}
-
-.poetry-room-header .poetry-ornament {
-    margin: 0 auto;
-}
-
-.poetry-room-body {
-    display: grid;
-    gap: clamp(28px, 5vw, 44px);
-}
-
-.poetry-stanza {
-    margin: 0;
-    text-align: center;
-    font-family: var(--font-serif);
-    font-size: clamp(19px, 2.4vw, 24px);
-    font-weight: 400;
-    line-height: 1.85;
-    color: var(--poetry-ink);
-}
-
-.poetry-room-colophon {
-    margin: clamp(40px, 7vw, 64px) 0 0;
-    text-align: center;
-    font-family: var(--font-sans);
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    font-weight: 500;
-    color: var(--poetry-faint);
-}
-
-.poetry-turn {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    max-width: 900px;
-    margin: clamp(24px, 5vw, 48px) auto 0;
-    border-top: 1px solid var(--poetry-line);
-}
-
-.poetry-turn-link {
+/* page-flip claims each .poetry-book-page for itself and forces its own
+   `display: block` via an inline style (higher specificity than anything
+   here), which quietly breaks `flex: 1` — that property only does
+   anything on a flex *child*, and page-flip's inline style means the page
+   no longer is one. Sizing this against the page's own inline `height`
+   instead sidesteps it entirely, and this element's own `display: flex`
+   (its own property, untouched by page-flip) still works for its
+   children below. */
+.poetry-book-page-inner {
+    position: relative;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: clamp(24px, 4vw, 32px) clamp(20px, 4vw, 36px);
-    text-decoration: none;
-    color: inherit;
-    transition: background 0.3s ease;
+    height: 100%;
+    min-height: 0;
 }
 
-.poetry-turn-link:hover,
-.poetry-turn-link:focus-visible {
-    background: rgba(36, 26, 18, 0.04);
+.poetry-book-page--vined .poetry-ornament,
+.poetry-book-page--poem .poetry-ornament {
+    margin: 0 0 20px;
 }
 
-.poetry-turn-link--prev {
+/* ─── The poem's preview card — an oval portrait beside a short note from
+   the collection, a seal-and-ribbon divider, then an index of the poems
+   shelved just before and after this one. ─── */
+
+.poetry-book-page--card .poetry-book-page-inner {
     text-align: left;
+}
+
+.poetry-book-card-top {
+    display: flex;
     align-items: flex-start;
-    border-right: 1px solid var(--poetry-line);
+    gap: clamp(14px, 2.4vw, 22px);
+    margin-bottom: clamp(14px, 2.4vw, 22px);
 }
 
-.poetry-turn-link--next {
-    text-align: right;
-    align-items: flex-end;
+.poetry-book-card-photo {
+    flex: 0 0 clamp(84px, 15vw, 128px);
+    margin: 4px 0 0;
 }
 
-.poetry-turn-direction {
+.poetry-book-card-photo img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 48% 52% 45% 55% / 55% 45% 58% 42%;
+    filter: saturate(0.92) sepia(0.1) brightness(0.96);
+    box-shadow: 0 14px 22px rgba(20, 13, 9, 0.26);
+}
+
+.poetry-book-card-intro {
+    flex: 1;
+    min-width: 0;
+}
+
+.poetry-book-page--card .poetry-eyebrow {
+    margin-bottom: 6px;
+}
+
+.poetry-book-card-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(16px, 1.9vw, 20px);
+    font-weight: 500;
+    line-height: 1.2;
+    color: var(--poetry-ink);
+    margin: 0 0 8px;
+}
+
+.poetry-book-card-excerpt {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 300;
+    line-height: 1.62;
+    color: var(--poetry-muted);
+    margin: 0 0 10px;
+}
+
+.poetry-book-card-continue {
+    margin: 0;
     display: inline-flex;
     align-items: center;
     gap: 8px;
     font-family: var(--font-sans);
-    font-size: 11px;
-    letter-spacing: 0.2em;
+    font-size: 10px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     font-weight: 600;
     color: var(--poetry-faint);
 }
 
-.poetry-turn-link:hover .poetry-turn-direction,
-.poetry-turn-link:focus-visible .poetry-turn-direction {
+.poetry-book-card-continue i {
+    font-size: 9px;
     color: var(--poetry-ember);
 }
 
-.poetry-turn-title {
+/* The seal-and-ribbon divider between the introduction and the index. */
+.poetry-book-card-divider {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 4px;
+    margin: 4px 0 clamp(16px, 2.6vw, 24px);
+    background: linear-gradient(90deg, transparent, var(--poetry-ember) 12%, var(--poetry-ember) 88%, transparent);
+    opacity: 0.55;
+}
+
+.poetry-book-card-seal {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px var(--poetry-paper), 0 2px 8px rgba(20, 13, 9, 0.35);
+}
+
+/* The index — the two poems shelved before this one, then the two after,
+   each a small round portrait strung along a single connecting thread. */
+/* Fills whatever height is left below the divider, so the index spreads
+   across the page instead of huddling under the fold with dead space
+   beneath it — the same way the intro row above it grew larger art. */
+.poetry-book-card-index {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    min-height: 0;
+}
+
+.poetry-book-card-index::before {
+    content: '';
+    position: absolute;
+    left: 28px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--poetry-ember);
+    opacity: 0.45;
+}
+
+.poetry-book-index-link {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    padding: 4px;
+    background: none;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: opacity 0.3s ease;
+}
+
+.poetry-book-index-link:hover,
+.poetry-book-index-link:focus-visible {
+    opacity: 0.65;
+}
+
+.poetry-book-index-photo {
+    flex: 0 0 clamp(48px, 6vw, 58px);
+    width: clamp(48px, 6vw, 58px);
+    height: clamp(48px, 6vw, 58px);
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 0 0 3px var(--poetry-paper), 0 4px 10px rgba(20, 13, 9, 0.22);
+}
+
+.poetry-book-index-photo img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.92) sepia(0.1) brightness(0.94);
+}
+
+.poetry-book-index-info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.poetry-book-index-kicker {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--poetry-ember);
+}
+
+.poetry-book-index-title {
     font-family: var(--font-serif);
     font-style: italic;
-    font-size: clamp(18px, 2.4vw, 22px);
+    font-size: clamp(14px, 1.6vw, 16.5px);
+    color: var(--poetry-ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ─── The poem itself ─── */
+
+.poetry-book-number-mark {
+    margin: 0 0 6px;
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    font-weight: 600;
+    color: var(--poetry-ember);
+}
+
+.poetry-book-poem-title {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: clamp(21px, 2.6vw, 28px);
+    font-weight: 500;
+    line-height: 1.18;
+    color: var(--poetry-ink);
+    margin: 0 0 16px;
+}
+
+.poetry-book-poem-body {
+    display: grid;
+    gap: clamp(16px, 2.6vw, 24px);
+    flex: 1;
+}
+
+.poetry-book-poem-body .poetry-stanza {
+    margin: 0;
+    text-align: left;
+    font-family: var(--font-serif);
+    font-size: clamp(14px, 1.4vw, 16px);
+    font-weight: 400;
+    line-height: 1.72;
     color: var(--poetry-ink);
 }
 
-/* ─── Responsive ─── */
+.poetry-book-page-number {
+    margin: 20px 0 0;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--poetry-faint);
+}
+
+/* ─── Nav arrows ─── */
+
+.poetry-book-nav {
+    position: absolute;
+    top: 50%;
+    z-index: 6;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(241, 232, 220, 0.28);
+    background: rgba(30, 21, 13, 0.55);
+    color: #f1e8dc;
+    cursor: pointer;
+    backdrop-filter: blur(6px);
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.poetry-book-nav--prev {
+    left: clamp(4px, 2vw, 24px);
+}
+
+.poetry-book-nav--next {
+    right: clamp(4px, 2vw, 24px);
+}
+
+.poetry-book-nav:hover,
+.poetry-book-nav:focus-visible {
+    background: rgba(30, 21, 13, 0.85);
+    border-color: rgba(241, 232, 220, 0.55);
+    transform: translateY(-50%) scale(1.05);
+}
+
+.poetry-book-nav:disabled {
+    opacity: 0.3;
+    cursor: default;
+    transform: translateY(-50%);
+}
+
+/* ─── The fanned page block — the trimmed edge of the paper stack, so the
+   book reads as hundreds of leaves bound together rather than a single
+   flat panel. JS measures .poetry-book's real box each time it changes
+   size (viewport width, portrait/landscape) and positions these against
+   it directly, so they can't drift out of alignment the way a purely
+   CSS-guessed size once did. ─── */
+.poetry-book-edge {
+    position: absolute;
+    width: 13px;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 7px / 20px;
+    box-shadow: 0 3px 12px rgba(20, 13, 9, 0.4);
+    transition: opacity 0.3s ease;
+}
+
+.poetry-book-edge.is-hidden {
+    opacity: 0;
+}
+
+.poetry-book-edge-leaves {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+        180deg,
+        #f2e8d3 0px,
+        #f2e8d3 2px,
+        #e2d2ab 2px,
+        #e2d2ab 3px,
+        #f2e8d3 3px,
+        #f2e8d3 5px,
+        #d3bf90 5px,
+        #d3bf90 6px
+    );
+}
+
+.poetry-book-edge-gilt {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #e2ac5c, #a9702a 50%, #e2ac5c);
+}
+
+.poetry-book-edge--left .poetry-book-edge-gilt {
+    left: 0;
+}
+
+.poetry-book-edge--right .poetry-book-edge-gilt {
+    right: 0;
+}
 
 @media (max-width: 900px) {
-    .poetry-turn {
-        grid-template-columns: 1fr;
-    }
-
-    .poetry-turn-link--prev {
-        border-right: 0;
-        border-bottom: 1px solid var(--poetry-line);
+    .poetry-book-edge {
+        display: none;
     }
 }
+
+/* ─── Responsive ─── */
 
 @media (max-width: 700px) {
     .poetry-collection-nav {
@@ -714,17 +1226,50 @@
         height: 38px;
     }
 
+    /* Single-page portrait mode has no meaningful "spine". */
+    .poetry-book-stage::before {
+        display: none;
+    }
+
     .poetry-collection-viewport {
         padding-inline: 14px;
     }
 
-    .poetry-reader-bar {
+    .poetry-book-topbar {
         flex-wrap: wrap;
     }
 
-    .poetry-turn-link--next {
-        text-align: left;
-        align-items: flex-start;
+    .poetry-book-stage {
+        padding-inline: clamp(6px, 3vw, 20px);
+    }
+
+    .poetry-book-nav {
+        width: 40px;
+        height: 40px;
+    }
+
+    .poetry-book-page--vined {
+        padding-left: clamp(38px, 11vw, 56px);
+    }
+
+    .poetry-book-card-photo {
+        flex-basis: 76px;
+    }
+
+    .poetry-book-card-excerpt {
+        -webkit-line-clamp: 2;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .poetry-book-card-index {
+        gap: 0;
+    }
+
+    .poetry-book-vine {
+        width: 18px;
+        left: 6px;
     }
 }
 
