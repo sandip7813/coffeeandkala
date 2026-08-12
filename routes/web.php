@@ -47,11 +47,17 @@ Route::get('/journal', [JournalController::class, 'index'])->name('journal');
 Route::get('/journal/{category}', [JournalController::class, 'show'])
     ->whereIn('category', JournalCatalog::categorySlugs())
     ->name('journal.category');
+Route::get('/journal/{category}/{article}', [JournalController::class, 'showArticle'])
+    ->whereIn('category', JournalCatalog::categorySlugs())
+    ->name('journal.article');
 
 Route::get('/features', [FeatureController::class, 'index'])->name('features');
 Route::get('/features/{category}', [FeatureController::class, 'show'])
     ->whereIn('category', FeatureCatalog::slugs())
     ->name('features.show');
+Route::get('/features/{category}/{article}', [FeatureController::class, 'showArticle'])
+    ->whereIn('category', FeatureCatalog::slugs())
+    ->name('features.article');
 
 Route::get('/poetry', [PoetryController::class, 'index'])->name('poetry');
 Route::get('/poetry/{poem}', [PoetryController::class, 'show'])

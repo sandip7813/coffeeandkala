@@ -2,6 +2,8 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Str;
+
 class FeatureCatalog
 {
     /**
@@ -24,11 +26,57 @@ class FeatureCatalog
      *         date: string,
      *         date_label: string,
      *         image: string,
+     *         slug: string,
      *         href: string
      *     }>
      * }>
      */
     public static function all(): array
+    {
+        return self::withArticleRouting(self::rawCategories());
+    }
+
+    /**
+     * Assigns a stable, unique slug to every article within its chapter and
+     * points its `href` at the article detail route — kept as a separate
+     * pass so the raw catalog below stays easy to read/edit.
+     *
+     * @param  list<array<string, mixed>>  $categories
+     * @return list<array<string, mixed>>
+     */
+    private static function withArticleRouting(array $categories): array
+    {
+        return array_map(function (array $category): array {
+            $seen = [];
+
+            $category['articles'] = array_map(function (array $article) use ($category, &$seen): array {
+                $base = Str::slug($article['title']);
+                $slug = $base;
+
+                for ($suffix = 2; isset($seen[$slug]); $suffix++) {
+                    $slug = "{$base}-{$suffix}";
+                }
+
+                $seen[$slug] = true;
+
+                return [
+                    ...$article,
+                    'slug' => $slug,
+                    // A plain relative URL rather than route() — this file is
+                    // also read by pure Unit tests with no app container, and
+                    // it must match GET /features/{category}/{article} exactly.
+                    'href' => "/features/{$category['id']}/{$slug}",
+                ];
+            }, $category['articles']);
+
+            return $category;
+        }, $categories);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private static function rawCategories(): array
     {
         return [
             [
@@ -445,7 +493,7 @@ class FeatureCatalog
      */
     public static function slugs(): array
     {
-        return array_column(self::all(), 'id');
+        return array_column(self::rawCategories(), 'id');
     }
 
     /**
@@ -469,6 +517,28 @@ class FeatureCatalog
         foreach (self::all() as $category) {
             if ($category['id'] === $slug) {
                 return $category;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Locate a single article by its chapter and slug.
+     *
+     * @return array{category: array<string, mixed>, article: array<string, mixed>}|null
+     */
+    public static function findArticle(string $categorySlug, string $articleSlug): ?array
+    {
+        $category = self::find($categorySlug);
+
+        if ($category === null) {
+            return null;
+        }
+
+        foreach ($category['articles'] as $article) {
+            if ($article['slug'] === $articleSlug) {
+                return ['category' => $category, 'article' => $article];
             }
         }
 

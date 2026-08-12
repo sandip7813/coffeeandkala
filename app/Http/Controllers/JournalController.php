@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\ArticleContentFactory;
+use App\Support\ArticleIndex;
 use App\Support\JournalCatalog;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
@@ -38,6 +40,29 @@ class JournalController extends Controller
             'category' => $current,
             'categories' => JournalCatalog::categories(),
             'entries' => $paginator,
+        ]);
+    }
+
+    public function showArticle(string $category, string $article): View
+    {
+        $found = JournalCatalog::findEntry($category, $article);
+
+        abort_if($found === null, 404);
+
+        ['category' => $current, 'article' => $currentArticle] = $found;
+
+        return view('frontend.article-detail', [
+            'category' => $current,
+            'article' => $currentArticle,
+            'content' => ArticleContentFactory::build($currentArticle, $current, 'journal'),
+            'subcategories' => ArticleIndex::subcategories(route('journal.category', $current['id'])),
+            'recent' => ArticleIndex::recent(6, $currentArticle['href']),
+            'source' => 'journal',
+            'sourceLabel' => 'Journal',
+            'sourceIndexHref' => route('journal'),
+            'categoryHref' => route('journal.category', $current['id']),
+            'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
+            'neighbors' => ArticleIndex::neighbors(JournalCatalog::forCategory($current['id']), $currentArticle['slug']),
         ]);
     }
 }

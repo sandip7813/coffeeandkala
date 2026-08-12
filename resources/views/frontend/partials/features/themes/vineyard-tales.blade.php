@@ -1,6 +1,4 @@
 {{-- Vineyard Tales — sommelier tasting flight (vertical bottle labels) --}}
-@include('frontend.partials.features.category-banner', ['category' => $category])
-
 <div class="fc-vine-wrap">
     <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
         <a href="{{ route('features') }}">Features</a>
@@ -51,7 +49,7 @@
                         </div>
                         <div class="fc-vine-labelcard">
                             <h2>{{ $article['title'] }}</h2>
-                            <p>{{ $article['excerpt'] }}</p>
+                            <p>{{ Str::limit($article['excerpt'], 80) }}</p>
                             <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                             <span class="fc-vine-cta">
                                 Pour the story

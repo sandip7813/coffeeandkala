@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\JournalCatalog;
+use Illuminate\Support\Str;
 
 test('a category page lists its entries with a themed layout unique to it', function () {
     $themeMarkers = [
@@ -75,5 +76,21 @@ test('an unknown category slug 404s', function () {
 test('category links from the journal index resolve to real category pages', function () {
     foreach (JournalCatalog::categories() as $category) {
         $this->get(route('journal.category', $category['id']))->assertSuccessful();
+    }
+});
+
+test('every journal category page truncates entry excerpts to 80 characters', function () {
+    foreach (JournalCatalog::categories() as $category) {
+        // Only the first page's worth — anything past entry 6 isn't rendered
+        // without a ?page=2 request.
+        $entries = array_slice(JournalCatalog::forCategory($category['id']), 0, 6);
+        $entry = collect($entries)->firstWhere(fn (array $e): bool => mb_strlen($e['excerpt']) > 80);
+
+        expect($entry)->not->toBeNull();
+
+        $response = $this->get(route('journal.category', $category['id']));
+
+        $response->assertSee(Str::limit($entry['excerpt'], 80), false);
+        $response->assertDontSee($entry['excerpt'], false);
     }
 });

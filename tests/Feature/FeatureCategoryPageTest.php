@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\FeatureCatalog;
+use Illuminate\Support\Str;
 
 test('each feature category page returns a successful response', function (string $slug) {
     $category = FeatureCatalog::find($slug);
@@ -16,8 +17,8 @@ test('each feature category page returns a successful response', function (strin
     $response->assertSee($category['quote'], false);
     $response->assertSee($category['articles'][0]['title'], false);
     $response->assertSee('features-theme--'.$slug, false);
-    $response->assertSee(asset($category['banner']), false);
-    $response->assertSee('categoryBannerZoom', false);
+    $response->assertDontSee(asset($category['banner']), false);
+    $response->assertDontSee('categoryBannerZoom', false);
     $response->assertSee('fc-pagination', false);
     $response->assertSee('javascript:void(0)', false);
     $response->assertSee('fc-siblings', false);
@@ -47,3 +48,23 @@ test('each feature category page uses a distinct theme layout', function () {
 test('unknown feature category returns not found', function () {
     $this->get('/features/not-a-real-chapter')->assertNotFound();
 });
+
+test('most feature category pages truncate article excerpts to 80 characters', function (string $slug) {
+    $category = FeatureCatalog::find($slug);
+    $article = collect($category['articles'])->firstWhere(fn (array $a): bool => mb_strlen($a['excerpt']) > 80);
+
+    expect($article)->not->toBeNull();
+
+    $response = $this->get(route('features.show', $slug));
+
+    $response->assertSee(Str::limit($article['excerpt'], 80), false);
+    $response->assertDontSee($article['excerpt'], false);
+})->with(['art-culture', 'experiences', 'on-a-budget', 'vineyard-tales']);
+
+test('the long-form feature category pages allow excerpts up to 500 characters', function (string $slug) {
+    $category = FeatureCatalog::find($slug);
+    $article = $category['articles'][0];
+
+    $this->get(route('features.show', $slug))
+        ->assertSee(Str::limit($article['excerpt'], 500), false);
+})->with(['luxury-escapes', 'global-chapters', 'not-on-the-atlas', 'coffee-classics']);

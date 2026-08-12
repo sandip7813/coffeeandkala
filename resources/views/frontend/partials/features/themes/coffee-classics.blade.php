@@ -1,9 +1,4 @@
 {{-- Coffee & Classics — dark academia reading list / library shelf --}}
-@include('frontend.partials.features.category-banner', [
-    'category' => $category,
-    'bannerClass' => 'fc-coffee-banner',
-])
-
 <div class="fc-coffee-room">
     <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
         <a href="{{ route('features') }}">Features</a>
@@ -41,7 +36,7 @@
                             <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                         </div>
                         <h2>{{ $article['title'] }}</h2>
-                        <p>{{ $article['excerpt'] }}</p>
+                        <p>{{ Str::limit($article['excerpt'], 500) }}</p>
                         <span class="fc-coffee-cta">Open chapter <i class="fa-solid fa-bookmark" aria-hidden="true"></i></span>
                     </div>
                 </a>

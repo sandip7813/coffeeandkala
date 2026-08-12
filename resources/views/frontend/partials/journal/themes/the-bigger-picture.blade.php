@@ -27,7 +27,7 @@
                 <div class="jc-picture-caption">
                     <time datetime="{{ $entry['date'] }}" class="jc-picture-date">{{ $entry['date_label'] }}</time>
                     <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
-                    <p>{{ $entry['excerpt'] }}</p>
+                    <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
                     <a href="{{ $entry['href'] }}" class="journal-continued">
                         Read the story
                         <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>

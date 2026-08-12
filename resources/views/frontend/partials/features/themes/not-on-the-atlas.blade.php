@@ -1,6 +1,4 @@
 {{-- Not On The Atlas — scrapbook journal / taped field notes --}}
-@include('frontend.partials.features.category-banner', ['category' => $category])
-
 <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
     <a href="{{ route('features') }}">Features</a>
     <span aria-hidden="true">/</span>
@@ -46,7 +44,7 @@
                 <div class="fc-atlas-body">
                     <span class="fc-atlas-tag">{{ $article['tag'] }}</span>
                     <h2>{{ $article['title'] }}</h2>
-                    <p>{{ $article['excerpt'] }}</p>
+                    <p>{{ Str::limit($article['excerpt'], 500) }}</p>
                     <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                 </div>
             </a>

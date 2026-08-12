@@ -24,7 +24,7 @@
                 <h2 class="jc-diary-entry-title">
                     <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
                 </h2>
-                <p class="jc-diary-excerpt">{{ $entry['excerpt'] }}</p>
+                <p class="jc-diary-excerpt">{{ Str::limit($entry['excerpt'], 80) }}</p>
                 <a href="{{ $entry['href'] }}" class="journal-continued">
                     Read the story
                     <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>

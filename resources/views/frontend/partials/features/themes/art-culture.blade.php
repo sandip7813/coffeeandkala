@@ -1,6 +1,4 @@
 {{-- Art & Culture — exhibition catalogue (dense content index) --}}
-@include('frontend.partials.features.category-banner', ['category' => $category])
-
 <div class="fc-art-wrap">
     <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
         <a href="{{ route('features') }}">Features</a>
@@ -43,7 +41,7 @@
                     <div class="fc-art-entry-body">
                         <span class="fc-art-tag">{{ $article['tag'] }}</span>
                         <h2>{{ $article['title'] }}</h2>
-                        <p>{{ $article['excerpt'] }}</p>
+                        <p>{{ Str::limit($article['excerpt'], 80) }}</p>
                     </div>
                     <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                 </a>

@@ -17,6 +17,8 @@ export default defineConfig({
                 'resources/js/features.js',
                 'resources/css/poetry.css',
                 'resources/js/poetry.js',
+                'resources/css/article.css',
+                'resources/js/article.js',
                 'resources/css/adminlte.css',
                 'resources/js/adminlte.js',
             ],

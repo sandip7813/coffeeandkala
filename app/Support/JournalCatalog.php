@@ -2,12 +2,54 @@
 
 namespace App\Support;
 
+use Illuminate\Support\Str;
+
 class JournalCatalog
 {
     /**
      * @return list<array<string, mixed>>
      */
     public static function all(): array
+    {
+        return self::withEntryRouting(self::rawEntries());
+    }
+
+    /**
+     * Assigns a stable, unique (per category) slug to every entry and points
+     * its `href` at the entry detail route.
+     *
+     * @param  list<array<string, mixed>>  $entries
+     * @return list<array<string, mixed>>
+     */
+    private static function withEntryRouting(array $entries): array
+    {
+        $seen = [];
+
+        return array_map(function (array $entry) use (&$seen): array {
+            $base = Str::slug($entry['title']);
+            $slug = $base;
+
+            for ($suffix = 2; isset($seen[$entry['category_id']][$slug]); $suffix++) {
+                $slug = "{$base}-{$suffix}";
+            }
+
+            $seen[$entry['category_id']][$slug] = true;
+
+            return [
+                ...$entry,
+                'slug' => $slug,
+                // A plain relative URL rather than route() — this file is
+                // also read by pure Unit tests with no app container, and it
+                // must match GET /journal/{category}/{article} exactly.
+                'href' => "/journal/{$entry['category_id']}/{$slug}",
+            ];
+        }, $entries);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private static function rawEntries(): array
     {
         return [
             [
@@ -416,6 +458,28 @@ class JournalCatalog
             ->sortByDesc('date')
             ->values()
             ->all();
+    }
+
+    /**
+     * Locate a single entry by its category and slug.
+     *
+     * @return array{category: array{id: string, name: string}, article: array<string, mixed>}|null
+     */
+    public static function findEntry(string $categorySlug, string $entrySlug): ?array
+    {
+        $category = self::findCategory($categorySlug);
+
+        if ($category === null) {
+            return null;
+        }
+
+        foreach (self::forCategory($categorySlug) as $entry) {
+            if ($entry['slug'] === $entrySlug) {
+                return ['category' => $category, 'article' => $entry];
+            }
+        }
+
+        return null;
     }
 
     /**

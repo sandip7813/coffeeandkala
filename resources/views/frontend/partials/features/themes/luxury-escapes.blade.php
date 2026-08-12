@@ -1,9 +1,4 @@
 {{-- Luxury Escapes — cinematic resort lookbook --}}
-@include('frontend.partials.features.category-banner', [
-    'category' => $category,
-    'bannerClass' => 'fc-lux-banner',
-])
-
 <div class="fc-lux-wrap">
     <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
         <a href="{{ route('features') }}">Features</a>
@@ -56,7 +51,7 @@
                             <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                         </div>
                         <h2>{{ $article['title'] }}</h2>
-                        <p>{{ $article['excerpt'] }}</p>
+                        <p>{{ Str::limit($article['excerpt'], 500) }}</p>
                         <span class="fc-lux-cta">
                             Enter the suite
                             <i class="fa-solid fa-gem" aria-hidden="true"></i>

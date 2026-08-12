@@ -1,6 +1,4 @@
 {{-- On a Budget — notebook checklist / practical planner --}}
-@include('frontend.partials.features.category-banner', ['category' => $category])
-
 <nav class="fc-crumb features-reveal features-reveal--up" aria-label="Breadcrumb">
     <a href="{{ route('features') }}">Features</a>
     <span aria-hidden="true">/</span>
@@ -37,7 +35,7 @@
                 <div class="fc-budget-card-body">
                     <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
                     <h2>{{ $article['title'] }}</h2>
-                    <p>{{ $article['excerpt'] }}</p>
+                    <p>{{ Str::limit($article['excerpt'], 80) }}</p>
                     <span class="fc-budget-cta">Open tip sheet →</span>
                 </div>
             </a>

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\ArticleContentFactory;
+use App\Support\ArticleIndex;
 use App\Support\FeatureCatalog;
 use Illuminate\Contracts\View\View;
 
@@ -30,6 +32,29 @@ class FeatureController extends Controller
         return view('frontend.features-category', [
             'category' => $current,
             'categories' => FeatureCatalog::all(),
+        ]);
+    }
+
+    public function showArticle(string $category, string $article): View
+    {
+        $found = FeatureCatalog::findArticle($category, $article);
+
+        abort_if($found === null, 404);
+
+        ['category' => $current, 'article' => $currentArticle] = $found;
+
+        return view('frontend.article-detail', [
+            'category' => $current,
+            'article' => $currentArticle,
+            'content' => ArticleContentFactory::build($currentArticle, $current, 'features'),
+            'subcategories' => ArticleIndex::subcategories(route('features.show', $current['id'])),
+            'recent' => ArticleIndex::recent(6, $currentArticle['href']),
+            'source' => 'features',
+            'sourceLabel' => 'Features',
+            'sourceIndexHref' => route('features'),
+            'categoryHref' => route('features.show', $current['id']),
+            'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
+            'neighbors' => ArticleIndex::neighbors($current['articles'], $currentArticle['slug']),
         ]);
     }
 }

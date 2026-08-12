@@ -19,7 +19,7 @@
             <div class="jc-guide-body">
                 <time datetime="{{ $entry['date'] }}">{{ $entry['date_label'] }}</time>
                 <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
-                <p>{{ $entry['excerpt'] }}</p>
+                <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
                 <a href="{{ $entry['href'] }}" class="journal-continued">
                     Read the guide
                     <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
