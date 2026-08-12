@@ -35,13 +35,12 @@
 <section
     id="sec-05"
     class="section-visual-feature"
-    aria-label="Features Unfolded"
+    aria-label="Features"
     data-visual-feature
 >
     <div class="visual-feature-header">
-        <h2 class="visual-feature-section-title">Features Unfolded</h2>
-        <a href="{{ route('features') }}" class="visual-feature-section-link">
-            Unfold the Stories
+        <h2 class="visual-feature-section-title">Features</h2>
+        <a href="{{ route('features') }}" class="visual-feature-section-link" aria-label="Unfold the stories">
             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
         </a>
     </div>
@@ -51,36 +50,33 @@
             <div class="visual-feature-container">
                 @foreach ($visualStories as $index => $story)
                     <article class="visual-feature-slide @if ($index === 0) is-active @endif">
-                        <div
-                            class="visual-feature-media"
-                            style="background-image: url('{{ $story['image'] }}')"
-                            role="img"
-                            aria-label="{{ $story['title'] }}"
-                        ></div>
-                        <div class="visual-feature-shade" aria-hidden="true"></div>
+                        <div class="visual-feature-rule visual-feature-rule--top" aria-hidden="true"></div>
 
-                        <div class="visual-feature-stage">
-                            <div class="visual-feature-panel-stack">
-                                <div class="visual-feature-rule visual-feature-rule--top" aria-hidden="true"></div>
+                        <div class="visual-feature-block">
+                            <div
+                                class="visual-feature-media"
+                                style="background-image: url('{{ $story['image'] }}')"
+                                role="img"
+                                aria-label="{{ $story['title'] }}"
+                            ></div>
 
-                                <div class="visual-feature-panel">
-                                    <p class="visual-feature-meta">
-                                        <time datetime="{{ $story['date'] }}">{{ $story['date'] }}</time>
-                                        <span aria-hidden="true">•</span>
-                                        <span>{{ $story['category'] }}</span>
-                                    </p>
-                                    <span class="visual-feature-accent" aria-hidden="true"></span>
-                                    <h3 class="visual-feature-title">{{ $story['title'] }}</h3>
-                                    <p class="visual-feature-excerpt">{{ $story['excerpt'] }}</p>
-                                    <a href="{{ route('features') }}" class="visual-feature-cta">
-                                        Continue reading
-                                        <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                                    </a>
-                                </div>
-
-                                <div class="visual-feature-rule visual-feature-rule--bottom" aria-hidden="true"></div>
+                            <div class="visual-feature-panel">
+                                <p class="visual-feature-meta">
+                                    <time datetime="{{ $story['date'] }}">{{ $story['date'] }}</time>
+                                    <span aria-hidden="true">•</span>
+                                    <span>{{ $story['category'] }}</span>
+                                </p>
+                                <span class="visual-feature-accent" aria-hidden="true"></span>
+                                <h3 class="visual-feature-title">{{ $story['title'] }}</h3>
+                                <p class="visual-feature-excerpt">{{ $story['excerpt'] }}</p>
+                                <a href="{{ route('features') }}" class="visual-feature-cta">
+                                    Continue reading
+                                    <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                                </a>
                             </div>
                         </div>
+
+                        <div class="visual-feature-rule visual-feature-rule--bottom" aria-hidden="true"></div>
                     </article>
                 @endforeach
             </div>

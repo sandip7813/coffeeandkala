@@ -49,11 +49,9 @@
 >
     <header class="gallery-story-header">
         <div class="gallery-story-heading">
-            <p class="gallery-story-eyebrow">Gallery</p>
-            <h2 class="gallery-story-title">Gallery of Visual Storytelling</h2>
+            <h2 class="gallery-story-title">Gallery</h2>
         </div>
-        <a href="{{ route('gallery') }}" class="gallery-story-view-all">
-            Wander the Exhibition
+        <a href="{{ route('gallery') }}" class="gallery-story-view-all" aria-label="Wander the exhibition">
             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
         </a>
     </header>

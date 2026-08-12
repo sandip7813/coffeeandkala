@@ -32,12 +32,10 @@
 >
     <header class="three-stories-header">
         <div class="three-stories-heading">
-            <p class="three-stories-eyebrow">From the table</p>
             <h2 class="three-stories-title">Three Small Stories</h2>
         </div>
 
-        <a href="{{ route('features') }}" class="three-stories-cta">
-            Unfold the Stories
+        <a href="{{ route('features') }}" class="three-stories-cta" aria-label="Unfold the stories">
             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
         </a>
     </header>
@@ -53,16 +51,11 @@
                         aria-label="{{ $story['title'] }}"
                     ></div>
 
-                    <span class="three-story-border" aria-hidden="true"></span>
-
-                    <span class="three-story-number">{{ $story['number'] }}</span>
-
-                    <div class="three-story-overlay">
+                    <div class="three-story-body">
                         <span class="three-story-tag">{{ $story['tag'] }}</span>
                         <h3 class="three-story-heading">{{ $story['title'] }}</h3>
-                        <p class="three-story-excerpt">{{ $story['excerpt'] }}</p>
                         <span class="three-story-link">
-                            Read story
+                            Read Story
                             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
                         </span>
                     </div>

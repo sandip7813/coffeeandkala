@@ -44,11 +44,9 @@
 >
     <header class="journal-feature-header">
         <div class="journal-feature-heading">
-            <p class="journal-feature-eyebrow">Blogs</p>
-            <h2 class="journal-feature-title">From the Journal</h2>
+            <h2 class="journal-feature-title">Journal</h2>
         </div>
-        <a href="{{ route('journal') }}" class="journal-feature-view-all">
-            Read the Journal
+        <a href="{{ route('journal') }}" class="journal-feature-view-all" aria-label="Read the journal">
             <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
         </a>
     </header>
@@ -58,7 +56,9 @@
             <div class="journal-feature-container">
                 @foreach ($journalPosts as $post)
                     <article class="journal-feature-slide">
-                        <div class="journal-feature-stage">
+                        <div class="journal-feature-rule journal-feature-rule--top" aria-hidden="true"></div>
+
+                        <div class="journal-feature-block">
                             <div
                                 class="journal-feature-media"
                                 style="background-image: url('{{ $post['image'] }}')"
@@ -77,6 +77,8 @@
                                 <time class="journal-feature-date" datetime="{{ $post['date'] }}">{{ $post['date'] }}</time>
                             </div>
                         </div>
+
+                        <div class="journal-feature-rule journal-feature-rule--bottom" aria-hidden="true"></div>
                     </article>
                 @endforeach
             </div>
