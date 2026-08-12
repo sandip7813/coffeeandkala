@@ -71,7 +71,7 @@
 }
 
 .journal-hero-title {
-    --journal-hero-title-size: clamp(48px, 9vw, 120px);
+    --journal-hero-title-size: clamp(36px, 6.5vw, 88px);
     position: relative;
     z-index: 2;
     margin: 0 auto calc(-0.5 * var(--journal-hero-title-size));

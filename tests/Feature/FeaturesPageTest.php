@@ -4,12 +4,14 @@ test('the features page returns a successful response', function () {
     $response = $this->get(route('features'));
 
     $response->assertSuccessful();
-    $response->assertSee('images/features/banner.png', false);
-    $response->assertSee('featuresBannerZoom', false);
-    $response->assertSee('features-banner-divider-mark', false);
+    $response->assertDontSee('images/features/banner.png', false);
+    $response->assertDontSee('featuresBannerZoom', false);
+    $response->assertDontSee('features-banner-divider-mark', false);
     $response->assertSee('features-masthead', false);
     $response->assertSee('features-edition', false);
     $response->assertSee('Article of the day', false);
+    $response->assertSee('data-journal-feature', false);
+    $response->assertSee('data-home-carousel', false);
     $response->assertSee('The Quiet Architecture of Old Courtyards', false);
     $response->assertSee('The Village That Marks Time by Harvest', false);
     $response->assertSee('Brewing Between Pages on a Rainy Desk', false);

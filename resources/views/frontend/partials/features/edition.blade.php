@@ -8,45 +8,109 @@
             $spotlight = collect($entries)->firstWhere('role', 'spotlight');
         @endphp
 
-        @if ($lead)
-            <article class="features-lead features-reveal features-reveal--up">
+        @php
+            $leadSlides = collect([$lead])->merge($features)->filter()->values();
+        @endphp
+
+        @if ($leadSlides->isNotEmpty())
+            <section class="features-lead-slider features-reveal features-reveal--up" aria-label="Article of the day" data-journal-feature>
                 <div class="features-kicker">
                     <span class="features-kicker-badge">Article of the day</span>
-                    <time datetime="{{ $lead['date'] }}">{{ $lead['date_label'] }}</time>
                 </div>
-                <h3 class="features-lead-headline">
-                    <a href="{{ $lead['href'] }}">{{ $lead['title'] }}</a>
-                </h3>
-                <p class="features-byline">
-                    <a href="{{ route('features.show', $lead['category_id']) }}">{{ $lead['category_name'] }}</a>
-                    · {{ $lead['tag'] }}
-                </p>
 
-                <div class="features-lead-grid">
-                    <figure class="features-lead-figure">
-                        <img
-                            src="{{ $lead['image'] }}"
-                            alt=""
-                            loading="lazy"
-                            width="1200"
-                            height="720"
-                            decoding="async"
-                        >
-                        <figcaption>{{ $lead['title'] }}</figcaption>
-                    </figure>
+                <div class="journal-feature-slider features-lead-feature-slider">
+                    <div class="journal-feature-viewport" data-journal-feature-viewport>
+                        <div class="journal-feature-container">
+                            @foreach ($leadSlides as $entry)
+                                <article class="journal-feature-slide features-lead-slide">
+                                    <time datetime="{{ $entry['date'] }}" class="features-lead-slide-date">{{ $entry['date_label'] }}</time>
+                                    <h3 class="features-lead-headline">
+                                        <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
+                                    </h3>
+                                    <p class="features-byline">
+                                        <a href="{{ route('features.show', $entry['category_id']) }}">{{ $entry['category_name'] }}</a>
+                                        · {{ $entry['tag'] }}
+                                    </p>
 
-                    <div class="features-lead-copy">
-                        <p class="features-dropcap">{{ $lead['excerpt'] }}</p>
-                        <a href="{{ $lead['href'] }}" class="features-continued">
-                            Read the full chapter
-                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                        </a>
+                                    <div class="features-lead-grid">
+                                        <figure class="features-lead-figure">
+                                            <img
+                                                src="{{ $entry['image'] }}"
+                                                alt=""
+                                                loading="lazy"
+                                                width="1200"
+                                                height="720"
+                                                decoding="async"
+                                            >
+                                            <figcaption>{{ $entry['title'] }}</figcaption>
+                                        </figure>
+
+                                        <div class="features-lead-copy">
+                                            <p class="features-dropcap features-dropcap--full">{{ $entry['excerpt'] }}</p>
+                                            <a href="{{ $entry['href'] }}" class="features-continued">
+                                                Read the full chapter
+                                                <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </article>
+                            @endforeach
+                        </div>
                     </div>
+
+                    <button type="button" class="journal-feature-nav journal-feature-nav--prev" data-journal-feature-prev aria-label="Previous">
+                        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="journal-feature-nav journal-feature-nav--next" data-journal-feature-next aria-label="Next">
+                        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                    </button>
                 </div>
-            </article>
+            </section>
         @endif
 
         <div class="features-rule features-rule--thick" aria-hidden="true"></div>
+
+        @php
+            $carouselEntries = $columns->merge($briefs)->merge($features)->values();
+        @endphp
+
+        @if ($carouselEntries->isNotEmpty())
+            <section class="section-home-carousel features-carousel" aria-label="More from this edition">
+                <div class="home-carousel-header">
+                    <div class="home-carousel-heading">
+                        <h2 class="home-carousel-title">More from this edition</h2>
+                    </div>
+                </div>
+
+                <div class="home-embla home-embla--features" data-home-carousel data-slides-visible="3">
+                    <div class="home-embla__viewport">
+                        <div class="home-embla__container">
+                            @foreach ($carouselEntries as $entry)
+                                <article class="home-embla__slide">
+                                    <a href="{{ $entry['href'] }}" class="home-studio-card">
+                                        <div class="home-studio-card-frame">
+                                            <div class="home-studio-card-media" style="background-image: url('{{ $entry['image'] }}')"></div>
+                                        </div>
+                                        <div class="home-studio-card-body">
+                                            <h3 class="home-studio-card-title">{{ $entry['title'] }}</h3>
+                                            <span class="home-studio-card-medium">{{ $entry['category_name'] }}</span>
+                                        </div>
+                                    </a>
+                                </article>
+                            @endforeach
+                        </div>
+                    </div>
+                    <button type="button" class="home-embla-arrow home-embla-arrow--prev" data-home-prev aria-label="Previous">
+                        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="home-embla-arrow home-embla-arrow--next" data-home-next aria-label="Next">
+                        <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </section>
+
+            <div class="features-rule features-rule--thick" aria-hidden="true"></div>
+        @endif
 
         <div class="features-front">
             <div class="features-columns">
@@ -74,7 +138,7 @@
                         <h3 class="features-story-card-headline">
                             <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
                         </h3>
-                        <p class="features-story-card-excerpt">{{ $entry['excerpt'] }}</p>
+                        <p class="features-story-card-excerpt">{{ Str::limit($entry['excerpt'], 80) }}</p>
                         <a href="{{ $entry['href'] }}" class="features-continued">Read the dispatch</a>
                     </article>
                 @endforeach
@@ -100,7 +164,7 @@
                         <h3>
                             <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
                         </h3>
-                        <p>{{ $entry['excerpt'] }}</p>
+                        <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
                     </article>
                 @endforeach
 
@@ -122,7 +186,7 @@
                                     </span>
                                     <span class="features-brief-copy">
                                         <strong>{{ $entry['title'] }}</strong>
-                                        <span>{{ $entry['excerpt'] }}</span>
+                                        <span>{{ Str::limit($entry['excerpt'], 80) }}</span>
                                     </span>
                                 </a>
                             </li>
@@ -139,7 +203,7 @@
                         <h3 class="features-spotlight-headline">
                             <a href="{{ $spotlight['href'] }}">{{ $spotlight['title'] }}</a>
                         </h3>
-                        <p class="features-spotlight-excerpt">{{ $spotlight['excerpt'] }}</p>
+                        <p class="features-spotlight-excerpt">{{ Str::limit($spotlight['excerpt'], 80) }}</p>
                         <a href="{{ $spotlight['href'] }}" class="features-continued">Read the dispatch</a>
                     </article>
                 @endif
