@@ -18,6 +18,26 @@
                 style="--portal-delay: {{ $loop->index * 0.08 }}s"
             >
                 <article class="journal-category-card">
+                    <div class="journal-category-copy">
+                        <div class="journal-category-heading">
+                            <span class="journal-category-index" aria-hidden="true">{{ sprintf('%02d', $loop->iteration) }}</span>
+                            <span class="journal-category-tag-line">
+                                <span class="journal-category-tag-rule" aria-hidden="true"></span>
+                                <a href="{{ route('journal.category', $entry['category_id']) }}" class="journal-category-tag">
+                                    {{ $entry['category_name'] }}
+                                </a>
+                            </span>
+                        </div>
+                        <h3 class="journal-category-title">
+                            <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
+                        </h3>
+                        <p class="journal-category-excerpt">{{ $entry['excerpt'] }}</p>
+                        <a href="{{ $entry['href'] }}" class="journal-continued">
+                            Read more
+                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                        </a>
+                    </div>
+
                     <figure class="journal-category-media">
                         <a href="{{ $entry['href'] }}" tabindex="-1" aria-hidden="true">
                             <img
@@ -30,25 +50,6 @@
                             >
                         </a>
                     </figure>
-
-                    <div class="journal-category-copy">
-                        <span class="journal-category-index" aria-hidden="true">{{ sprintf('%02d', $loop->iteration) }}</span>
-                        <div class="journal-category-meta">
-                            <a href="{{ route('journal.category', $entry['category_id']) }}" class="journal-category-tag">
-                                {{ $entry['category_name'] }}
-                            </a>
-                            <span class="journal-category-meta-sep" aria-hidden="true">·</span>
-                            <time datetime="{{ $entry['date'] }}" class="journal-category-date">{{ $entry['date_label'] }}</time>
-                        </div>
-                        <h3 class="journal-category-title">
-                            <a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a>
-                        </h3>
-                        <p class="journal-category-excerpt">{{ $entry['excerpt'] }}</p>
-                        <a href="{{ $entry['href'] }}" class="journal-continued">
-                            Read the story
-                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                        </a>
-                    </div>
                 </article>
             </li>
         @endforeach

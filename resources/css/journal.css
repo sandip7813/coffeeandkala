@@ -61,10 +61,13 @@
    margin on the title pulls the banner up under its own lower half. */
 
 .journal-hero {
+    /* Sampled from the banner photo's own top edge, so the field above the
+       image reads as a continuation of the photo rather than a seam. */
+    --journal-hero-bg: #110f0b;
     position: relative;
     z-index: 1;
     padding-top: clamp(4px, 1vh, 12px);
-    background-color: var(--espresso);
+    background-color: var(--journal-hero-bg);
 }
 
 .journal-hero-title {
@@ -103,22 +106,60 @@
     height: 100%;
     object-fit: cover;
     object-position: center 12%;
+    /* Feather the image's own top/bottom edges so it dissolves into the
+       hero field above and the Warm Paper below; left/right stay almost
+       untouched so the photo keeps its full width. */
+    -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 4%,
+        #000 92%,
+        transparent 100%
+    ),
+    linear-gradient(
+        to right,
+        transparent 0%,
+        #000 0.5%,
+        #000 99.5%,
+        transparent 100%
+    );
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        #000 4%,
+        #000 92%,
+        transparent 100%
+    ),
+    linear-gradient(
+        to right,
+        transparent 0%,
+        #000 0.5%,
+        #000 99.5%,
+        transparent 100%
+    );
+    mask-composite: intersect;
 }
 
 .journal-hero-banner.is-expanded .journal-hero-image {
     height: auto;
     object-fit: contain;
+    -webkit-mask-image: none;
+    mask-image: none;
 }
 
 .journal-hero-veil {
     position: absolute;
     inset: 0;
     pointer-events: none;
+    /* Top edge blends into the hero field's own dark tone, bottom edge
+       blends into the Warm Paper below — left/right are left alone. */
     background: linear-gradient(
         to bottom,
-        rgba(26, 18, 12, 0.6) 0%,
-        rgba(26, 18, 12, 0.12) 24%,
-        transparent 48%
+        var(--journal-hero-bg) 0%,
+        transparent 10%,
+        transparent 88%,
+        var(--warm-paper) 100%
     );
     transition: opacity 0.5s ease;
 }
@@ -266,42 +307,58 @@
 }
 
 .journal-category-card {
-    display: flex;
-    align-items: center;
-    gap: clamp(20px, 3.5vw, 44px);
-    padding: clamp(20px, 3vw, 32px);
-    background-color: var(--coffee-beige);
-    border-radius: clamp(16px, 2.2vw, 24px);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 14px 30px rgba(26, 24, 20, 0.08);
-    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease;
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    align-items: start;
+    gap: clamp(28px, 4.5vw, 64px);
+    padding: 0;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-.journal-category-card:hover,
-.journal-category-card:focus-within {
-    transform: translateY(-3px);
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) inset, 0 20px 38px rgba(26, 24, 20, 0.14);
-}
-
-.journal-category:nth-child(even) .journal-category-card {
-    flex-direction: row-reverse;
+.journal-category-copy {
+    order: 1;
+    align-self: center;
+    min-width: 0;
+    padding-top: clamp(4px, 1vw, 16px);
 }
 
 .journal-category-media {
-    flex: 0 0 min(38%, 320px);
+    order: 2;
     margin: 0;
+    max-width: 340px;
+    outline: 1px solid rgba(26, 24, 20, 0.16);
+    outline-offset: 7px;
+}
+
+.journal-category:nth-child(even) .journal-category-media {
+    justify-self: end;
+}
+
+.journal-category:nth-child(even) .journal-category-copy {
+    order: 2;
+}
+
+.journal-category:nth-child(even) .journal-category-media {
+    order: 1;
+}
+
+/* A gentle zigzag: the even rows' image sits lower than its text block so
+   the three spreads read as a staggered column rather than a rigid grid. */
+.journal-category:nth-child(even) .journal-category-media {
+    margin-top: clamp(28px, 6vw, 96px);
 }
 
 .journal-category-media a {
     display: block;
     overflow: hidden;
-    border-radius: var(--radius-media);
-    box-shadow: var(--shadow-section-image);
 }
 
 .journal-category-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 5;
+    aspect-ratio: 3 / 4;
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -311,28 +368,35 @@
     transform: scale(1.04);
 }
 
-.journal-category-copy {
-    flex: 1 1 auto;
-    min-width: 0;
+.journal-category-heading {
+    position: relative;
+    z-index: 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 0;
 }
 
 .journal-category-index {
-    display: block;
     font-family: var(--font-serif);
-    font-size: clamp(40px, 4.5vw, 64px);
+    font-size: clamp(72px, 9vw, 128px);
     font-weight: 600;
-    line-height: 1;
+    line-height: 0.8;
     color: var(--journal-accent);
     opacity: 0.28;
-    margin: 0 0 -0.2em;
 }
 
-.journal-category-meta {
+.journal-category-tag-line {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    gap: 8px;
-    margin: 0 0 8px;
+    gap: 10px;
+    margin-top: clamp(10px, 1.6vw, 18px);
+}
+
+.journal-category-tag-rule {
+    width: 28px;
+    height: 1px;
+    background: var(--journal-rule);
 }
 
 .journal-category-tag {
@@ -352,25 +416,14 @@
     text-decoration: underline;
 }
 
-.journal-category-meta-sep {
-    color: var(--journal-rule);
-    font-size: 11px;
-}
-
-.journal-category-date {
-    font-family: var(--font-sans);
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: var(--journal-muted);
-}
-
 .journal-category-title {
-    margin: 0 0 10px;
+    position: relative;
+    z-index: 1;
+    margin: clamp(-34px, -4.4vw, -18px) 0 12px;
     font-family: var(--font-serif);
-    font-size: clamp(1.3rem, 2.2vw, 1.75rem);
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
     font-weight: 600;
-    line-height: 1.15;
+    line-height: 1.18;
     letter-spacing: -0.01em;
 }
 
@@ -385,8 +438,8 @@
 }
 
 .journal-category-excerpt {
-    margin: 0 0 16px;
-    max-width: 46ch;
+    margin: 0 0 18px;
+    max-width: 42ch;
     font-family: var(--font-serif);
     font-size: 0.98rem;
     line-height: 1.6;
@@ -400,10 +453,46 @@
 /* Closing */
 
 .journal-closing {
+    position: relative;
+    margin: clamp(32px, 5vw, 56px) 0 0;
+    padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 40px) clamp(64px, 10vw, 110px);
+    /* A shade deeper than the page's Warm Paper, so the closing section
+       reads as its own quiet room before the footer. */
+    background-color: var(--journal-paper);
+    text-align: center;
+    overflow: clip;
+}
+
+.journal-closing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    mix-blend-mode: multiply;
+}
+
+.journal-closing-inner {
+    position: relative;
+    z-index: 1;
     max-width: 720px;
     margin: 0 auto;
-    padding: clamp(40px, 7vw, 80px) clamp(16px, 4vw, 40px) clamp(64px, 10vw, 110px);
-    text-align: center;
+}
+
+.journal-masthead-rule {
+    height: 1px;
+    margin: 0 auto 22px;
+    max-width: 220px;
+    background: var(--journal-rule);
+}
+
+.journal-masthead-rule--double {
+    height: 3px;
+    background:
+        linear-gradient(var(--journal-rule), var(--journal-rule)) top / 100% 1px no-repeat,
+        linear-gradient(var(--journal-rule), var(--journal-rule)) bottom / 100% 1px no-repeat;
 }
 
 .journal-closing-quote {
@@ -1051,12 +1140,17 @@
 @media (max-width: 720px) {
     .journal-category-card,
     .journal-category:nth-child(even) .journal-category-card {
-        flex-direction: column;
-        align-items: stretch;
+        grid-template-columns: minmax(0, 1fr);
     }
 
-    .journal-category-media {
-        flex-basis: auto;
+    .journal-category-copy,
+    .journal-category:nth-child(even) .journal-category-copy,
+    .journal-category-media,
+    .journal-category:nth-child(even) .journal-category-media {
+        order: initial;
+        margin-top: 0;
+        max-width: none;
+        justify-self: stretch;
     }
 
     .journal-category-media img {

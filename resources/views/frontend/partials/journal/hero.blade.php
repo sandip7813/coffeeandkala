@@ -6,11 +6,11 @@
 
     <div class="journal-hero-banner" id="journalBanner">
         <img
-            src="{{ asset('images/journal/hero.png') }}"
-            alt="A writing desk scene with coffee, dried flowers, handmade paper and an open notebook."
+            src="{{ asset('images/journal/journal-hero.png') }}"
+            alt="A reader at a wooden table holds open a copy of The Journal, lit warmly against a dark garden."
             class="journal-hero-image"
-            width="1717"
-            height="916"
+            width="815"
+            height="455"
         >
         <div class="journal-hero-veil" aria-hidden="true"></div>
 
