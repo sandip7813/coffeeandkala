@@ -9,8 +9,6 @@
                     data-galleria-index="{{ $loop->index }}"
                     aria-label="Open {{ $plate['title'] }}"
                 >
-                    <span class="gallery-poster-tape gallery-poster-tape--tl" aria-hidden="true"></span>
-                    <span class="gallery-poster-tape gallery-poster-tape--tr" aria-hidden="true"></span>
                     <span class="gallery-poster-sheet">
                         <img
                             src="{{ $plate['thumb'] }}"
@@ -20,7 +18,6 @@
                             height="500"
                         >
                     </span>
-                    <span class="gallery-poster-number" aria-hidden="true">{{ $plate['number'] }}</span>
                 </a>
 
                 <figcaption class="gallery-poster-caption">

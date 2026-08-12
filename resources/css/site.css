@@ -201,7 +201,7 @@ body {
     bottom: 0;
     right: -320px;
     width: 300px;
-    background-color: var(--espresso);
+    background-color: var(--black);
     border-left: 1px solid var(--border-dark);
     z-index: 200;
     padding: 40px 30px;
@@ -482,7 +482,7 @@ body.layout-no-sidebar .site-header {
     overflow-y: auto;
     padding: 10px 0;
     margin: 0;
-    background-color: var(--espresso);
+    background-color: var(--black);
     border: 1px solid rgba(231, 221, 210, 0.22);
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
     opacity: 0;
@@ -1517,7 +1517,7 @@ body.layout-no-sidebar .site-header {
 /* Gallery of Visual Storytelling */
 .section-gallery-story {
     position: relative;
-    background-color: #5B3A29;
+    background-color: var(--black);
     color: #ffffff;
     padding: clamp(36px, 5vh, 56px) var(--section-inline) clamp(40px, 6vh, 64px);
     overflow: visible;

@@ -10,7 +10,7 @@
 .poetry-topbar .site-header {
     width: 100%;
     margin: 0;
-    background-color: var(--espresso);
+    background-color: var(--black);
 }
 
 .poetry-page {

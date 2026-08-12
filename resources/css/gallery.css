@@ -3,20 +3,18 @@
 .gallery-shell,
 .gallery-body,
 .gallery-main {
-    background-color: #120e0b;
+    background-color: var(--black);
 }
 
 .gallery-page {
     --gallery-ink: #f1e8dc;
     --gallery-muted: rgba(241, 232, 220, 0.62);
     --gallery-ember: #c4895f;
-    --gallery-wall: #120e0b;
+    --gallery-wall: var(--black);
     --gallery-line: rgba(241, 232, 220, 0.12);
     --gallery-glow: rgba(196, 137, 95, 0.22);
     color: var(--gallery-ink);
-    background:
-        radial-gradient(ellipse at 50% 18%, rgba(196, 137, 95, 0.22), transparent 50%),
-        linear-gradient(180deg, #1c1511 0%, #120e0b 100%);
+    background: var(--black);
     position: relative;
 }
 
@@ -51,40 +49,51 @@
     transform: translateY(0);
 }
 
+/* Banner — hero image blended into the page background, no hard edges */
 .gallery-banner {
-    background: #0a0807;
+    position: relative;
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background: var(--black);
+}
+
+.gallery-banner-frame {
+    position: relative;
+    display: block;
+    width: 100%;
+    max-height: min(72vw, 720px);
+    overflow: hidden;
 }
 
 .gallery-banner-image {
-    object-position: center 42%;
-}
-
-.gallery-banner-veil {
-    background:
-        linear-gradient(
-            to top,
-            rgba(18, 14, 11, 0.72) 0%,
-            rgba(18, 14, 11, 0.18) 42%,
-            rgba(18, 14, 11, 0.28) 100%
-        );
-}
-
-.gallery-banner-divider {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    padding: 20px 24px 0;
-    background: transparent;
-}
-
-.gallery-banner-divider-mark {
     display: block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--gallery-ember);
-    box-shadow: 0 0 0 10px rgba(196, 137, 95, 0.1);
+    width: 100%;
+    height: min(72vw, 720px);
+    object-fit: cover;
+    object-position: center 38%;
+    mask-image: linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 62%, transparent 100%);
+}
+
+.gallery-banner-title {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 1100px);
+    margin: 0 auto;
+    padding: 0 20px;
+    transform: translateY(-50%);
+    text-align: center;
+    white-space: nowrap;
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(18px, 4vw, 48px);
+    line-height: 1.1;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #f7f0e7;
+    text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
 }
 
 .gallery-eyebrow {
@@ -115,7 +124,7 @@
 }
 
 .gallery-intro {
-    padding: clamp(40px, 7vw, 88px) clamp(14px, 3vw, 36px) clamp(28px, 4vw, 48px);
+    padding: clamp(20px, 3vw, 40px) clamp(14px, 3vw, 36px) clamp(28px, 4vw, 48px);
     text-align: center;
     background: transparent;
 }
@@ -148,17 +157,50 @@
 .gallery-intro-copy {
     display: grid;
     gap: 16px;
-    max-width: none;
-    margin: 0 auto 28px;
+    max-width: 860px;
+    margin: 0 auto;
 }
 
 .gallery-intro-copy p {
     margin: 0;
     font-family: var(--font-sans);
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 300;
     line-height: 1.75;
     color: var(--gallery-muted);
+}
+
+.gallery-intro-more-wrap {
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+        max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease;
+}
+
+.gallery-intro-more-wrap.is-open {
+    opacity: 1;
+}
+
+.gallery-intro-toggle {
+    display: block;
+    margin: 18px auto 0;
+    padding: 0;
+    background: none;
+    border: 0;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gallery-ember);
+    cursor: pointer;
+}
+
+.gallery-intro-toggle:hover,
+.gallery-intro-toggle:focus-visible {
+    color: #f7f0e7;
 }
 
 .gallery-intro-aside {
@@ -202,7 +244,7 @@
 
 /* Poster wall — uniform posters */
 .gallery-wall {
-    padding: 0 clamp(14px, 3vw, 36px) clamp(48px, 8vw, 88px);
+    padding: 0 clamp(14px, 3vw, 36px) clamp(24px, 4vw, 48px);
 }
 
 .gallery-wall-surface {
@@ -245,15 +287,6 @@
 
 .gallery-poster-sheet {
     display: block;
-    padding: 6px 6px 16px;
-    background: #f4eee4;
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.35) inset,
-        0 10px 22px rgba(0, 0, 0, 0.32),
-        0 2px 4px rgba(0, 0, 0, 0.22);
-    transition:
-        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
-        box-shadow 0.4s ease;
 }
 
 .gallery-poster-sheet img {
@@ -261,57 +294,10 @@
     width: 100%;
     aspect-ratio: 4 / 5;
     object-fit: cover;
-    filter: saturate(0.92) contrast(1.04);
     background: #1a1410;
 }
 
-.gallery-poster-tape {
-    position: absolute;
-    top: -7px;
-    z-index: 2;
-    width: 34px;
-    height: 14px;
-    background: linear-gradient(
-        180deg,
-        rgba(232, 210, 160, 0.72),
-        rgba(196, 168, 110, 0.55)
-    );
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-    pointer-events: none;
-}
-
-.gallery-poster-tape--tl {
-    left: 10px;
-    transform: rotate(-8deg);
-}
-
-.gallery-poster-tape--tr {
-    right: 10px;
-    transform: rotate(7deg);
-}
-
-.gallery-poster-number {
-    position: absolute;
-    left: 12px;
-    bottom: 22px;
-    z-index: 2;
-    font-family: var(--font-serif);
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: rgba(36, 25, 18, 0.55);
-    pointer-events: none;
-}
-
-.gallery-poster-link:hover .gallery-poster-sheet,
-.gallery-poster-link:focus-visible .gallery-poster-sheet {
-    transform: translateY(-4px) scale(1.02);
-    box-shadow:
-        0 1px 0 rgba(255, 255, 255, 0.4) inset,
-        0 18px 34px rgba(0, 0, 0, 0.4),
-        0 4px 8px rgba(0, 0, 0, 0.25);
-}
-
-.gallery-poster-link:focus-visible .gallery-poster-sheet {
+.gallery-poster-link:focus-visible .gallery-poster-sheet img {
     outline: 2px solid rgba(196, 137, 95, 0.8);
     outline-offset: 3px;
 }
@@ -355,7 +341,7 @@
 }
 
 .gallery-closing {
-    background: transparent;
+    background: radial-gradient(ellipse at 50% 0%, var(--gallery-glow), transparent 60%);
     padding: clamp(72px, 12vw, 140px) clamp(24px, 8vw, 100px);
     text-align: center;
     border-top: 1px solid rgba(241, 232, 220, 0.12);
@@ -372,7 +358,7 @@
     height: 7px;
     border-radius: 50%;
     background: var(--gallery-ember);
-    box-shadow: 0 0 0 10px #120e0b;
+    box-shadow: 0 0 0 10px var(--black);
 }
 
 .gallery-closing-inner {

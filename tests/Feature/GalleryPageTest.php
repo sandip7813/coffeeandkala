@@ -4,13 +4,13 @@ test('the gallery page returns a successful response', function () {
     $response = $this->get(route('gallery'));
 
     $response->assertSuccessful();
-    $response->assertSee('Gallery of Visual Storytelling', false);
-    $response->assertSee('images/gallery/banner.png', false);
-    $response->assertSee('galleryBannerZoom', false);
-    $response->assertSee('gallery-banner-divider-mark', false);
-    $response->assertSee('Frames that refuse', false);
+    $response->assertSee('Gallery of the Visual Storytelling', false);
+    $response->assertSee('images/gallery/hero.png', false);
+    $response->assertSee('gallery-banner-title', false);
+    $response->assertSee('This isn’t merely a gallery', false);
+    $response->assertSee('data-gallery-intro-toggle', false);
+    $response->assertSee('Know More', false);
     $response->assertSee('gallery-intro', false);
-    $response->assertSee('plates on the wall', false);
     $response->assertSee('galleryLightRoot', false);
     $response->assertSee('gallery-wall-surface', false);
     $response->assertSee('gallery-poster', false);
