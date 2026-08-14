@@ -1,0 +1,124 @@
+/* Error pages — matches the .about-page editorial treatment */
+
+.error-shell {
+    background-color: #16110e;
+}
+
+.error-main {
+    display: flex;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height));
+}
+
+.error-page {
+    --about-ink: #241912;
+    --about-paper: #f1e8dc;
+    --about-ember: #9a6240;
+    width: 100%;
+    color: var(--about-paper);
+    background:
+        radial-gradient(ellipse at 50% 15%, rgba(154, 98, 64, 0.28), transparent 50%),
+        linear-gradient(180deg, #1c1511 0%, #120e0b 100%);
+    padding: clamp(88px, 14vw, 160px) clamp(24px, 8vw, 100px);
+    text-align: center;
+}
+
+.error-page-inner {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.error-reveal {
+    animation: error-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes error-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-code {
+    font-family: var(--font-serif);
+    font-size: clamp(96px, 16vw, 168px);
+    font-weight: 500;
+    font-style: italic;
+    line-height: 1;
+    color: #f7f0e7;
+    margin: 0 0 4px;
+    letter-spacing: 0.01em;
+}
+
+.error-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--about-ember);
+    margin-bottom: 18px;
+}
+
+.error-heading {
+    font-family: var(--font-serif);
+    font-size: clamp(28px, 4vw, 40px);
+    font-style: italic;
+    font-weight: 400;
+    line-height: 1.2;
+    color: #f7f0e7;
+    margin: 0 0 20px;
+}
+
+.error-copy {
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.7;
+    color: rgba(241, 232, 220, 0.72);
+    max-width: 46ch;
+    margin: 0 auto 40px;
+}
+
+.error-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px 40px;
+}
+
+.error-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    font-weight: 500;
+    color: #f1e8dc;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(241, 232, 220, 0.35);
+    padding-bottom: 8px;
+    transition: gap 0.35s ease, border-color 0.35s ease, color 0.35s ease;
+}
+
+.error-cta:hover {
+    gap: 18px;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.75);
+}
+
+.error-cta--secondary {
+    color: rgba(241, 232, 220, 0.72);
+    border-color: rgba(241, 232, 220, 0.2);
+}
+
+.error-cta--secondary:hover {
+    color: #f1e8dc;
+    border-color: rgba(241, 232, 220, 0.55);
+}

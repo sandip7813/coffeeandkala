@@ -21,6 +21,7 @@ export default defineConfig({
                 'resources/js/article.js',
                 'resources/css/adminlte.css',
                 'resources/js/adminlte.js',
+                'resources/css/error.css',
             ],
             refresh: true,
         }),
