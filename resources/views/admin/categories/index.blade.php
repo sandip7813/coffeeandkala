@@ -44,7 +44,7 @@
                         <i class="bi bi-search me-1" aria-hidden="true"></i> {{ __('Search') }}
                     </button>
                     <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-secondary w-100">
-                        {{ __('Reset') }}
+                        <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i> {{ __('Reset') }}
                     </a>
                 </div>
             </form>

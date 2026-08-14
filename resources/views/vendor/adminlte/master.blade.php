@@ -97,6 +97,12 @@
         </script>
     @endif
 
+    @if ($errors->any() && filled(old('_reopen_modal')))
+        <script type="application/json" id="admin-reopen-modal">
+            @json(old('_reopen_modal'))
+        </script>
+    @endif
+
     @can('manage-artisan')
         @php
             $artisanRunnerGate = [

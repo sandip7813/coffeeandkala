@@ -9,7 +9,7 @@
 @section('content')
     <div class="row justify-content-center">
         <div class="col-lg-6">
-            <x-adminlte-card icon="bi bi-person-gear" title="{{ __('adminlte.edit_user') }}">
+            <x-adminlte-card icon="bi bi-person-gear" title="{{ __('adminlte.edit_user') }}" class="mb-4">
                 <form method="POST" action="{{ route('admin.users.update', $user) }}" data-page-loading="Saving user…">
                     @csrf
                     @method('PUT')
@@ -86,6 +86,30 @@
                             <i class="bi bi-check-lg me-1" aria-hidden="true"></i> {{ __('adminlte.save') }}
                         </button>
                     </div>
+                </form>
+            </x-adminlte-card>
+
+            <x-adminlte-card icon="bi bi-image" title="Profile picture">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    @if ($user->profile_photo_thumbnail_url)
+                        <img src="{{ $user->profile_photo_thumbnail_url }}" alt="{{ $user->full_name }}"
+                             class="rounded-circle" width="80" height="80" style="object-fit: cover;">
+                    @else
+                        <i class="bi bi-person-circle text-body-secondary" style="font-size: 80px; line-height: 1;" aria-hidden="true"></i>
+                    @endif
+                </div>
+                <form method="POST" action="{{ route('admin.users.photo.update', $user) }}" enctype="multipart/form-data"
+                      data-page-loading="Uploading picture…">
+                    @csrf
+                    @method('PUT')
+                    <x-adminlte-input-file name="profile_photo" label="Upload picture" accept="image/*" />
+                    <p class="form-text">
+                        Accepted formats: {{ strtoupper(implode(', ', config('media.profile_photo.formats'))) }}.
+                        Max size: {{ number_format(config('media.profile_photo.max_size_kb') / 1024, 1) }} MB.
+                    </p>
+                    <button type="submit" class="btn btn-outline-primary">
+                        <i class="bi bi-upload me-1" aria-hidden="true"></i> Upload
+                    </button>
                 </form>
             </x-adminlte-card>
         </div>

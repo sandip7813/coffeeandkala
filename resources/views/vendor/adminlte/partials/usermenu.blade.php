@@ -3,9 +3,15 @@
     $name = $user->full_name ?: ($user->email ?? 'Guest');
 @endphp
 <li class="nav-item dropdown user-menu">
-    <a href="#" class="nav-link dropdown-toggle d-flex align-items-center"
+    <a href="#" class="nav-link dropdown-toggle d-flex align-items-center gap-2"
        data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ __('User menu') }}">
-        <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
+        @if ($user->profile_photo_thumbnail_url)
+            <img src="{{ $user->profile_photo_thumbnail_url }}" alt="{{ $name }}"
+                 class="rounded-circle" width="32" height="32" style="object-fit: cover;">
+        @else
+            <i class="bi bi-person-circle fs-4" aria-hidden="true"></i>
+        @endif
+        <span class="d-none d-md-inline">{{ $name }}</span>
     </a>
     <ul class="dropdown-menu dropdown-menu-end">
         <li class="dropdown-header text-body-secondary small">{{ $name }}</li>

@@ -7,7 +7,7 @@
 
 // Bootstrap (provides dropdowns, modals, tooltips, offcanvas, etc.)
 import 'bootstrap'
-import { Collapse } from 'bootstrap'
+import { Collapse, Modal } from 'bootstrap'
 
 // OverlayScrollbars — AdminLTE uses it for the sidebar scroller (optional)
 import { OverlayScrollbars } from 'overlayscrollbars'
@@ -17,6 +17,61 @@ import { OverlayScrollbars } from 'overlayscrollbars'
 import 'admin-lte'
 
 import Swal from 'sweetalert2'
+
+// jQuery + Select2 — used for AJAX autocomplete dropdowns (e.g. the users search field)
+import jQuery from 'jquery'
+import initSelect2 from 'select2/dist/js/select2.full.js'
+import 'select2/dist/css/select2.min.css'
+import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css'
+
+window.$ = window.jQuery = jQuery
+// Select2's UMD wrapper exports an uninvoked factory under bundlers — call it
+// explicitly so it attaches itself to our jQuery instance.
+initSelect2(window, jQuery)
+
+// Select2 4.0.x's AJAX data adapter re-normalizes each result via an
+// *unbound* `SelectAdapter.prototype._normalizeItem` reference
+// (`results.results.map(AjaxAdapter.prototype._normalizeItem)`). Under a
+// sloppy-mode <script> tag `this` falls back to `window` there, so the
+// `this.container` read is harmless (`window.container` is just
+// undefined). Under an ES module bundler every chunk is strict mode, so
+// `this` is `undefined` instead and the same read throws
+// "Cannot read properties of undefined (reading 'container')" the moment
+// AJAX results come back. Patch the method to tolerate a missing `this`,
+// matching the (already effectively no-op) behaviour it has when unbound.
+jQuery.fn.select2.amd.require(['select2/data/select'], (SelectAdapter) => {
+  const normalizeItem = function (item) {
+    const self = this || {}
+
+    if (item !== Object(item)) {
+      item = { id: item, text: item }
+    }
+
+    item = jQuery.extend({}, { text: '' }, item)
+
+    const defaults = { selected: false, disabled: false }
+
+    if (item.id != null) {
+      item.id = item.id.toString()
+    }
+
+    if (item.text != null) {
+      item.text = item.text.toString()
+    }
+
+    if (item._resultId == null && item.id && self.container != null) {
+      item._resultId = self.generateResultId(self.container, item)
+    }
+
+    if (item.children) {
+      item.children = item.children.map(normalizeItem)
+    }
+
+    return jQuery.extend({}, defaults, item)
+  }
+
+  SelectAdapter.prototype._normalizeItem = normalizeItem
+})
 /**
  * Initialise an optional plugin only when its global is present.
  * Plugin libraries (ApexCharts, jsVectorMap, FullCalendar, Sortable) are
@@ -637,6 +692,77 @@ function initValidationErrorAlert() {
   })
 }
 
+// --- Reopen a modal after a validation redirect -----------------------------
+function initReopenModal() {
+  const el = document.getElementById('admin-reopen-modal')
+
+  if (!el) {
+    return
+  }
+
+  let modalId
+
+  try {
+    modalId = JSON.parse(el.textContent)
+  } catch (e) {
+    console.warn('AdminLTE: invalid reopen-modal JSON', e)
+    return
+  }
+
+  if (typeof modalId !== 'string' || !modalId) {
+    return
+  }
+
+  const modalEl = document.getElementById(modalId)
+
+  if (!modalEl) {
+    return
+  }
+
+  Modal.getOrCreateInstance(modalEl).show()
+}
+
+// --- Select2 AJAX autocomplete ----------------------------------------------
+function initSelect2Search() {
+  document.querySelectorAll('[data-select2-search]').forEach((el) => {
+    const setup = () => {
+      if (jQuery(el).data('select2')) {
+        return
+      }
+
+      // Note: Select2's `tags: true` is not supported alongside a remote
+      // `ajax` source (it corrupts the results/selection state and throws
+      // "Cannot read properties of undefined (reading 'container')"), so
+      // this stays a pick-a-suggestion autocomplete rather than free tagging.
+      jQuery(el).select2({
+        theme: 'bootstrap-5',
+        width: '100%',
+        allowClear: true,
+        placeholder: el.dataset.placeholder || '',
+        minimumInputLength: 3,
+        ajax: {
+          url: el.dataset.select2Url,
+          dataType: 'json',
+          delay: 300,
+          data: (params) => ({ q: params.term }),
+          processResults: (data) => ({ results: data.results || [] }),
+        },
+      })
+    }
+
+    // Select2 measures its container for positioning, which fails when the
+    // field starts out inside a collapsed (display: none) panel. Defer
+    // initialisation until the panel is actually visible.
+    const collapseParent = el.closest('.collapse')
+
+    if (collapseParent && !collapseParent.classList.contains('show')) {
+      collapseParent.addEventListener('shown.bs.collapse', setup, { once: true })
+    } else {
+      setup()
+    }
+  })
+}
+
 whenReady(() => {
   // Wire OverlayScrollbars to the sidebar (matches the AdminLTE demo behaviour)
   const sidebar = document.querySelector('.sidebar-wrapper')
@@ -660,4 +786,6 @@ whenReady(() => {
   initPageLoadingForms()
   initFlashToasts()
   initValidationErrorAlert()
+  initReopenModal()
+  initSelect2Search()
 })

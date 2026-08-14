@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Actions\IssueOneTimePassword;
+use App\Actions\UpdateProfilePhoto;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateProfilePhotoRequest;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,13 +20,77 @@ use Illuminate\Validation\ValidationException;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
         $this->authorizeManage();
 
-        $users = User::with('roles')->latest()->paginate(15);
+        $filters = $request->only(['name', 'role', 'status']);
 
-        return view('admin.users.index', compact('users'));
+        $users = User::query()
+            ->with('roles')
+            ->when(filled($filters['name'] ?? null), function ($query) use ($filters) {
+                $query->where(function ($query) use ($filters) {
+                    $query->where('first_name', 'like', '%'.$filters['name'].'%')
+                        ->orWhere('last_name', 'like', '%'.$filters['name'].'%')
+                        ->orWhere('email', 'like', '%'.$filters['name'].'%');
+                });
+            })
+            ->when(filled($filters['role'] ?? null), fn ($query) => $query->whereHas(
+                'roles', fn ($query) => $query->where('name', $filters['role'])
+            ))
+            ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->latest()
+            ->paginate(config('pagination.admin.users_per_page'))
+            ->withQueryString();
+
+        $roles = $this->assignableRoles();
+
+        $hasActiveFilters = collect($filters)->filter(fn ($value) => filled($value))->isNotEmpty();
+
+        // The name/email filter value is a user's email (selected from the
+        // Select2 autocomplete), but the field should keep showing the
+        // "Full Name (email)" label the user picked rather than just the
+        // raw email once the page reloads.
+        $nameFilterLabel = null;
+
+        if (filled($filters['name'] ?? null)) {
+            $matchedUser = User::query()->where('email', $filters['name'])->first();
+            $nameFilterLabel = $matchedUser
+                ? "{$matchedUser->full_name} ({$matchedUser->email})"
+                : $filters['name'];
+        }
+
+        return view('admin.users.index', compact('users', 'roles', 'filters', 'hasActiveFilters', 'nameFilterLabel'));
+    }
+
+    /**
+     * Select2 AJAX source for the name/email search field on the users index.
+     * Returns matches once at least 3 characters have been typed.
+     */
+    public function search(Request $request): JsonResponse
+    {
+        $this->authorizeManage();
+
+        $term = trim((string) $request->query('q', ''));
+
+        if (mb_strlen($term) < 3) {
+            return response()->json(['results' => []]);
+        }
+
+        $users = User::query()
+            ->where('first_name', 'like', '%'.$term.'%')
+            ->orWhere('last_name', 'like', '%'.$term.'%')
+            ->orWhere('email', 'like', '%'.$term.'%')
+            ->orderBy('first_name')
+            ->limit(20)
+            ->get(['first_name', 'last_name', 'email']);
+
+        return response()->json([
+            'results' => $users->map(fn (User $user): array => [
+                'id' => $user->email,
+                'text' => "{$user->full_name} ({$user->email})",
+            ])->values(),
+        ]);
     }
 
     public function create(): View
@@ -142,6 +209,16 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('status', $status);
+    }
+
+    public function updatePhoto(UpdateProfilePhotoRequest $request, User $user, UpdateProfilePhoto $updateProfilePhoto): RedirectResponse
+    {
+        $this->authorizeManage();
+
+        $updateProfilePhoto->handle($user, $request->file('profile_photo'));
+
+        return redirect()->back()
+            ->with('status', 'Profile picture updated.');
     }
 
     public function destroy(User $user): RedirectResponse

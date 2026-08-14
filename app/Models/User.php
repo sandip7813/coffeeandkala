@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -25,6 +26,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_name',
         'email',
         'phone',
+        'profile_photo_path',
+        'profile_photo_thumbnail_path',
         'password',
         'is_active',
         'must_change_password',
@@ -43,6 +46,8 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     protected $appends = [
         'full_name',
+        'profile_photo_url',
+        'profile_photo_thumbnail_url',
     ];
 
     /**
@@ -74,5 +79,29 @@ class User extends Authenticatable implements MustVerifyEmail
     protected function name(): Attribute
     {
         return Attribute::get(fn (): string => $this->full_name);
+    }
+
+    /**
+     * @return Attribute<?string, never>
+     */
+    protected function profilePhotoUrl(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?string => $this->profile_photo_path
+                ? Storage::disk(config('media.profile_photo.disk'))->url($this->profile_photo_path)
+                : null,
+        );
+    }
+
+    /**
+     * @return Attribute<?string, never>
+     */
+    protected function profilePhotoThumbnailUrl(): Attribute
+    {
+        return Attribute::get(
+            fn (): ?string => $this->profile_photo_thumbnail_path
+                ? Storage::disk(config('media.profile_photo.disk'))->url($this->profile_photo_thumbnail_path)
+                : null,
+        );
     }
 }

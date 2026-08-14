@@ -98,6 +98,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
     Route::get('profile/password', [ProfileController::class, 'editPassword'])->name('profile.password.edit');
     Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password.update');
 
@@ -112,10 +113,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
 
     Route::middleware('permission:manage-users')->group(function () {
         Route::get('users', [UserController::class, 'index'])->name('users.index');
+        Route::get('users/search', [UserController::class, 'search'])->name('users.search');
         Route::get('users/create', [UserController::class, 'create'])->name('users.create');
         Route::post('users', [UserController::class, 'store'])->name('users.store');
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('users/{user}/photo', [UserController::class, 'updatePhoto'])->name('users.photo.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });
 

@@ -38,6 +38,12 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#profilePhotoModal">
+                    <i class="nav-icon bi bi-image" aria-hidden="true"></i>
+                    <p>Profile Picture</p>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a href="{{ route('admin.profile.password.edit') }}" class="nav-link">
                     <i class="nav-icon bi bi-key" aria-hidden="true"></i>
                     <p>Change Password</p>
@@ -54,6 +60,8 @@
         </ul>
     </div>
 </aside>
+
+@include('admin.profile.partials.photo-modal')
 
 @once
     <style>
