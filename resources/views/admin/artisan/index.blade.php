@@ -3,33 +3,13 @@
 @section('title', 'Artisan Runner')
 
 @section('content_header')
-    <div class="row">
-        <div class="col-sm-8">
-            <h1 class="m-0">Artisan Runner</h1>
-            <p class="text-body-secondary mb-0">
-                Run allowlisted <code>php artisan</code> commands from the browser when SSH is unavailable.
-            </p>
-        </div>
-        <div class="col-sm-4">
-            <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Artisan</li>
-            </ol>
-        </div>
-    </div>
+    <h1 class="m-0">Artisan Runner</h1>
+    <p class="text-body-secondary mb-0">
+        Run allowlisted <code>php artisan</code> commands from the browser when SSH is unavailable.
+    </p>
 @stop
 
 @section('content')
-    @if ($errors->any())
-        <div class="alert alert-danger" role="alert">
-            <ul class="mb-0">
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     @if (session('error'))
         <div class="alert alert-warning" role="alert">
             {{ session('error') }}

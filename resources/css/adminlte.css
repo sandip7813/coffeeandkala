@@ -194,6 +194,15 @@
 }
 
 /*
+ * Validation errors surface in a SweetAlert (see initValidationErrorAlert in
+ * adminlte.js) instead of inline, so the per-field message text is hidden
+ * here. The `is-invalid` red border stays, to still flag which field failed.
+ */
+.invalid-feedback {
+    display: none !important;
+}
+
+/*
  * Option B: compile from source to customise SCSS variables. Comment out
  * the admin-lte CSS import above and use this instead (requires `sass`):
  *

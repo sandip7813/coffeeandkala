@@ -7,6 +7,7 @@
 
 // Bootstrap (provides dropdowns, modals, tooltips, offcanvas, etc.)
 import 'bootstrap'
+import { Collapse } from 'bootstrap'
 
 // OverlayScrollbars — AdminLTE uses it for the sidebar scroller (optional)
 import { OverlayScrollbars } from 'overlayscrollbars'
@@ -165,6 +166,23 @@ function showPageLoader(message = 'Deleting…') {
   document.body.style.overflow = 'hidden'
 }
 
+function initCollapsibleSearchPanels() {
+  document.querySelectorAll('[data-search-toggle]').forEach((toggle) => {
+    const targetSelector = toggle.dataset.searchToggle || toggle.getAttribute('data-bs-target')
+    const target = targetSelector ? document.querySelector(targetSelector) : null
+
+    if (!target) {
+      return
+    }
+
+    const collapse = Collapse.getOrCreateInstance(target, { toggle: false })
+
+    toggle.addEventListener('click', () => collapse.toggle())
+    target.addEventListener('show.bs.collapse', () => toggle.setAttribute('aria-expanded', 'true'))
+    target.addEventListener('hide.bs.collapse', () => toggle.setAttribute('aria-expanded', 'false'))
+  })
+}
+
 function initPageLoadingForms() {
   document.addEventListener('submit', (event) => {
     const form = event.target
@@ -173,7 +191,7 @@ function initPageLoadingForms() {
       return
     }
 
-    if (form.hasAttribute('data-confirm-delete') || form.hasAttribute('data-confirm-artisan')) {
+    if (form.hasAttribute('data-confirm-delete') || form.hasAttribute('data-confirm-artisan') || form.hasAttribute('data-confirm-toggle')) {
       return
     }
 
@@ -226,6 +244,55 @@ function initConfirmDeletes() {
 
     showPageLoader(loadingText)
     form.dataset.confirmDeleteReady = '1'
+    form.requestSubmit()
+  })
+}
+
+function initConfirmToggles() {
+  document.addEventListener('submit', async (event) => {
+    const form = event.target
+
+    if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-confirm-toggle')) {
+      return
+    }
+
+    if (form.dataset.confirmToggleReady === '1') {
+      return
+    }
+
+    event.preventDefault()
+    event.stopPropagation()
+
+    const title = form.dataset.confirmTitle || 'Change status?'
+    const text = form.dataset.confirmText || 'This will update the status.'
+    const confirmButtonText = form.dataset.confirmButton || 'Yes, change it'
+    const cancelButtonText = form.dataset.cancelButton || 'Cancel'
+    const loadingText = form.dataset.loadingText || 'Updating…'
+
+    const result = await Swal.fire({
+      title,
+      text,
+      icon: 'question',
+      showCancelButton: true,
+      focusCancel: true,
+      reverseButtons: true,
+      confirmButtonText,
+      cancelButtonText,
+      buttonsStyling: false,
+      customClass: {
+        popup: 'swal2-adminlte',
+        actions: 'gap-2',
+        confirmButton: 'btn btn-primary px-3',
+        cancelButton: 'btn btn-outline-secondary px-3',
+      },
+    })
+
+    if (!result.isConfirmed) {
+      return
+    }
+
+    showPageLoader(loadingText)
+    form.dataset.confirmToggleReady = '1'
     form.requestSubmit()
   })
 }
@@ -527,6 +594,49 @@ function initFlashToasts() {
   })
 }
 
+function initValidationErrorAlert() {
+  const el = document.getElementById('admin-validation-errors')
+
+  if (!el) {
+    return
+  }
+
+  let messages
+
+  try {
+    messages = JSON.parse(el.textContent)
+  } catch (e) {
+    console.warn('AdminLTE: invalid validation errors JSON', e)
+    return
+  }
+
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return
+  }
+
+  const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  })[char])
+
+  const list = messages.map((message) => `<li>${escapeHtml(String(message))}</li>`).join('')
+
+  Swal.fire({
+    icon: 'error',
+    title: messages.length === 1 ? 'Please fix the following' : `Please fix the following ${messages.length} issues`,
+    html: `<ul class="text-start mb-0 ps-3">${list}</ul>`,
+    confirmButtonText: 'OK',
+    buttonsStyling: false,
+    customClass: {
+      popup: 'swal2-adminlte',
+      confirmButton: 'btn btn-primary px-3',
+    },
+  })
+}
+
 whenReady(() => {
   // Wire OverlayScrollbars to the sidebar (matches the AdminLTE demo behaviour)
   const sidebar = document.querySelector('.sidebar-wrapper')
@@ -541,10 +651,13 @@ whenReady(() => {
   initCalendars()
   initSortables()
   initTreeviewA11y()
+  initCollapsibleSearchPanels()
   initConfirmDeletes()
+  initConfirmToggles()
   initConfirmArtisanRuns()
   initArtisanSidebarUnlock()
   initArtisanGate()
   initPageLoadingForms()
   initFlashToasts()
+  initValidationErrorAlert()
 })

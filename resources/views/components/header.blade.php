@@ -2,6 +2,11 @@
     'showSidebarToggle' => true,
 ])
 
+@php
+    $featureNavCategories = \App\Models\Category::query()->ofType(\App\Models\Category::TYPE_FEATURE)->active()->ordered()->get();
+    $journalNavCategories = \App\Models\Category::query()->ofType(\App\Models\Category::TYPE_JOURNAL)->active()->ordered()->get();
+@endphp
+
 <header {{ $attributes->class(['site-header']) }}>
     <div class="header-brand">
         @if ($showSidebarToggle)
@@ -50,14 +55,9 @@
                 <span class="nav-link-muted">Articles</span>
             </a>
             <ul class="nav-dropdown" aria-label="Features">
-                <li><a href="{{ route('features.show', 'art-culture') }}">Art &amp; Culture</a></li>
-                <li><a href="{{ route('features.show', 'experiences') }}">Experiences</a></li>
-                <li><a href="{{ route('features.show', 'on-a-budget') }}">On A Budget</a></li>
-                <li><a href="{{ route('features.show', 'luxury-escapes') }}">Luxury Escapes</a></li>
-                <li><a href="{{ route('features.show', 'global-chapters') }}">Global Chapters</a></li>
-                <li><a href="{{ route('features.show', 'not-on-the-atlas') }}">Not On The Atlas</a></li>
-                <li><a href="{{ route('features.show', 'vineyard-tales') }}">Vineyard Tales</a></li>
-                <li><a href="{{ route('features.show', 'coffee-classics') }}">Coffee &amp; Classics</a></li>
+                @foreach ($featureNavCategories as $category)
+                    <li><a href="{{ route('features.show', $category->slug) }}">{{ $category->title }}</a></li>
+                @endforeach
             </ul>
         </li>
         <li class="nav-item-has-dropdown">
@@ -76,9 +76,9 @@
                 <span class="nav-link-muted">Blogs</span>
             </a>
             <ul class="nav-dropdown" aria-label="Journal">
-                <li><a href="{{ route('journal.category', 'the-bigger-picture') }}">The Bigger Picture</a></li>
-                <li><a href="{{ route('journal.category', 'worth-knowing') }}">Worth Knowing</a></li>
-                <li><a href="{{ route('journal.category', 'chapters-over-coffee') }}">Chapters Over Coffee</a></li>
+                @foreach ($journalNavCategories as $category)
+                    <li><a href="{{ route('journal.category', $category->slug) }}">{{ $category->title }}</a></li>
+                @endforeach
             </ul>
         </li>
         <li>

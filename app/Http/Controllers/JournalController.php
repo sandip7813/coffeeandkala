@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Support\ArticleContentFactory;
 use App\Support\ArticleIndex;
 use App\Support\JournalCatalog;
@@ -20,6 +21,8 @@ class JournalController extends Controller
 
     public function show(Request $request, string $category): View
     {
+        $this->abortIfCategoryInactive($category);
+
         $current = JournalCatalog::findCategory($category);
 
         abort_if($current === null, 404);
@@ -45,6 +48,8 @@ class JournalController extends Controller
 
     public function showArticle(string $category, string $article): View
     {
+        $this->abortIfCategoryInactive($category);
+
         $found = JournalCatalog::findEntry($category, $article);
 
         abort_if($found === null, 404);
@@ -64,5 +69,16 @@ class JournalController extends Controller
             'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
             'neighbors' => ArticleIndex::neighbors(JournalCatalog::forCategory($current['id']), $currentArticle['slug']),
         ]);
+    }
+
+    private function abortIfCategoryInactive(string $category): void
+    {
+        $exists = Category::query()
+            ->ofType(Category::TYPE_JOURNAL)
+            ->where('slug', $category)
+            ->active()
+            ->exists();
+
+        abort_unless($exists, 404);
     }
 }

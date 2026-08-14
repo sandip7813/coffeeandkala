@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Support\ArticleContentFactory;
 use App\Support\ArticleIndex;
 use App\Support\FeatureCatalog;
@@ -25,6 +26,8 @@ class FeatureController extends Controller
 
     public function show(string $category): View
     {
+        $this->abortIfCategoryInactive($category);
+
         $current = FeatureCatalog::find($category);
 
         abort_if($current === null, 404);
@@ -37,6 +40,8 @@ class FeatureController extends Controller
 
     public function showArticle(string $category, string $article): View
     {
+        $this->abortIfCategoryInactive($category);
+
         $found = FeatureCatalog::findArticle($category, $article);
 
         abort_if($found === null, 404);
@@ -56,5 +61,16 @@ class FeatureController extends Controller
             'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
             'neighbors' => ArticleIndex::neighbors($current['articles'], $currentArticle['slug']),
         ]);
+    }
+
+    private function abortIfCategoryInactive(string $category): void
+    {
+        $exists = Category::query()
+            ->ofType(Category::TYPE_FEATURE)
+            ->where('slug', $category)
+            ->active()
+            ->exists();
+
+        abort_unless($exists, 404);
     }
 }

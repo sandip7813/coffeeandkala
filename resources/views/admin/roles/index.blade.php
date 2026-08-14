@@ -3,18 +3,7 @@
 @section('title', __('adminlte.roles'))
 
 @section('content_header')
-    <div class="row">
-        <div class="col-sm-6">
-            <h1 class="m-0">{{ __('adminlte.roles') }}</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('adminlte.home') }}</a></li>
-                <li class="breadcrumb-item">{{ __('adminlte.administration') }}</li>
-                <li class="breadcrumb-item active" aria-current="page">{{ __('adminlte.roles') }}</li>
-            </ol>
-        </div>
-    </div>
+    <h1 class="m-0">{{ __('adminlte.roles') }}</h1>
 @stop
 
 @section('content')

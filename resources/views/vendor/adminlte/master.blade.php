@@ -91,6 +91,12 @@
         </script>
     @endif
 
+    @if ($errors->any())
+        <script type="application/json" id="admin-validation-errors">
+            @json($errors->all())
+        </script>
+    @endif
+
     @can('manage-artisan')
         @php
             $artisanRunnerGate = [

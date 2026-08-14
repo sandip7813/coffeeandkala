@@ -3,27 +3,17 @@
 @section('title', __('adminlte.permissions'))
 
 @section('content_header')
-    <div class="row">
-        <div class="col-sm-6">
-            <h1 class="m-0">{{ __('adminlte.permissions') }}</h1>
-        </div>
-        <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">{{ __('adminlte.home') }}</a></li>
-                <li class="breadcrumb-item">{{ __('adminlte.administration') }}</li>
-                <li class="breadcrumb-item active" aria-current="page">{{ __('adminlte.permissions') }}</li>
-            </ol>
-        </div>
-    </div>
+    <h1 class="m-0">{{ __('adminlte.permissions') }}</h1>
 @stop
 
 @section('content')
     <x-adminlte-card icon="bi bi-key" title="{{ __('adminlte.permissions') }}" bodyClass="p-0">
-        <div class="p-3 border-bottom">
+        <x-slot name="tools">
             <a href="{{ route('admin.permissions.create') }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ __('New Permission') }}
             </a>
-        </div>
+        </x-slot>
+
         <div class="table-responsive">
             <table class="table table-hover mb-0 align-middle">
                 <thead>

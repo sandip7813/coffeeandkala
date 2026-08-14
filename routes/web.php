@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\ArtisanController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -135,6 +136,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::post('artisan', [ArtisanController::class, 'store'])
             ->middleware('throttle:10,1')
             ->name('artisan.run');
+    });
+
+    Route::middleware('can:manage-categories')->group(function () {
+        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+        Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+        Route::put('categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
+        Route::put('categories/{category}/status', [CategoryController::class, 'updateStatus'])->name('categories.status.update');
     });
 
     Route::middleware('can:manage-brand')->group(function () {

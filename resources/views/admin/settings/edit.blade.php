@@ -3,20 +3,10 @@
 @section('title', 'Settings')
 
 @section('content_header')
-    <div class="row">
-        <div class="col-sm-8">
-            <h1 class="m-0">Settings</h1>
-            <p class="text-body-secondary mb-0">
-                Manage the brand logo, social links, and contact details shown across the public site.
-            </p>
-        </div>
-        <div class="col-sm-4">
-            <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Settings</li>
-            </ol>
-        </div>
-    </div>
+    <h1 class="m-0">Settings</h1>
+    <p class="text-body-secondary mb-0">
+        Manage the brand logo, social links, and contact details shown across the public site.
+    </p>
 @stop
 
 @php
