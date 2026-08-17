@@ -2613,6 +2613,11 @@ body.layout-no-sidebar .site-header {
     margin-bottom: -0.08em;
 }
 
+.thought-reveal-word-group {
+    display: inline-block;
+    white-space: nowrap;
+}
+
 .thought-reveal-word-inner {
     display: inline-block;
     opacity: 0;
