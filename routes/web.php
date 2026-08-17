@@ -137,6 +137,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::post('users', [UserController::class, 'store'])->name('users.store');
         Route::get('users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::put('users/{user}/status', [UserController::class, 'toggleStatus'])->name('users.status.update');
+        Route::post('users/{user}/resend-one-time-password', [UserController::class, 'resendOneTimePassword'])->name('users.otp.resend');
         Route::put('users/{user}/photo', [UserController::class, 'updatePhoto'])->name('users.photo.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
     });

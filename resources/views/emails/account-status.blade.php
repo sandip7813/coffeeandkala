@@ -67,12 +67,10 @@
                                                     <tr>
                                                         <td align="center" style="padding:16px 40px 8px;background:#5B3A29;">
                                                             <h1 style="margin:0;font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:36px;font-weight:400;line-height:1.2;color:#FFFEFA;">
-                                                                @if ($reason === 'email_changed')
-                                                                    Your email was updated
-                                                                @elseif ($reason === 'resend')
-                                                                    Your new one-time password
+                                                                @if ($activated)
+                                                                    Account reactivated
                                                                 @else
-                                                                    Welcome aboard
+                                                                    Account deactivated
                                                                 @endif
                                                             </h1>
                                                         </td>
@@ -84,79 +82,46 @@
                                                             <p style="margin:0 0 16px;color:#FFFEFA;font-size:16px;">
                                                                 Dear {{ $user->full_name }},
                                                             </p>
-                                                            @if ($reason === 'email_changed')
+                                                            @if ($activated)
                                                                 <p style="margin:0;">
-                                                                    Your Coffee &amp; Kala admin email has changed. Use the one-time password below to sign in, then set a new password for your account.
-                                                                </p>
-                                                            @elseif ($reason === 'resend')
-                                                                <p style="margin:0;">
-                                                                    A new one-time password has been issued for your Coffee &amp; Kala admin account. Sign in with the credentials below, then set a new password for your account.
+                                                                    Your Coffee &amp; Kala admin account has been reactivated. You can sign in again using your existing credentials.
                                                                 </p>
                                                             @else
                                                                 <p style="margin:0;">
-                                                                    An admin account has been created for you on Coffee &amp; Kala. Sign in once with the credentials below — you’ll choose your own password right after.
+                                                                    Your Coffee &amp; Kala admin account has been deactivated. You will not be able to sign in until an administrator reactivates your account.
                                                                 </p>
                                                             @endif
                                                         </td>
                                                     </tr>
 
-                                                    {{-- Credential panel --}}
-                                                    <tr>
-                                                        <td style="padding:0 44px 30px;background:#5B3A29;">
-                                                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#C4A574;">
-                                                                <tr>
-                                                                    <td style="padding:1px;">
-                                                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#4A2F21;">
-                                                                            <tr>
-                                                                                <td style="padding:28px 24px;text-align:center;">
-                                                                                    <p style="margin:0 0 10px;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:#C4A574;">
-                                                                                        One-time password
-                                                                                    </p>
-                                                                                    <p style="margin:0 0 22px;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:600;letter-spacing:0.14em;color:#FFFEFA;line-height:1.2;">
-                                                                                        {{ $oneTimePassword }}
-                                                                                    </p>
-                                                                                    <div style="width:36px;height:1px;background:#C4A574;margin:0 auto 18px;"></div>
-                                                                                    <p style="margin:0 0 6px;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:10px;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:#C4A574;">
-                                                                                        Sign-in email
-                                                                                    </p>
-                                                                                    <p style="margin:0;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:14px;font-weight:500;color:#E7DDD2;word-break:break-all;">
-                                                                                        {{ $user->email }}
-                                                                                    </p>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
-
-                                                    {{-- CTA --}}
-                                                    <tr>
-                                                        <td align="center" style="padding:0 44px 28px;background:#5B3A29;">
-                                                            <table role="presentation" cellpadding="0" cellspacing="0" style="background:#C4A574;">
-                                                                <tr>
-                                                                    <td style="padding:1px;">
-                                                                        <table role="presentation" cellpadding="0" cellspacing="0" style="background:#5B3A29;">
-                                                                            <tr>
-                                                                                <td align="center">
-                                                                                    <a href="{{ route('login') }}"
-                                                                                       style="display:inline-block;padding:15px 38px;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;color:#E7DDD2;">
-                                                                                        Sign in to admin
-                                                                                    </a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </td>
-                                                                </tr>
-                                                            </table>
-                                                        </td>
-                                                    </tr>
+                                                    @if ($activated)
+                                                        {{-- CTA --}}
+                                                        <tr>
+                                                            <td align="center" style="padding:0 44px 28px;background:#5B3A29;">
+                                                                <table role="presentation" cellpadding="0" cellspacing="0" style="background:#C4A574;">
+                                                                    <tr>
+                                                                        <td style="padding:1px;">
+                                                                            <table role="presentation" cellpadding="0" cellspacing="0" style="background:#5B3A29;">
+                                                                                <tr>
+                                                                                    <td align="center">
+                                                                                        <a href="{{ route('login') }}"
+                                                                                           style="display:inline-block;padding:15px 38px;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:12px;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;color:#E7DDD2;">
+                                                                                            Sign in to admin
+                                                                                        </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+                                                                        </td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
 
                                                     {{-- Note --}}
                                                     <tr>
                                                         <td style="padding:0 44px 40px;background:#5B3A29;font-family:'Plus Jakarta Sans',Helvetica,Arial,sans-serif;font-size:13px;line-height:1.65;color:#C9B8A6;text-align:center;">
-                                                            This password is temporary and meant for a single first sign-in. You’ll create a lasting password before entering the dashboard.
+                                                            If you believe this is a mistake, please contact an administrator.
                                                         </td>
                                                     </tr>
 

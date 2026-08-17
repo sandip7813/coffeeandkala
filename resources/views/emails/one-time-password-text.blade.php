@@ -2,6 +2,8 @@ Hello {{ $user->full_name }},
 
 @if ($reason === 'email_changed')
 Your Coffee & Kala admin email was updated. Sign in with the one-time password below, then choose a new password.
+@elseif ($reason === 'resend')
+A new one-time password has been issued for your Coffee & Kala admin account. Sign in with the one-time password below, then choose a new password.
 @else
 An admin account has been created for you on Coffee & Kala. Sign in with the one-time password below, then choose a new password.
 @endif

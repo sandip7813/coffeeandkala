@@ -43,6 +43,7 @@
                     <label for="filter-status" class="form-label">{{ __('adminlte.status') }}</label>
                     <select id="filter-status" name="status" class="form-select">
                         <option value="">{{ __('All') }}</option>
+                        <option value="pending" @selected(($filters['status'] ?? '') === 'pending')>{{ __('Pending') }}</option>
                         <option value="active" @selected(($filters['status'] ?? '') === 'active')>{{ __('Active') }}</option>
                         <option value="inactive" @selected(($filters['status'] ?? '') === 'inactive')>{{ __('Inactive') }}</option>
                     </select>
@@ -101,11 +102,16 @@
                                 @endforelse
                             </td>
                             <td>
-                                @if ($user->is_active)
-                                    <span class="badge text-bg-success">Active</span>
-                                @else
-                                    <span class="badge text-bg-secondary">Inactive</span>
-                                @endif
+                                @switch($user->status)
+                                    @case('pending')
+                                        <span class="badge text-bg-warning">Pending</span>
+                                        @break
+                                    @case('inactive')
+                                        <span class="badge text-bg-secondary">Inactive</span>
+                                        @break
+                                    @default
+                                        <span class="badge text-bg-success">Active</span>
+                                @endswitch
                             </td>
                             <td class="text-end">
                                 <x-admin.row-actions>
@@ -132,7 +138,42 @@
                                             <span>Profile Picture</span>
                                         </a>
                                     </li>
+                                    @if ($user->status === 'pending')
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.users.otp.resend', $user) }}"
+                                                  data-confirm-toggle
+                                                  data-confirm-title="Resend the one-time password?"
+                                                  data-confirm-text="{{ $user->full_name }} will be emailed a new one-time password. Their current one will stop working."
+                                                  data-confirm-button="Yes, resend"
+                                                  data-cancel-button="{{ __('adminlte.cancel') }}">
+                                                @csrf
+                                                <button type="submit"
+                                                        class="dropdown-item d-flex align-items-center gap-2">
+                                                    <i class="bi bi-envelope-arrow-up" aria-hidden="true"></i>
+                                                    <span>Resend one-time password</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
                                     @if (auth()->user()?->isSuperAdmin() && ! $user->is(auth()->user()))
+                                        @if ($user->status === 'active' || $user->status === 'inactive')
+                                            <li>
+                                                <form method="POST" action="{{ route('admin.users.status.update', $user) }}"
+                                                      data-confirm-toggle
+                                                      data-confirm-title="{{ $user->is_active ? 'Deactivate this user?' : 'Activate this user?' }}"
+                                                      data-confirm-text="{{ $user->full_name }} will be marked as {{ $user->is_active ? 'inactive and will not be able to log in to the portal' : 'active and will be able to log in again' }}."
+                                                      data-confirm-button="{{ $user->is_active ? 'Yes, deactivate' : 'Yes, activate' }}"
+                                                      data-cancel-button="{{ __('adminlte.cancel') }}">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                            class="dropdown-item d-flex align-items-center gap-2 {{ $user->is_active ? 'text-danger' : '' }}">
+                                                        <i class="bi {{ $user->is_active ? 'bi-slash-circle' : 'bi-check-circle' }}" aria-hidden="true"></i>
+                                                        <span>{{ $user->is_active ? 'Deactivate' : 'Activate' }}</span>
+                                                    </button>
+                                                </form>
+                                            </li>
+                                        @endif
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form method="POST" action="{{ route('admin.users.destroy', $user) }}"

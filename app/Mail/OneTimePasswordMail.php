@@ -22,9 +22,11 @@ class OneTimePasswordMail extends Mailable
 
     public function envelope(): Envelope
     {
-        $subject = $this->reason === 'email_changed'
-            ? 'Your Coffee & Kala account email was updated'
-            : 'Your Coffee & Kala account credentials';
+        $subject = match ($this->reason) {
+            'email_changed' => 'Your Coffee & Kala account email was updated',
+            'resend' => 'Your new Coffee & Kala account credentials',
+            default => 'Your Coffee & Kala account credentials',
+        };
 
         return new Envelope(subject: $subject);
     }

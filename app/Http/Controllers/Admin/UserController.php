@@ -6,6 +6,7 @@ use App\Actions\IssueOneTimePassword;
 use App\Actions\UpdateProfilePhoto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateProfilePhotoRequest;
+use App\Mail\AccountStatusMail;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
@@ -38,7 +40,14 @@ class UserController extends Controller
             ->when(filled($filters['role'] ?? null), fn ($query) => $query->whereHas(
                 'roles', fn ($query) => $query->where('name', $filters['role'])
             ))
-            ->when(filled($filters['status'] ?? null), fn ($query) => $query->where('is_active', $filters['status'] === 'active'))
+            ->when(filled($filters['status'] ?? null), function ($query) use ($filters) {
+                match ($filters['status']) {
+                    'pending' => $query->where('is_active', true)->where('must_change_password', true),
+                    'active' => $query->where('is_active', true)->where('must_change_password', false),
+                    'inactive' => $query->where('is_active', false),
+                    default => null,
+                };
+            })
             ->latest()
             ->paginate(config('pagination.admin.users_per_page'))
             ->withQueryString();
@@ -167,6 +176,12 @@ class UserController extends Controller
 
         $emailChanged = $user->email !== $data['email'];
 
+        if ($emailChanged && ! $user->is_active) {
+            throw ValidationException::withMessages([
+                'email' => 'Reactivate this account before changing its email address.',
+            ]);
+        }
+
         $attributes = [
             'first_name' => $data['first_name'],
             'last_name' => $data['last_name'],
@@ -219,6 +234,53 @@ class UserController extends Controller
 
         return redirect()->back()
             ->with('status', 'Profile picture updated.');
+    }
+
+    public function toggleStatus(User $user): RedirectResponse
+    {
+        $this->authorizeManage();
+        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+
+        if ($user->is(auth()->user())) {
+            throw ValidationException::withMessages([
+                'user' => 'You cannot deactivate your own account.',
+            ]);
+        }
+
+        if ($user->is_active) {
+            $this->guardLastSuperAdminDeletion($user);
+
+            if ($user->must_change_password) {
+                throw ValidationException::withMessages([
+                    'user' => 'Pending users cannot be deactivated until they complete their first sign-in.',
+                ]);
+            }
+        }
+
+        $user->update(['is_active' => ! $user->is_active]);
+
+        $status = $user->is_active ? 'activated' : 'deactivated';
+
+        Mail::to($user->email)->send(new AccountStatusMail($user, $user->is_active));
+
+        return redirect()->route('admin.users.index')
+            ->with('status', "{$user->full_name} has been {$status}.");
+    }
+
+    public function resendOneTimePassword(User $user, IssueOneTimePassword $issueOneTimePassword): RedirectResponse
+    {
+        $this->authorizeManage();
+
+        if ($user->status !== 'pending') {
+            throw ValidationException::withMessages([
+                'user' => 'A one-time password can only be resent to users who have not yet signed in.',
+            ]);
+        }
+
+        $issueOneTimePassword->handle($user, 'resend');
+
+        return redirect()->route('admin.users.index')
+            ->with('status', "A new one-time password has been emailed to {$user->full_name}.");
     }
 
     public function destroy(User $user): RedirectResponse
@@ -289,7 +351,7 @@ class UserController extends Controller
 
         if ($this->superAdminCount() <= 1) {
             throw ValidationException::withMessages([
-                'user' => 'Cannot delete the last super admin.',
+                'user' => 'Cannot remove access from the last super admin.',
             ]);
         }
     }

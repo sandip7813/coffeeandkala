@@ -65,18 +65,24 @@
                         @endif
                     </div>
 
-                    @if (auth()->user()?->isSuperAdmin() && ! $user->is(auth()->user()))
+                    @if (auth()->user()?->isSuperAdmin())
                         <div class="mb-3">
-                            <div class="form-check form-switch">
-                                <input type="hidden" name="is_active" value="0">
-                                <input class="form-check-input" type="checkbox" role="switch"
-                                       name="is_active" value="1" id="is_active"
-                                       @checked(old('is_active', $user->is_active))>
-                                <label class="form-check-label" for="is_active">Active</label>
-                            </div>
-                            @error('is_active')
-                                <div class="text-danger small mt-1">{{ $message }}</div>
-                            @enderror
+                            <label class="form-label d-block">{{ __('adminlte.status') }}</label>
+                            @switch($user->status)
+                                @case('pending')
+                                    <span class="badge text-bg-warning">Pending</span>
+                                    @break
+                                @case('inactive')
+                                    <span class="badge text-bg-secondary">Inactive</span>
+                                    @break
+                                @default
+                                    <span class="badge text-bg-success">Active</span>
+                            @endswitch
+                            @unless ($user->is(auth()->user()))
+                                <p class="form-text mb-0">
+                                    Use the {{ $user->is_active ? 'Deactivate' : 'Activate' }} action from the users list to change this.
+                                </p>
+                            @endunless
                         </div>
                     @endif
 

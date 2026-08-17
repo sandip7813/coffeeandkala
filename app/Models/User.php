@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Concerns\HasRoles;
+use App\Notifications\ResetPasswordNotification;
 use Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -48,6 +49,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'full_name',
         'profile_photo_url',
         'profile_photo_thumbnail_url',
+        'status',
     ];
 
     /**
@@ -61,6 +63,38 @@ class User extends Authenticatable implements MustVerifyEmail
             'is_active' => 'boolean',
             'must_change_password' => 'boolean',
         ];
+    }
+
+    /**
+     * The user's lifecycle status, derived from `is_active` and
+     * `must_change_password`: an invited user stays "pending" until they
+     * log in with their one-time password and set their own, an admin can
+     * deactivate an account at any time to force "inactive", and otherwise
+     * the account is "active".
+     *
+     * @return Attribute<string, never>
+     */
+    protected function status(): Attribute
+    {
+        return Attribute::get(function (): string {
+            if (! $this->is_active) {
+                return 'inactive';
+            }
+
+            if ($this->must_change_password) {
+                return 'pending';
+            }
+
+            return 'active';
+        });
+    }
+
+    /**
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     /**

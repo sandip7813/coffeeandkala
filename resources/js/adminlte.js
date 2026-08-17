@@ -335,7 +335,7 @@ function initConfirmToggles() {
     const text = form.dataset.confirmText || 'This will update the status.'
     const confirmButtonText = form.dataset.confirmButton || 'Yes, change it'
     const cancelButtonText = form.dataset.cancelButton || 'Cancel'
-    const loadingText = form.dataset.loadingText || 'Updating…'
+    const loadingText = form.dataset.loadingText || 'Processing…'
 
     const result = await Swal.fire({
       title,
