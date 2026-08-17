@@ -26,6 +26,7 @@ use App\Support\JournalCatalog;
 use App\Support\PoetryCatalog;
 use App\Support\StudioCatalog;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function (EnsureQuoteScheduledForDate $ensureQuoteScheduledForDate) {
@@ -101,6 +102,18 @@ Route::middleware('auth')->group(function () {
 
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 'permission:view-dashboard'])->group(function () {
     Route::get('/', DashboardController::class)->name('dashboard');
+
+    // Temporary diagnostic: confirms the scheduler is actually running on prod.
+    // Remove once verified.
+    Route::get('scheduler-check', function () {
+        $lastRun = Cache::get('scheduler-heartbeat-last-run');
+
+        return response()->json([
+            'last_run' => $lastRun,
+            'seconds_ago' => $lastRun ? now()->diffInSeconds($lastRun) : null,
+            'looks_healthy' => $lastRun && now()->diffInSeconds($lastRun) < 120,
+        ]);
+    })->name('scheduler.check');
 
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
