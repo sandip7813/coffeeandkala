@@ -16,6 +16,7 @@ class AdminLteRbacSeeder extends Seeder
             'manage-roles' => 'Manage Roles',
             'manage-permissions' => 'Manage Permissions',
             'manage-settings' => 'Manage Artisan Runner',
+            'manage-quotes' => 'Manage Quotes',
         ];
 
         foreach ($permissions as $name => $label) {

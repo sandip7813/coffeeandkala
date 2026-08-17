@@ -24,7 +24,20 @@ import initSelect2 from 'select2/dist/js/select2.full.js'
 import 'select2/dist/css/select2.min.css'
 import 'select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css'
 
+// moment — required by daterangepicker below
+import moment from 'moment'
+
 window.$ = window.jQuery = jQuery
+window.moment = moment
+
+// daterangepicker — used for the "assigned date" range field on the quotes search panel.
+// Loaded with a *dynamic* import (see loadDateRangePicker below) rather than a static one:
+// ALL static imports in a module are evaluated before any of that module's own top-level
+// code runs, no matter where the `import` line sits in the file — so a static import here
+// would still run before `window.jQuery`/`window.moment` above are set, and its UMD wrapper
+// would silently fall back to a mismatched jQuery instance (symptom: "e is not a function").
+import 'daterangepicker/daterangepicker.css'
+
 // Select2's UMD wrapper exports an uninvoked factory under bundlers — call it
 // explicitly so it attaches itself to our jQuery instance.
 initSelect2(window, jQuery)
@@ -722,7 +735,62 @@ function initReopenModal() {
   Modal.getOrCreateInstance(modalEl).show()
 }
 
-// --- Select2 AJAX autocomplete ----------------------------------------------
+// --- Date range picker (Quotes search panel) --------------------------------
+// Loaded on demand via a *dynamic* import — by the time this promise resolves,
+// window.jQuery/window.moment (set above) are already in place, unlike with a
+// static import (see the comment near those assignments for why that matters).
+function loadDateRangePicker() {
+  return import('daterangepicker').then((mod) => mod.default || mod)
+}
+
+function initDateRangePicker() {
+  const elements = document.querySelectorAll('[data-daterangepicker]')
+
+  if (elements.length === 0) {
+    return
+  }
+
+  loadDateRangePicker().then((DateRangePicker) => {
+    elements.forEach((el) => {
+      const startInput = document.querySelector(el.dataset.startInput)
+      const endInput = document.querySelector(el.dataset.endInput)
+
+      if (!startInput || !endInput) {
+        return
+      }
+
+      const hasRange = Boolean(startInput.value && endInput.value)
+
+      const picker = new DateRangePicker(
+        el,
+        {
+          autoUpdateInput: true,
+          autoApply: false,
+          opens: 'left',
+          locale: { format: 'MMM D, YYYY', cancelLabel: 'Clear' },
+          ...(hasRange ? { startDate: startInput.value, endDate: endInput.value } : {}),
+        },
+        (start, end) => {
+          startInput.value = start.format('YYYY-MM-DD')
+          endInput.value = end.format('YYYY-MM-DD')
+        }
+      )
+
+      if (!hasRange) {
+        el.value = ''
+      }
+
+      // "Clear" (the cancel button, relabelled above) empties the field instead of
+      // just closing the picker on the last-shown (today's) range.
+      picker.container?.[0]?.querySelector('.cancelBtn')?.addEventListener('click', () => {
+        el.value = ''
+        startInput.value = ''
+        endInput.value = ''
+      })
+    })
+  })
+}
+
 function initSelect2Search() {
   document.querySelectorAll('[data-select2-search]').forEach((el) => {
     const setup = () => {
@@ -788,4 +856,5 @@ whenReady(() => {
   initValidationErrorAlert()
   initReopenModal()
   initSelect2Search()
+  initDateRangePicker()
 })

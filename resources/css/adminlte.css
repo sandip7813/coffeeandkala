@@ -203,13 +203,14 @@
 }
 
 /*
- * Table search panels (Users, Categories) always slide open/closed, even
+ * Table search panels (Users, Categories, Quotes) always slide open/closed, even
  * when the OS "reduce motion" setting strips Bootstrap's default collapse
  * transition — this toggle is a minor, non-essential animation rather than
  * a large motion effect, so it's fine to keep it smooth for everyone.
  */
 #userSearch.collapsing,
-#categorySearch.collapsing {
+#categorySearch.collapsing,
+#quoteSearch.collapsing {
     transition: height 0.35s ease !important;
 }
 

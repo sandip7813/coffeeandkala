@@ -22,6 +22,11 @@
             </a>
         </li>
         <li>
+            <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profilePhotoModal">
+                <i class="bi bi-image me-2" aria-hidden="true"></i> Profile Picture
+            </a>
+        </li>
+        <li>
             <a class="dropdown-item" href="{{ route('admin.profile.password.edit') }}">
                 <i class="bi bi-key me-2" aria-hidden="true"></i> Change Password
             </a>

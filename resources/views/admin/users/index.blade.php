@@ -7,8 +7,8 @@
         <div class="col-sm-6">
             <h1 class="m-0">{{ __('adminlte.users') }}</h1>
         </div>
-        <div class="col-sm-6 d-flex justify-content-sm-end">
-            <button type="button" class="btn btn-outline-info" data-search-toggle="#userSearch" aria-expanded="{{ $hasActiveFilters ? 'true' : 'false' }}" aria-controls="userSearch">
+        <div class="col-sm-6 text-sm-end">
+            <button type="button" class="btn btn-sm btn-outline-info" data-search-toggle="#userSearch" aria-expanded="{{ $hasActiveFilters ? 'true' : 'false' }}" aria-controls="userSearch">
                 <i class="bi bi-search me-1" aria-hidden="true"></i> {{ __('Search') }}
             </button>
         </div>

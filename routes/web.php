@@ -1,10 +1,13 @@
 <?php
 
+use App\Actions\Quotes\EnsureQuoteScheduledForDate;
 use App\Http\Controllers\Admin\ArtisanController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\QuoteScheduleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\UserController;
@@ -22,10 +25,13 @@ use App\Support\GalleryCatalog;
 use App\Support\JournalCatalog;
 use App\Support\PoetryCatalog;
 use App\Support\StudioCatalog;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('frontend.home');
+Route::get('/', function (EnsureQuoteScheduledForDate $ensureQuoteScheduledForDate) {
+    $quote = $ensureQuoteScheduledForDate->handle(Carbon::today())->quote;
+
+    return view('frontend.home', compact('quote'));
 })->name('home');
 
 Route::get('/our-story', function () {
@@ -153,5 +159,20 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::put('settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.logo.update');
         Route::put('settings/social', [SettingsController::class, 'updateSocial'])->name('settings.social.update');
         Route::put('settings/contact', [SettingsController::class, 'updateContact'])->name('settings.contact.update');
+    });
+
+    Route::middleware('can:manage-quotes')->group(function () {
+        Route::get('quotes/schedule', [QuoteScheduleController::class, 'index'])->name('quotes.schedule.index');
+        Route::put('quotes/schedule/{date}', [QuoteScheduleController::class, 'update'])
+            ->where('date', '\d{4}-\d{2}-\d{2}')
+            ->name('quotes.schedule.update');
+
+        Route::get('quotes', [QuoteController::class, 'index'])->name('quotes.index');
+        Route::get('quotes/create', [QuoteController::class, 'create'])->name('quotes.create');
+        Route::post('quotes', [QuoteController::class, 'store'])->name('quotes.store');
+        Route::get('quotes/{quote}/edit', [QuoteController::class, 'edit'])->name('quotes.edit');
+        Route::put('quotes/{quote}', [QuoteController::class, 'update'])->name('quotes.update');
+        Route::put('quotes/{quote}/assign-dates', [QuoteController::class, 'assignDates'])->name('quotes.assign-dates');
+        Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
     });
 });

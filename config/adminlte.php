@@ -85,7 +85,7 @@ return [
     'usermenu_enabled' => true,
     'usermenu_header' => false,
     'usermenu_header_class' => 'bg-primary',
-    'usermenu_image' => false,
+    'usermenu_image' => true,
     'usermenu_desc' => false,
     'usermenu_profile_url' => false,
 
@@ -219,6 +219,13 @@ return [
             'can' => 'view-dashboard',
             'active' => ['admin'],
         ],
+        [
+            'text' => 'Quotes',
+            'route' => 'admin.quotes.index',
+            'icon' => 'bi bi-chat-quote',
+            'can' => 'manage-quotes',
+            'active' => ['admin/quotes', 'admin/quotes/*'],
+        ],
         ['header' => 'Administration'],
         [
             'text' => 'Users',
@@ -234,6 +241,15 @@ return [
             'can' => 'manage-categories',
             'active' => ['admin/categories', 'admin/categories/*'],
         ],
+        ['header' => 'Site Manager'],
+        [
+            'text' => 'Settings',
+            'route' => 'admin.settings.edit',
+            'icon' => 'bi bi-gear',
+            'can' => 'manage-brand',
+            'active' => ['admin/settings', 'admin/settings/*'],
+        ],
+        ['header' => 'Access Control'],
         [
             'text' => 'Roles',
             'route' => 'admin.roles.index',
@@ -248,13 +264,7 @@ return [
             'can' => 'manage-permissions',
             'active' => ['admin/permissions', 'admin/permissions/*'],
         ],
-        [
-            'text' => 'Settings',
-            'route' => 'admin.settings.edit',
-            'icon' => 'bi bi-gear',
-            'can' => 'manage-brand',
-            'active' => ['admin/settings', 'admin/settings/*'],
-        ],
+        ['header' => 'Restricted'],
         [
             'text' => 'Artisan Runner',
             'route' => 'admin.artisan.index',
