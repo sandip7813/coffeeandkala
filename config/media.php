@@ -25,4 +25,54 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Gallery & Studio Media
+    |--------------------------------------------------------------------------
+    |
+    | Settings for admin-uploaded Gallery and Studio images: the disk and
+    | directories used for storage (original, large, and thumbnail), the
+    | accepted file extensions, the maximum upload size (in kilobytes), and
+    | the dimensions used when generating the large and thumbnail copies.
+    |
+    */
+
+    'gallery' => [
+        'disk' => 'public',
+        'directory' => 'gallery',
+        'thumbnail_directory' => 'gallery/thumbnails',
+        'large_directory' => 'gallery/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        // Capped to fit the server's current upload_max_filesize (2M in
+        // /etc/php/8.5/cli/php.ini) — raise both together if that's ever increased.
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
+    'studio' => [
+        'disk' => 'public',
+        'directory' => 'studio',
+        'thumbnail_directory' => 'studio/thumbnails',
+        'large_directory' => 'studio/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        // Capped to fit the server's current upload_max_filesize (2M in
+        // /etc/php/8.5/cli/php.ini) — raise both together if that's ever increased.
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
 ];

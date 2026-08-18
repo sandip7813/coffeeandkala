@@ -18,6 +18,8 @@
         'Users' => 'bi bi-people',
         'Categories' => 'bi bi-tags',
         'Quotes' => 'bi bi-chat-quote',
+        'Gallery' => 'bi bi-images',
+        'Studio' => 'bi bi-easel',
         'Roles & Permissions' => 'bi bi-shield-lock',
         'Settings' => 'bi bi-gear',
         'General' => 'bi bi-question-circle',

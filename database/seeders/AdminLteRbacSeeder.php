@@ -26,6 +26,20 @@ class AdminLteRbacSeeder extends Seeder
             'edit-quotes' => ['label' => 'Edit Quote', 'group' => 'Quotes'],
             'delete-quotes' => ['label' => 'Delete Quote', 'group' => 'Quotes'],
 
+            'view-gallery' => ['label' => 'View Gallery', 'group' => 'Gallery'],
+            'upload-gallery' => ['label' => 'Upload Gallery Image', 'group' => 'Gallery'],
+            'edit-gallery' => ['label' => 'Edit Gallery Image', 'group' => 'Gallery'],
+            'delete-gallery' => ['label' => 'Delete Gallery Image', 'group' => 'Gallery'],
+            'change-gallery-status' => ['label' => 'Change Gallery Image Status', 'group' => 'Gallery'],
+            'approve-gallery' => ['label' => 'Approve Gallery Image', 'group' => 'Gallery'],
+
+            'view-studio' => ['label' => 'View Studio', 'group' => 'Studio'],
+            'upload-studio' => ['label' => 'Upload Studio Image', 'group' => 'Studio'],
+            'edit-studio' => ['label' => 'Edit Studio Image', 'group' => 'Studio'],
+            'delete-studio' => ['label' => 'Delete Studio Image', 'group' => 'Studio'],
+            'change-studio-status' => ['label' => 'Change Studio Image Status', 'group' => 'Studio'],
+            'approve-studio' => ['label' => 'Approve Studio Image', 'group' => 'Studio'],
+
             'manage-roles' => ['label' => 'Manage Roles', 'group' => 'Roles & Permissions'],
             'manage-permissions' => ['label' => 'Manage Permissions', 'group' => 'Roles & Permissions'],
 

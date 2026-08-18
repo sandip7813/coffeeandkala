@@ -4,12 +4,14 @@ use App\Actions\Quotes\EnsureQuoteScheduledForDate;
 use App\Http\Controllers\Admin\ArtisanController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\Admin\QuoteScheduleController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\StudioController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationController;
@@ -201,4 +203,26 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     Route::get('quotes/{quote}/edit', [QuoteController::class, 'edit'])->name('quotes.edit');
     Route::put('quotes/{quote}', [QuoteController::class, 'update'])->name('quotes.update');
     Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
+
+    // Gallery and Studio share identical functionality (see MediaFileController);
+    // each action is gated by its own granular '*-gallery'/'*-studio' permission
+    // checked in the controller, and approval is restricted to super admins
+    // directly (not a delegable permission), so no route middleware is used here.
+    Route::get('gallery', [GalleryController::class, 'index'])->name('gallery.index');
+    Route::get('gallery/create', [GalleryController::class, 'create'])->name('gallery.create');
+    Route::post('gallery', [GalleryController::class, 'store'])->name('gallery.store');
+    Route::get('gallery/{media}/edit', [GalleryController::class, 'edit'])->name('gallery.edit');
+    Route::put('gallery/{media}', [GalleryController::class, 'update'])->name('gallery.update');
+    Route::put('gallery/{media}/status', [GalleryController::class, 'updateStatus'])->name('gallery.status.update');
+    Route::put('gallery/{media}/approve', [GalleryController::class, 'approve'])->name('gallery.approve');
+    Route::delete('gallery/{media}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
+
+    Route::get('studio', [StudioController::class, 'index'])->name('studio.index');
+    Route::get('studio/create', [StudioController::class, 'create'])->name('studio.create');
+    Route::post('studio', [StudioController::class, 'store'])->name('studio.store');
+    Route::get('studio/{media}/edit', [StudioController::class, 'edit'])->name('studio.edit');
+    Route::put('studio/{media}', [StudioController::class, 'update'])->name('studio.update');
+    Route::put('studio/{media}/status', [StudioController::class, 'updateStatus'])->name('studio.status.update');
+    Route::put('studio/{media}/approve', [StudioController::class, 'approve'])->name('studio.approve');
+    Route::delete('studio/{media}', [StudioController::class, 'destroy'])->name('studio.destroy');
 });

@@ -798,6 +798,41 @@ function loadDateRangePicker() {
   return import('daterangepicker').then((mod) => mod.default || mod)
 }
 
+// --- Fancybox (Gallery/Studio thumbnail lightbox) ---------------------------
+// Loaded on demand via a *dynamic* import, for the same reason as
+// daterangepicker above: it's a jQuery UMD plugin that needs window.jQuery
+// already in place when it runs.
+//
+// Fancybox 3 calls several $.xxx helpers (isArray, isFunction, isNumeric,
+// isPlainObject, trim, type) that jQuery removed in v4 — this project is on
+// jQuery ^4, so without these shims opening the lightbox throws
+// "n.isArray is not a function".
+function shimJqueryForFancybox() {
+  jQuery.isArray ??= Array.isArray
+  jQuery.isFunction ??= (value) => typeof value === 'function'
+  jQuery.isNumeric ??= (value) => !isNaN(parseFloat(value)) && isFinite(value)
+  jQuery.isPlainObject ??= (value) =>
+    typeof value === 'object' && value !== null && value.constructor === Object
+  jQuery.trim ??= (value) => (value == null ? '' : String(value).trim())
+  jQuery.type ??= (value) => (value === null ? 'null' : typeof value)
+}
+
+function loadFancybox() {
+  shimJqueryForFancybox()
+
+  return import('@fancyapps/fancybox/dist/jquery.fancybox.js').then(() => jQuery.fancybox)
+}
+
+function initFancybox() {
+  const elements = document.querySelectorAll('[data-fancybox]')
+
+  if (elements.length === 0) {
+    return
+  }
+
+  loadFancybox()
+}
+
 function initDateRangePicker() {
   const elements = document.querySelectorAll('[data-daterangepicker]')
 
@@ -895,23 +930,39 @@ whenReady(() => {
     })
   }
 
-  initCharts()
-  initVectorMaps()
-  initCalendars()
-  initSortables()
-  initTreeviewA11y()
-  initCollapsibleSearchPanels()
-  initConfirmDeletes()
-  initConfirmToggles()
-  initConfirmArtisanRuns()
-  initArtisanSidebarUnlock()
-  initArtisanGate()
-  initPageLoadingForms()
-  initFlashToasts()
-  initValidationErrorAlert()
-  initPasswordToggles()
-  initPermissionGroupToggles()
-  initReopenModal()
-  initSelect2Search()
-  initDateRangePicker()
+  // Each init runs in isolation: a page-specific error thrown by one (e.g. a
+  // chart/calendar widget only present on some pages) would otherwise abort
+  // this whole callback and silently skip every init still queued after it —
+  // including, on pages with no charts/calendars at all, ones as unrelated as
+  // the collapsible search panel toggle.
+  const inits = [
+    initCharts,
+    initVectorMaps,
+    initCalendars,
+    initSortables,
+    initTreeviewA11y,
+    initCollapsibleSearchPanels,
+    initConfirmDeletes,
+    initConfirmToggles,
+    initConfirmArtisanRuns,
+    initArtisanSidebarUnlock,
+    initArtisanGate,
+    initPageLoadingForms,
+    initFlashToasts,
+    initValidationErrorAlert,
+    initPasswordToggles,
+    initPermissionGroupToggles,
+    initReopenModal,
+    initSelect2Search,
+    initDateRangePicker,
+    initFancybox,
+  ]
+
+  for (const init of inits) {
+    try {
+      init()
+    } catch (error) {
+      console.error(`adminlte.js: ${init.name} failed`, error)
+    }
+  }
 })

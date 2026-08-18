@@ -228,6 +228,20 @@ return [
             'can' => 'view-quotes',
             'active' => ['admin/quotes', 'admin/quotes/*'],
         ],
+        [
+            'text' => 'Gallery',
+            'route' => 'admin.gallery.index',
+            'icon' => 'bi bi-images',
+            'can' => 'view-gallery',
+            'active' => ['admin/gallery', 'admin/gallery/*'],
+        ],
+        [
+            'text' => 'Studio',
+            'route' => 'admin.studio.index',
+            'icon' => 'bi bi-easel',
+            'can' => 'view-studio',
+            'active' => ['admin/studio', 'admin/studio/*'],
+        ],
         ['header' => 'Administration'],
         [
             'text' => 'Users',

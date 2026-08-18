@@ -27,6 +27,8 @@ class Permission extends Model
     public const GROUP_ORDER = [
         'Dashboard',
         'Quotes',
+        'Gallery',
+        'Studio',
         'Categories',
         'Users',
         'Roles & Permissions',

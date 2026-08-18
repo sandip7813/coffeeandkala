@@ -2,6 +2,30 @@
     $items = app('adminlte')->menu('sidebar');
     $sidebarTheme = config('adminlte.sidebar_theme', 'dark');
     $sidebarClasses = config('adminlte.classes_sidebar', 'bg-body-secondary shadow');
+
+    // Gallery/Studio uploads awaiting approval: shown as a badge on the
+    // matching sidebar link, but only to users who can actually approve them
+    // (the 'approve-gallery'/'approve-studio' permission — super admins get
+    // it automatically via the RBAC layer's super-admin bypass). The link
+    // itself still goes to the normal (unfiltered) list — only the badge
+    // count reflects pending uploads.
+    $sidebarUser = auth()->user();
+    $pendingApprovalCounts = [
+        'admin.gallery.index' => $sidebarUser?->can('approve-gallery')
+            ? \App\Models\MediaFile::ofType('gallery')->pending()->count() : 0,
+        'admin.studio.index' => $sidebarUser?->can('approve-studio')
+            ? \App\Models\MediaFile::ofType('studio')->pending()->count() : 0,
+    ];
+
+    foreach ($items as &$sidebarItem) {
+        $pendingCount = $pendingApprovalCounts[$sidebarItem['route'] ?? null] ?? 0;
+
+        if ($pendingCount > 0) {
+            $sidebarItem['label'] = $pendingCount;
+            $sidebarItem['label_color'] = 'danger';
+        }
+    }
+    unset($sidebarItem);
 @endphp
 <aside class="app-sidebar {{ $sidebarClasses }}" @if ($sidebarTheme === 'dark') data-bs-theme="dark" @endif>
     <div class="sidebar-brand {{ config('adminlte.classes_brand') }}">

@@ -10,6 +10,7 @@
 @import 'overlayscrollbars/overlayscrollbars.css';
 @import 'admin-lte/dist/css/adminlte.css';
 @import 'sweetalert2/dist/sweetalert2.min.css';
+@import '@fancyapps/fancybox/dist/jquery.fancybox.css';
 
 /* Soften SweetAlert2 to sit nicely on AdminLTE */
 .swal2-popup {
@@ -203,14 +204,17 @@
 }
 
 /*
- * Table search panels (Users, Categories, Quotes) always slide open/closed, even
- * when the OS "reduce motion" setting strips Bootstrap's default collapse
- * transition — this toggle is a minor, non-essential animation rather than
- * a large motion effect, so it's fine to keep it smooth for everyone.
+ * Table search panels (Users, Categories, Quotes, Gallery, Studio) always
+ * slide open/closed, even when the OS "reduce motion" setting strips
+ * Bootstrap's default collapse transition — this toggle is a minor,
+ * non-essential animation rather than a large motion effect, so it's fine to
+ * keep it smooth for everyone.
  */
 #userSearch.collapsing,
 #categorySearch.collapsing,
-#quoteSearch.collapsing {
+#quoteSearch.collapsing,
+#gallerySearch.collapsing,
+#studioSearch.collapsing {
     transition: height 0.35s ease !important;
 }
 

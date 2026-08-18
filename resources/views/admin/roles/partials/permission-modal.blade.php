@@ -18,7 +18,12 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                {{-- `modal-dialog-scrollable` on its own isn't producing an internal
+                     scrollbar here (its percentage-based height calc doesn't seem to
+                     resolve in this stack), so the body's scroll area is sized
+                     explicitly instead — full viewport height minus roughly what the
+                     header, footer, and modal margins take up. --}}
+                <div class="modal-body" style="max-height: calc(100vh - 210px); overflow-y: auto;">
                     @error('permissions')
                         <div class="text-danger small mb-2">{{ $message }}</div>
                     @enderror

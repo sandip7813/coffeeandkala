@@ -73,11 +73,18 @@ test('system permissions cannot be deleted', function () {
 test('the permissions list is grouped by section', function () {
     $user = User::factory()->superAdmin()->create();
 
+    // The Users group now falls entirely on page 2 of the 20-per-page listing
+    // — with Gallery/Studio's permissions added, the first 20 rows end
+    // exactly at Categories — so it's checked separately from page 1.
     $this->actingAs($user)
         ->get(route('admin.permissions.index'))
         ->assertOk()
         ->assertSeeTextInOrder(['Categories', 'Change Category Status', 'Edit Categories'])
-        ->assertSeeTextInOrder(['Quotes', 'Add New Quote', 'Assign Quote To Date', 'Delete Quote', 'Edit Quote', 'Show Quotes'])
+        ->assertSeeTextInOrder(['Quotes', 'Add New Quote', 'Assign Quote To Date', 'Delete Quote', 'Edit Quote', 'Show Quotes']);
+
+    $this->actingAs($user)
+        ->get(route('admin.permissions.index', ['page' => 2]))
+        ->assertOk()
         ->assertSeeTextInOrder(['Users', 'Change User Status', 'Delete Users', 'Manage Users']);
 });
 
@@ -93,12 +100,20 @@ test('the role permission checkboxes are grouped by section', function () {
 
 test('permission groups follow the configured display order, not alphabetical', function () {
     $user = User::factory()->superAdmin()->create();
-    $order = ['Dashboard', 'Quotes', 'Categories', 'Users', 'Roles & Permissions', 'Artisan Runner'];
+    $order = ['Dashboard', 'Quotes', 'Gallery', 'Studio', 'Categories', 'Users', 'Roles & Permissions', 'Artisan Runner'];
 
+    // admin.permissions.index paginates at 20 rows; with the full permission
+    // set now at 26, the last three groups spill onto page 2 — check each
+    // page's slice of the order separately instead of the whole list at once.
     $this->actingAs($user)
         ->get(route('admin.permissions.index'))
         ->assertOk()
-        ->assertSeeTextInOrder($order);
+        ->assertSeeTextInOrder(['Dashboard', 'Quotes', 'Gallery', 'Studio', 'Categories']);
+
+    $this->actingAs($user)
+        ->get(route('admin.permissions.index', ['page' => 2]))
+        ->assertOk()
+        ->assertSeeTextInOrder(['Users', 'Roles & Permissions', 'Artisan Runner']);
 
     $this->actingAs($user)
         ->get(route('admin.roles.create'))
