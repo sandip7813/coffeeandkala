@@ -24,7 +24,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php $currentGroup = null; @endphp
                     @forelse ($permissions as $permission)
+                        @if ($permission->group !== $currentGroup)
+                            @php $currentGroup = $permission->group; @endphp
+                            <tr class="table-light">
+                                <th colspan="3" class="text-uppercase small text-body-secondary">
+                                    {{ $currentGroup ?? __('General') }}
+                                </th>
+                            </tr>
+                        @endif
                         <tr>
                             <td><code>{{ $permission->name }}</code></td>
                             <td>{{ $permission->label }}</td>

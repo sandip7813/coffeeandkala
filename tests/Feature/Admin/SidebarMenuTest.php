@@ -38,3 +38,17 @@ test('editors without manage-categories do not see the categories link', functio
     $response->assertOk();
     $response->assertDontSee(route('admin.categories.index'), false);
 });
+
+test('a section header does not render when every link under it is hidden', function () {
+    $user = User::factory()->editor()->create();
+
+    $response = $this->actingAs($user)->get(route('admin.dashboard'));
+
+    $response->assertOk();
+    // Editors only hold `view-dashboard`, so none of the links grouped under
+    // these headers are visible — the headers themselves must be dropped too.
+    $response->assertDontSee('Administration');
+    $response->assertDontSee('Site Manager');
+    $response->assertDontSee('Access Control');
+    $response->assertDontSee('Restricted');
+});

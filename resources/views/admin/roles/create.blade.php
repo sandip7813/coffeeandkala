@@ -8,7 +8,7 @@
 
 @section('content')
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-lg-9">
             <x-adminlte-card icon="bi bi-shield-plus" title="{{ __('adminlte.new_role') }}">
                 <form method="POST" action="{{ route('admin.roles.store') }}">
                     @csrf
@@ -21,22 +21,7 @@
                         @error('permissions')
                             <div class="text-danger small mb-1">{{ $message }}</div>
                         @enderror
-                        <div class="row">
-                            @forelse ($permissions as $permission)
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="permissions[]"
-                                               value="{{ $permission->id }}" id="permission-{{ $permission->id }}"
-                                               @checked(in_array($permission->id, old('permissions', [])))>
-                                        <label class="form-check-label" for="permission-{{ $permission->id }}">
-                                            {{ $permission->label ?? $permission->name }}
-                                        </label>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-muted">{{ __('adminlte.no_permissions') }}</p>
-                            @endforelse
-                        </div>
+                        @include('admin.roles.partials.permission-checkboxes', ['checkedIds' => []])
                     </div>
 
                     <div class="d-flex gap-2">

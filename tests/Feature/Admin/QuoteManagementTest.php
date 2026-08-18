@@ -370,3 +370,114 @@ test('admins without the quotes permission cannot manage quotes', function () {
 test('guests are redirected to login', function () {
     $this->get(route('admin.quotes.index'))->assertRedirect(route('login'));
 });
+
+test('a user with only view-quotes can list quotes but cannot create, edit, or delete', function () {
+    $user = userWithPermission('view-quotes');
+    $quote = Quote::factory()->create();
+
+    $this->actingAs($user)->get(route('admin.quotes.index'))->assertOk();
+    $this->actingAs($user)->get(route('admin.quotes.create'))->assertForbidden();
+    $this->actingAs($user)->post(route('admin.quotes.store'), ['text' => 'x'])->assertForbidden();
+    $this->actingAs($user)->get(route('admin.quotes.edit', $quote))->assertForbidden();
+    $this->actingAs($user)->put(route('admin.quotes.update', $quote), ['text' => 'x'])->assertForbidden();
+    $this->actingAs($user)->delete(route('admin.quotes.destroy', $quote))->assertForbidden();
+});
+
+test('a user with only create-quotes can add a quote', function () {
+    $user = userWithPermission('create-quotes');
+
+    $this->actingAs($user)
+        ->get(route('admin.quotes.create'))
+        ->assertOk();
+
+    $this->actingAs($user)
+        ->post(route('admin.quotes.store'), ['text' => 'Granted by create-quotes.'])
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseHas('quotes', ['text' => 'Granted by create-quotes.']);
+});
+
+test('a user with only edit-quotes can update a quote', function () {
+    $user = userWithPermission('edit-quotes');
+    $quote = Quote::factory()->create(['text' => 'Old text']);
+
+    $this->actingAs($user)
+        ->put(route('admin.quotes.update', $quote), ['text' => 'New text'])
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseHas('quotes', ['id' => $quote->id, 'text' => 'New text']);
+});
+
+test('a user with only delete-quotes can delete a quote', function () {
+    $user = userWithPermission('delete-quotes');
+    $quote = Quote::factory()->create();
+
+    $this->actingAs($user)
+        ->delete(route('admin.quotes.destroy', $quote))
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseMissing('quotes', ['id' => $quote->id]);
+});
+
+test('a user can edit and delete their own quote without any quote permission', function () {
+    $user = userWithPermission('view-quotes');
+    $quote = Quote::factory()->create(['text' => 'Old text', 'created_by' => $user->id]);
+
+    $this->actingAs($user)
+        ->get(route('admin.quotes.edit', $quote))
+        ->assertOk();
+
+    $this->actingAs($user)
+        ->put(route('admin.quotes.update', $quote), ['text' => 'New text'])
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseHas('quotes', ['id' => $quote->id, 'text' => 'New text']);
+
+    $this->actingAs($user)
+        ->delete(route('admin.quotes.destroy', $quote))
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseMissing('quotes', ['id' => $quote->id]);
+});
+
+test('a user without edit-quotes or delete-quotes cannot manage someone else\'s quote', function () {
+    $owner = User::factory()->editor()->create();
+    $user = userWithPermission('view-quotes');
+    $quote = Quote::factory()->create(['text' => 'Old text', 'created_by' => $owner->id]);
+
+    $this->actingAs($user)->get(route('admin.quotes.edit', $quote))->assertForbidden();
+    $this->actingAs($user)->put(route('admin.quotes.update', $quote), ['text' => 'New text'])->assertForbidden();
+    $this->actingAs($user)->delete(route('admin.quotes.destroy', $quote))->assertForbidden();
+
+    $this->assertDatabaseHas('quotes', ['id' => $quote->id, 'text' => 'Old text']);
+});
+
+test('a user with edit-quotes and delete-quotes can manage someone else\'s quote', function () {
+    $owner = User::factory()->editor()->create();
+    $user = userWithPermission(['view-quotes', 'edit-quotes', 'delete-quotes']);
+    $quote = Quote::factory()->create(['text' => 'Old text', 'created_by' => $owner->id]);
+
+    $this->actingAs($user)
+        ->put(route('admin.quotes.update', $quote), ['text' => 'New text'])
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseHas('quotes', ['id' => $quote->id, 'text' => 'New text']);
+
+    $this->actingAs($user)
+        ->delete(route('admin.quotes.destroy', $quote))
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseMissing('quotes', ['id' => $quote->id]);
+});
+
+test('a user with only assign-quote-dates can assign a quote to a date', function () {
+    $user = userWithPermission('assign-quote-dates');
+    $quote = Quote::factory()->create();
+    $date = now()->addDays(2)->toDateString();
+
+    $this->actingAs($user)
+        ->put(route('admin.quotes.assign-dates', $quote), ['dates' => [$date]])
+        ->assertRedirect(route('admin.quotes.index'));
+
+    $this->assertDatabaseHas('quote_schedules', ['date' => $date.' 00:00:00', 'quote_id' => $quote->id]);
+});

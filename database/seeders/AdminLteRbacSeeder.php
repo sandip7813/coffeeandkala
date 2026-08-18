@@ -11,17 +11,37 @@ class AdminLteRbacSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
-            'view-dashboard' => 'View Dashboard',
-            'manage-users' => 'Manage Users',
-            'manage-roles' => 'Manage Roles',
-            'manage-permissions' => 'Manage Permissions',
-            'manage-settings' => 'Manage Artisan Runner',
-            'manage-quotes' => 'Manage Quotes',
+            'view-dashboard' => ['label' => 'View Dashboard', 'group' => 'Dashboard'],
+
+            'manage-users' => ['label' => 'Manage Users', 'group' => 'Users'],
+            'delete-users' => ['label' => 'Delete Users', 'group' => 'Users'],
+            'change-user-status' => ['label' => 'Change User Status', 'group' => 'Users'],
+
+            'edit-categories' => ['label' => 'Edit Categories', 'group' => 'Categories'],
+            'change-category-status' => ['label' => 'Change Category Status', 'group' => 'Categories'],
+
+            'view-quotes' => ['label' => 'Show Quotes', 'group' => 'Quotes'],
+            'create-quotes' => ['label' => 'Add New Quote', 'group' => 'Quotes'],
+            'assign-quote-dates' => ['label' => 'Assign Quote To Date', 'group' => 'Quotes'],
+            'edit-quotes' => ['label' => 'Edit Quote', 'group' => 'Quotes'],
+            'delete-quotes' => ['label' => 'Delete Quote', 'group' => 'Quotes'],
+
+            'manage-roles' => ['label' => 'Manage Roles', 'group' => 'Roles & Permissions'],
+            'manage-permissions' => ['label' => 'Manage Permissions', 'group' => 'Roles & Permissions'],
+
+            'manage-settings' => ['label' => 'Manage Artisan Runner', 'group' => 'Artisan Runner'],
         ];
 
-        foreach ($permissions as $name => $label) {
-            Permission::updateOrCreate(['name' => $name], ['label' => $label]);
+        foreach ($permissions as $name => $definition) {
+            Permission::updateOrCreate(['name' => $name], [
+                'label' => $definition['label'],
+                'group' => $definition['group'],
+            ]);
         }
+
+        // Superseded by the granular 'view-quotes'/'create-quotes'/'edit-quotes'/
+        // 'delete-quotes'/'assign-quote-dates' permissions above.
+        Permission::where('name', 'manage-quotes')->delete();
 
         $roles = [
             'super_admin' => [

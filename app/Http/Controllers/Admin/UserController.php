@@ -239,7 +239,7 @@ class UserController extends Controller
     public function toggleStatus(User $user): RedirectResponse
     {
         $this->authorizeManage();
-        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+        abort_unless(auth()->user()?->can('change-user-status'), 403);
 
         if ($user->is(auth()->user())) {
             throw ValidationException::withMessages([
@@ -286,7 +286,7 @@ class UserController extends Controller
     public function destroy(User $user): RedirectResponse
     {
         $this->authorizeManage();
-        abort_unless(auth()->user()?->isSuperAdmin(), 403);
+        abort_unless(auth()->user()?->can('delete-users'), 403);
 
         if ($user->is(auth()->user())) {
             throw ValidationException::withMessages([

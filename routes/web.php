@@ -162,12 +162,16 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
             ->name('artisan.run');
     });
 
-    Route::middleware('can:manage-categories')->group(function () {
-        Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
-        Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
-        Route::put('categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
-        Route::put('categories/{category}/status', [CategoryController::class, 'updateStatus'])->name('categories.status.update');
-    });
+    // Authorization for each action lives in CategoryController: viewing the
+    // list only needs one of the two granular permissions below, so it isn't
+    // gated by route middleware here.
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('categories/{category}/edit', [CategoryController::class, 'edit'])
+        ->middleware('can:edit-categories')->name('categories.edit');
+    Route::put('categories/{category}', [CategoryController::class, 'update'])
+        ->middleware('can:edit-categories')->name('categories.update');
+    Route::put('categories/{category}/status', [CategoryController::class, 'updateStatus'])
+        ->middleware('can:change-category-status')->name('categories.status.update');
 
     Route::middleware('can:manage-brand')->group(function () {
         Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
@@ -176,18 +180,25 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::put('settings/contact', [SettingsController::class, 'updateContact'])->name('settings.contact.update');
     });
 
-    Route::middleware('can:manage-quotes')->group(function () {
+    // Each action below is gated by its own granular permission (checked in the
+    // controller / form request), so route middleware only applies where a
+    // single permission maps cleanly to a single route.
+    Route::middleware('can:assign-quote-dates')->group(function () {
         Route::get('quotes/schedule', [QuoteScheduleController::class, 'index'])->name('quotes.schedule.index');
         Route::put('quotes/schedule/{date}', [QuoteScheduleController::class, 'update'])
             ->where('date', '\d{4}-\d{2}-\d{2}')
             ->name('quotes.schedule.update');
-
-        Route::get('quotes', [QuoteController::class, 'index'])->name('quotes.index');
-        Route::get('quotes/create', [QuoteController::class, 'create'])->name('quotes.create');
-        Route::post('quotes', [QuoteController::class, 'store'])->name('quotes.store');
-        Route::get('quotes/{quote}/edit', [QuoteController::class, 'edit'])->name('quotes.edit');
-        Route::put('quotes/{quote}', [QuoteController::class, 'update'])->name('quotes.update');
         Route::put('quotes/{quote}/assign-dates', [QuoteController::class, 'assignDates'])->name('quotes.assign-dates');
-        Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
     });
+
+    // Editing and deleting are gated in the controller / form request instead of
+    // here: a quote's own creator may always edit or delete it, and the
+    // 'edit-quotes'/'delete-quotes' permissions are only required to manage
+    // quotes created by someone else.
+    Route::get('quotes', [QuoteController::class, 'index'])->middleware('can:view-quotes')->name('quotes.index');
+    Route::get('quotes/create', [QuoteController::class, 'create'])->middleware('can:create-quotes')->name('quotes.create');
+    Route::post('quotes', [QuoteController::class, 'store'])->middleware('can:create-quotes')->name('quotes.store');
+    Route::get('quotes/{quote}/edit', [QuoteController::class, 'edit'])->name('quotes.edit');
+    Route::put('quotes/{quote}', [QuoteController::class, 'update'])->name('quotes.update');
+    Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
 });

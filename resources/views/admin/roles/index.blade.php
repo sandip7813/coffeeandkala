@@ -40,6 +40,13 @@
                                         </a>
                                     </li>
                                     @if ($role->name !== 'super_admin')
+                                        <li>
+                                            <button type="button" class="dropdown-item d-flex align-items-center gap-2"
+                                                    data-bs-toggle="modal" data-bs-target="#role-permissions-{{ $role->id }}">
+                                                <i class="bi bi-key" aria-hidden="true"></i>
+                                                <span>{{ __('adminlte.permissions') }}</span>
+                                            </button>
+                                        </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form method="POST" action="{{ route('admin.roles.destroy', $role) }}"
@@ -72,4 +79,9 @@
             {{ $roles->links() }}
         </x-slot>
     </x-adminlte-card>
+
+    @foreach ($roles as $role)
+        @continue($role->name === 'super_admin')
+        @include('admin.roles.partials.permission-modal', ['role' => $role, 'permissions' => $permissions])
+    @endforeach
 @stop

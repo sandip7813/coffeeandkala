@@ -11,10 +11,10 @@
         @csrf
 
         <div class="input-group mb-3">
+            <div class="input-group-text"><span class="bi bi-envelope"></span></div>
             <input type="email" name="email" value="{{ old('email') }}"
                    class="form-control @error('email') is-invalid @enderror"
                    placeholder="{{ __('adminlte.email') }}" required autofocus>
-            <div class="input-group-text"><span class="bi bi-envelope"></span></div>
             @error('email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
         </div>
 

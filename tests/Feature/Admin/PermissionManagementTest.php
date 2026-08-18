@@ -69,3 +69,118 @@ test('system permissions cannot be deleted', function () {
 
     $this->assertDatabaseHas('adminlte_permissions', ['name' => 'manage-users']);
 });
+
+test('the permissions list is grouped by section', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->actingAs($user)
+        ->get(route('admin.permissions.index'))
+        ->assertOk()
+        ->assertSeeTextInOrder(['Categories', 'Change Category Status', 'Edit Categories'])
+        ->assertSeeTextInOrder(['Quotes', 'Add New Quote', 'Assign Quote To Date', 'Delete Quote', 'Edit Quote', 'Show Quotes'])
+        ->assertSeeTextInOrder(['Users', 'Change User Status', 'Delete Users', 'Manage Users']);
+});
+
+test('the role permission checkboxes are grouped by section', function () {
+    $user = User::factory()->superAdmin()->create();
+
+    $this->actingAs($user)
+        ->get(route('admin.roles.create'))
+        ->assertOk()
+        ->assertSeeTextInOrder(['Categories', 'Change Category Status', 'Edit Categories'])
+        ->assertSeeTextInOrder(['Quotes', 'Add New Quote', 'Assign Quote To Date', 'Delete Quote', 'Edit Quote', 'Show Quotes']);
+});
+
+test('permission groups follow the configured display order, not alphabetical', function () {
+    $user = User::factory()->superAdmin()->create();
+    $order = ['Dashboard', 'Quotes', 'Categories', 'Users', 'Roles & Permissions', 'Artisan Runner'];
+
+    $this->actingAs($user)
+        ->get(route('admin.permissions.index'))
+        ->assertOk()
+        ->assertSeeTextInOrder($order);
+
+    $this->actingAs($user)
+        ->get(route('admin.roles.create'))
+        ->assertOk()
+        ->assertSeeTextInOrder($order);
+});
+
+test('a newly created permission is automatically granted to super admin', function () {
+    $superAdminRole = Role::query()->where('name', 'super_admin')->firstOrFail();
+
+    $permission = Permission::create([
+        'name' => 'manage-newsletter',
+        'label' => 'Manage Newsletter',
+    ]);
+
+    expect($superAdminRole->fresh()->hasPermission('manage-newsletter'))->toBeTrue();
+
+    $superAdmin = User::factory()->superAdmin()->create();
+    expect($superAdmin->hasPermission('manage-newsletter'))->toBeTrue();
+});
+
+test('the super admin role edit form has no permission checkboxes to change', function () {
+    $user = User::factory()->superAdmin()->create();
+    $role = Role::query()->where('name', 'super_admin')->firstOrFail();
+
+    $this->actingAs($user)
+        ->get(route('admin.roles.edit', $role))
+        ->assertOk()
+        ->assertSee('Super Admin always has every permission.')
+        ->assertDontSee('name="permissions[]"', false);
+});
+
+test('submitting the super admin role form cannot strip its permissions', function () {
+    $user = User::factory()->superAdmin()->create();
+    $role = Role::query()->where('name', 'super_admin')->firstOrFail();
+    $totalPermissions = Permission::count();
+
+    // Simulates the real form: no `permissions[]` fields are rendered for
+    // super admin, so nothing is submitted for that field either.
+    $this->actingAs($user)
+        ->put(route('admin.roles.update', $role), [
+            'name' => 'super_admin',
+            'label' => 'Super Admin',
+        ])
+        ->assertRedirect(route('admin.roles.index'));
+
+    expect($role->fresh()->permissions()->count())->toBe($totalPermissions);
+});
+
+test('the roles list offers a permissions modal for each role', function () {
+    $user = User::factory()->superAdmin()->create();
+    $role = Role::query()->where('name', 'editor')->firstOrFail();
+
+    $this->actingAs($user)
+        ->get(route('admin.roles.index'))
+        ->assertOk()
+        ->assertSee('id="role-permissions-'.$role->id.'"', false)
+        ->assertSee('data-bs-target="#role-permissions-'.$role->id.'"', false);
+});
+
+test('the roles list has no permissions modal for super admin', function () {
+    $user = User::factory()->superAdmin()->create();
+    $role = Role::query()->where('name', 'super_admin')->firstOrFail();
+
+    $this->actingAs($user)
+        ->get(route('admin.roles.index'))
+        ->assertOk()
+        ->assertDontSee('id="role-permissions-'.$role->id.'"', false)
+        ->assertDontSee('data-bs-target="#role-permissions-'.$role->id.'"', false);
+});
+
+test('a role\'s permissions can be updated from its modal on the roles list', function () {
+    $user = User::factory()->superAdmin()->create();
+    $role = Role::query()->where('name', 'editor')->firstOrFail();
+    $permission = Permission::query()->where('name', 'view-quotes')->firstOrFail();
+
+    $this->actingAs($user)->put(route('admin.roles.update', $role), [
+        'name' => $role->name,
+        'label' => $role->label,
+        'permissions' => array_merge($role->permissions->pluck('id')->all(), [$permission->id]),
+        '_reopen_modal' => 'role-permissions-'.$role->id,
+    ])->assertRedirect(route('admin.roles.index'));
+
+    expect($role->fresh()->hasPermission('view-quotes'))->toBeTrue();
+});

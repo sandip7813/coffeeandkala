@@ -239,3 +239,49 @@ test('super admin role cannot be deleted', function () {
 
     $this->assertDatabaseHas('adminlte_roles', ['name' => 'super_admin']);
 });
+
+test('a user with manage-users and delete-users can delete a user', function () {
+    $actor = userWithPermission(['manage-users', 'delete-users']);
+    $target = User::factory()->editor()->create();
+
+    $this->actingAs($actor)
+        ->delete(route('admin.users.destroy', $target))
+        ->assertRedirect(route('admin.users.index'));
+
+    $this->assertDatabaseMissing('users', ['id' => $target->id]);
+});
+
+test('manage-users alone is not enough to delete a user', function () {
+    $actor = userWithPermission(['manage-users']);
+    $target = User::factory()->editor()->create();
+
+    $this->actingAs($actor)
+        ->delete(route('admin.users.destroy', $target))
+        ->assertForbidden();
+
+    $this->assertDatabaseHas('users', ['id' => $target->id]);
+});
+
+test('a user with manage-users and change-user-status can toggle another user\'s status', function () {
+    Mail::fake();
+
+    $actor = userWithPermission(['manage-users', 'change-user-status']);
+    $target = User::factory()->editor()->create(['is_active' => true, 'must_change_password' => false]);
+
+    $this->actingAs($actor)
+        ->put(route('admin.users.status.update', $target))
+        ->assertRedirect(route('admin.users.index'));
+
+    expect($target->fresh()->is_active)->toBeFalse();
+});
+
+test('manage-users alone is not enough to change a user\'s status', function () {
+    $actor = userWithPermission(['manage-users']);
+    $target = User::factory()->editor()->create(['is_active' => true, 'must_change_password' => false]);
+
+    $this->actingAs($actor)
+        ->put(route('admin.users.status.update', $target))
+        ->assertForbidden();
+
+    expect($target->fresh()->is_active)->toBeTrue();
+});

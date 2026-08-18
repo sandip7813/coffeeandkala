@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
 use Database\Seeders\AdminLteRbacSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 /*
@@ -48,6 +52,30 @@ expect()->extend('toBeOne', function () {
 function seedRbac(): void
 {
     test()->seed(AdminLteRbacSeeder::class);
+}
+
+/**
+ * Create a user in a fresh, otherwise-empty role holding exactly the given
+ * permission(s) — for asserting a granular permission works on its own,
+ * without any of the other permissions a seeded role might bundle it with.
+ *
+ * @param  string|array<int, string>  $permissions
+ */
+function userWithPermission(string|array $permissions): User
+{
+    // Every admin route sits behind 'permission:view-dashboard' at the route
+    // group level, so it's implied here rather than repeated at every call site.
+    $permissions = array_unique([...(array) $permissions, 'view-dashboard']);
+
+    $role = Role::create(['name' => 'test-'.Str::random(8)]);
+    $role->permissions()->sync(
+        Permission::whereIn('name', $permissions)->pluck('id')
+    );
+
+    $user = User::factory()->create();
+    $user->roles()->attach($role);
+
+    return $user;
 }
 
 /**

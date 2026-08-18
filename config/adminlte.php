@@ -223,7 +223,9 @@ return [
             'text' => 'Quotes',
             'route' => 'admin.quotes.index',
             'icon' => 'bi bi-chat-quote',
-            'can' => 'manage-quotes',
+            // The link opens the quotes list itself; create/edit/delete/assign
+            // are reached from buttons on that page, so viewing it is the gate.
+            'can' => 'view-quotes',
             'active' => ['admin/quotes', 'admin/quotes/*'],
         ],
         ['header' => 'Administration'],
@@ -238,7 +240,7 @@ return [
             'text' => 'Categories',
             'route' => 'admin.categories.index',
             'icon' => 'bi bi-tags',
-            'can' => 'manage-categories',
+            'can' => ['edit-categories', 'change-category-status'],
             'active' => ['admin/categories', 'admin/categories/*'],
         ],
         ['header' => 'Site Manager'],

@@ -28,12 +28,18 @@
                         @csrf
                         <div class="mb-3 text-start">
                             <label class="form-label" for="artisan-gate-password">Account password</label>
-                            <input type="password"
-                                   class="form-control"
-                                   id="artisan-gate-password"
-                                   name="password"
-                                   autocomplete="current-password"
-                                   required>
+                            <div class="input-group">
+                                <div class="input-group-text"><i class="bi bi-lock-fill"></i></div>
+                                <input type="password"
+                                       class="form-control"
+                                       id="artisan-gate-password"
+                                       name="password"
+                                       autocomplete="current-password"
+                                       required>
+                                <button type="button" class="input-group-text js-password-toggle" tabindex="-1" aria-label="Show password">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="d-flex flex-wrap gap-2 justify-content-center">
                             <button type="submit" class="btn btn-warning">

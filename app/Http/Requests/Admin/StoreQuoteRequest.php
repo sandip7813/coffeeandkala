@@ -12,7 +12,7 @@ class StoreQuoteRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return $this->user()?->can('manage-quotes') === true;
+        return $this->user()?->can('create-quotes') === true;
     }
 
     /**

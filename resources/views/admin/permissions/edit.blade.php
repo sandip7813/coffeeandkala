@@ -16,6 +16,7 @@
 
                     <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" :value="$permission->name" required />
                     <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" :value="$permission->label" />
+                    <x-adminlte-input name="group" label="{{ __('Group') }}" :value="$permission->group" />
 
                     <div class="d-flex gap-2">
                         <a href="{{ route('admin.permissions.index') }}" class="btn btn-outline-secondary">{{ __('adminlte.cancel') }}</a>

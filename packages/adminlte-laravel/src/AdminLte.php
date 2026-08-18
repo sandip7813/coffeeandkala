@@ -100,10 +100,10 @@ class AdminLte
         }
 
         return match ($scope) {
-            'sidebar' => array_values(array_filter(
+            'sidebar' => $this->withoutOrphanHeaders(array_values(array_filter(
                 $this->filteredMenu,
                 fn ($item) => MenuItemHelper::isSidebarItem($item)
-            )),
+            ))),
             'navbar-left' => array_values(array_filter(
                 $this->filteredMenu,
                 fn ($item) => ! empty($item['topnav'])
@@ -114,6 +114,44 @@ class AdminLte
             )),
             default => $this->filteredMenu,
         };
+    }
+
+    /**
+     * Drop `header` items that have no visible link underneath them, so a
+     * section label doesn't sit alone once every item it groups has been
+     * filtered out by permissions.
+     *
+     * @param  array<int, array<string, mixed>>  $items
+     * @return array<int, array<string, mixed>>
+     */
+    protected function withoutOrphanHeaders(array $items): array
+    {
+        $result = [];
+
+        foreach ($items as $index => $item) {
+            if (! isset($item['header'])) {
+                $result[] = $item;
+
+                continue;
+            }
+
+            $hasVisibleChild = false;
+
+            for ($i = $index + 1; $i < count($items); $i++) {
+                if (isset($items[$i]['header'])) {
+                    break;
+                }
+
+                $hasVisibleChild = true;
+                break;
+            }
+
+            if ($hasVisibleChild) {
+                $result[] = $item;
+            }
+        }
+
+        return $result;
     }
 
     /**

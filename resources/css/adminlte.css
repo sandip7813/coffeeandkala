@@ -215,6 +215,27 @@
 }
 
 /*
+ * Password show/hide toggle — styled as an input-group-text addon so its
+ * border, background, and radius match the field it's attached to.
+ */
+.js-password-toggle {
+    cursor: pointer;
+}
+
+.js-password-toggle:hover,
+.js-password-toggle:focus {
+    color: var(--bs-body-color);
+}
+
+/*
+ * Bootstrap's default modal backdrop is solid black at 50% opacity — lighten
+ * it site-wide so the page behind a modal stays visibly readable.
+ */
+.modal-backdrop.show {
+    opacity: 0.25;
+}
+
+/*
  * Option B: compile from source to customise SCSS variables. Comment out
  * the admin-lte CSS import above and use this instead (requires `sass`):
  *

@@ -78,13 +78,18 @@
                             </td>
                             <td class="text-end">
                                 <x-admin.row-actions>
-                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                           href="{{ route('admin.quotes.edit', $quote) }}">
-                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                            <span>{{ __('adminlte.edit') }}</span>
-                                        </a>
-                                    </li>
+                                    @php
+                                        $ownsQuote = $quote->created_by === auth()->id();
+                                    @endphp
+                                    @if ($ownsQuote || auth()->user()?->can('edit-quotes'))
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2"
+                                               href="{{ route('admin.quotes.edit', $quote) }}">
+                                                <i class="bi bi-pencil" aria-hidden="true"></i>
+                                                <span>{{ __('adminlte.edit') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" href="#"
                                            data-bs-toggle="modal" data-bs-target="#assignDatesModal{{ $quote->id }}">
@@ -92,22 +97,24 @@
                                             <span>{{ __('Assign to date(s)') }}</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <form method="POST" action="{{ route('admin.quotes.destroy', $quote) }}"
-                                              data-confirm-toggle
-                                              data-confirm-title="{{ __('Delete this quote?') }}"
-                                              data-confirm-text="{{ __('This cannot be undone.') }}"
-                                              data-confirm-button="{{ __('Yes, delete') }}"
-                                              data-cancel-button="{{ __('adminlte.cancel') }}">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                    class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                <i class="bi bi-trash" aria-hidden="true"></i>
-                                                <span>{{ __('adminlte.delete') }}</span>
-                                            </button>
-                                        </form>
-                                    </li>
+                                    @if ($ownsQuote || auth()->user()?->can('delete-quotes'))
+                                        <li>
+                                            <form method="POST" action="{{ route('admin.quotes.destroy', $quote) }}"
+                                                  data-confirm-toggle
+                                                  data-confirm-title="{{ __('Delete this quote?') }}"
+                                                  data-confirm-text="{{ __('This cannot be undone.') }}"
+                                                  data-confirm-button="{{ __('Yes, delete') }}"
+                                                  data-cancel-button="{{ __('adminlte.cancel') }}">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="dropdown-item d-flex align-items-center gap-2 text-danger">
+                                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                                    <span>{{ __('adminlte.delete') }}</span>
+                                                </button>
+                                            </form>
+                                        </li>
+                                    @endif
                                 </x-admin.row-actions>
                             </td>
                         </tr>

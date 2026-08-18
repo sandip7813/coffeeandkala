@@ -705,6 +705,61 @@ function initValidationErrorAlert() {
   })
 }
 
+// --- Password visibility toggles --------------------------------------------
+function initPasswordToggles() {
+  document.querySelectorAll('.js-password-toggle').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const wrapper = btn.closest('.input-group') || btn.parentElement
+      const input = wrapper?.querySelector('input[type="password"], input[type="text"].js-password-input')
+
+      if (!input) {
+        return
+      }
+
+      const willShow = input.type === 'password'
+      input.type = willShow ? 'text' : 'password'
+      input.classList.toggle('js-password-input', willShow)
+
+      const icon = btn.querySelector('i')
+      if (icon) {
+        icon.classList.toggle('bi-eye', !willShow)
+        icon.classList.toggle('bi-eye-slash', willShow)
+      }
+
+      btn.setAttribute('aria-label', willShow ? 'Hide password' : 'Show password')
+    })
+  })
+}
+
+// --- Role permission group "select all" toggles -----------------------------
+function initPermissionGroupToggles() {
+  document.querySelectorAll('.permission-group').forEach((card) => {
+    const toggle = card.querySelector('.js-permission-group-toggle')
+    const checkboxes = Array.from(card.querySelectorAll('.js-permission-checkbox'))
+
+    if (!toggle || checkboxes.length === 0) {
+      return
+    }
+
+    const syncToggle = () => {
+      const checkedCount = checkboxes.filter((checkbox) => checkbox.checked).length
+      toggle.checked = checkedCount === checkboxes.length
+      toggle.indeterminate = checkedCount > 0 && checkedCount < checkboxes.length
+    }
+
+    toggle.addEventListener('change', () => {
+      checkboxes.forEach((checkbox) => {
+        checkbox.checked = toggle.checked
+      })
+      toggle.indeterminate = false
+    })
+
+    checkboxes.forEach((checkbox) => checkbox.addEventListener('change', syncToggle))
+
+    syncToggle()
+  })
+}
+
 // --- Reopen a modal after a validation redirect -----------------------------
 function initReopenModal() {
   const el = document.getElementById('admin-reopen-modal')
@@ -854,6 +909,8 @@ whenReady(() => {
   initPageLoadingForms()
   initFlashToasts()
   initValidationErrorAlert()
+  initPasswordToggles()
+  initPermissionGroupToggles()
   initReopenModal()
   initSelect2Search()
   initDateRangePicker()

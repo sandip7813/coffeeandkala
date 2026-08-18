@@ -15,6 +15,7 @@
 
                     <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" placeholder="e.g. manage-articles" required />
                     <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" placeholder="e.g. Manage Articles" />
+                    <x-adminlte-input name="group" label="{{ __('Group') }}" placeholder="e.g. Articles" />
 
                     <div class="d-flex gap-2">
                         <a href="{{ route('admin.permissions.index') }}" class="btn btn-outline-secondary">{{ __('adminlte.cancel') }}</a>

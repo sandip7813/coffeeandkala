@@ -8,13 +8,13 @@
 
 @section('content')
     <div class="row justify-content-center">
-        <div class="col-lg-6">
+        <div class="col-lg-9">
             <x-adminlte-card icon="bi bi-shield-lock" title="{{ __('adminlte.edit_role') }}">
                 <form method="POST" action="{{ route('admin.roles.update', $role) }}">
                     @csrf
                     @method('PUT')
 
-                    <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" :value="$role->name" required />
+                    <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" :value="$role->name" @if ($role->name === 'super_admin') readonly @endif required />
                     <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" :value="$role->label" />
 
                     <div class="mb-3">
@@ -22,22 +22,10 @@
                         @error('permissions')
                             <div class="text-danger small mb-1">{{ $message }}</div>
                         @enderror
-                        <div class="row">
-                            @forelse ($permissions as $permission)
-                                <div class="col-md-6">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="permissions[]"
-                                               value="{{ $permission->id }}" id="permission-{{ $permission->id }}"
-                                               @checked(in_array($permission->id, old('permissions', $role->permissions->pluck('id')->all())))>
-                                        <label class="form-check-label" for="permission-{{ $permission->id }}">
-                                            {{ $permission->label ?? $permission->name }}
-                                        </label>
-                                    </div>
-                                </div>
-                            @empty
-                                <p class="text-muted">{{ __('adminlte.no_permissions') }}</p>
-                            @endforelse
-                        </div>
+                        @include('admin.roles.partials.permission-checkboxes', [
+                            'checkedIds' => $role->permissions->pluck('id')->all(),
+                            'isSuperAdmin' => $role->name === 'super_admin',
+                        ])
                     </div>
 
                     <div class="d-flex gap-2">

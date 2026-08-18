@@ -28,6 +28,5 @@ class AppServiceProvider extends ServiceProvider
 
         Gate::define('manage-brand', fn (?User $user): bool => $user?->isSuperAdmin() === true);
         Gate::define('manage-artisan', fn (?User $user): bool => $user?->isSuperAdmin() === true);
-        Gate::define('manage-categories', fn (?User $user): bool => $user?->isSuperAdmin() === true);
     }
 }

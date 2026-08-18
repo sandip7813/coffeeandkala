@@ -133,3 +133,44 @@ test('editors cannot manage categories', function () {
         ->put(route('admin.categories.status.update', $category))
         ->assertForbidden();
 });
+
+test('a user with only edit-categories can edit but not toggle status', function () {
+    $user = userWithPermission('edit-categories');
+    $category = Category::factory()->create(['type' => 'journal', 'title' => 'Old Title', 'status' => true]);
+
+    $this->actingAs($user)
+        ->get(route('admin.categories.index'))
+        ->assertOk();
+
+    $this->actingAs($user)->put(route('admin.categories.update', $category), [
+        'title' => 'New Title',
+        'slug' => $category->slug,
+        'sort_order' => $category->sort_order,
+        'status' => true,
+    ])->assertRedirect(route('admin.categories.index'));
+
+    $this->assertDatabaseHas('categories', ['id' => $category->id, 'title' => 'New Title']);
+
+    $this->actingAs($user)
+        ->put(route('admin.categories.status.update', $category))
+        ->assertForbidden();
+});
+
+test('a user with only change-category-status can toggle status but not edit', function () {
+    $user = userWithPermission('change-category-status');
+    $category = Category::factory()->create(['status' => true]);
+
+    $this->actingAs($user)
+        ->get(route('admin.categories.index'))
+        ->assertOk();
+
+    $this->actingAs($user)
+        ->put(route('admin.categories.status.update', $category))
+        ->assertRedirect(route('admin.categories.index'));
+
+    $this->assertDatabaseHas('categories', ['id' => $category->id, 'status' => false]);
+
+    $this->actingAs($user)
+        ->put(route('admin.categories.update', $category), ['title' => 'x'])
+        ->assertForbidden();
+});

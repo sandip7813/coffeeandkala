@@ -13,7 +13,7 @@ class CategoryController extends Controller
 {
     public function index(Request $request): View
     {
-        $this->authorizeManage();
+        $this->authorizeView();
 
         $filters = $request->only(['title', 'type', 'status']);
 
@@ -34,7 +34,7 @@ class CategoryController extends Controller
 
     public function updateStatus(Category $category): RedirectResponse
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('change-category-status'), 403);
 
         $category->update(['status' => ! $category->status]);
 
@@ -44,7 +44,7 @@ class CategoryController extends Controller
 
     public function edit(Category $category): View
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('edit-categories'), 403);
 
         return view('admin.categories.edit', compact('category'));
     }
@@ -57,8 +57,15 @@ class CategoryController extends Controller
             ->with('status', __('Category updated.'));
     }
 
-    private function authorizeManage(): void
+    /**
+     * Viewing the list only requires one of the granular category permissions
+     * — whichever action a user is allowed to perform, they need to see the
+     * list first to get to it.
+     */
+    private function authorizeView(): void
     {
-        abort_unless(auth()->user()?->can('manage-categories'), 403);
+        $user = auth()->user();
+
+        abort_unless($user?->can('edit-categories') || $user?->can('change-category-status'), 403);
     }
 }

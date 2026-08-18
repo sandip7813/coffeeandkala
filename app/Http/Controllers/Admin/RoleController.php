@@ -8,6 +8,7 @@ use App\Models\Role;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 
 class RoleController extends Controller
@@ -16,16 +17,17 @@ class RoleController extends Controller
     {
         $this->authorizeManage();
 
-        $roles = Role::withCount('permissions')->orderBy('name')->paginate(15);
+        $roles = Role::with('permissions')->withCount('permissions')->orderBy('name')->paginate(15);
+        $permissions = $this->groupedPermissions();
 
-        return view('admin.roles.index', compact('roles'));
+        return view('admin.roles.index', compact('roles', 'permissions'));
     }
 
     public function create(): View
     {
         $this->authorizeManage();
 
-        $permissions = Permission::orderBy('name')->get();
+        $permissions = $this->groupedPermissions();
 
         return view('admin.roles.create', compact('permissions'));
     }
@@ -56,7 +58,7 @@ class RoleController extends Controller
     {
         $this->authorizeManage();
 
-        $permissions = Permission::orderBy('name')->get();
+        $permissions = $this->groupedPermissions();
         $role->load('permissions');
 
         return view('admin.roles.edit', compact('role', 'permissions'));
@@ -75,7 +77,9 @@ class RoleController extends Controller
             'permissions.*' => ['integer', 'exists:adminlte_permissions,id'],
         ]);
 
-        if ($role->name === 'super_admin') {
+        $isSuperAdmin = $role->name === 'super_admin';
+
+        if ($isSuperAdmin) {
             $data['name'] = 'super_admin';
         }
 
@@ -84,7 +88,10 @@ class RoleController extends Controller
             'label' => $data['label'] ?? null,
         ]);
 
-        $role->permissions()->sync($data['permissions'] ?? []);
+        // Super Admin isn't editable from the form (the checkboxes aren't even
+        // rendered for it), so keep it synced to every permission that exists
+        // rather than trusting — or wiping it out with — whatever was submitted.
+        $role->permissions()->sync($isSuperAdmin ? Permission::pluck('id') : ($data['permissions'] ?? []));
 
         return redirect()->route('admin.roles.index')
             ->with('status', __('adminlte.role_updated'));
@@ -109,6 +116,19 @@ class RoleController extends Controller
     private function authorizeManage(): void
     {
         abort_unless(auth()->user()?->can('manage-roles'), 403);
+    }
+
+    /**
+     * All permissions, grouped by their `group` label for a grouped checkbox
+     * list — ungrouped permissions fall under a catch-all "General" heading.
+     * Groups follow Permission::GROUP_ORDER rather than alphabetical order.
+     *
+     * @return Collection<string, Collection<int, Permission>>
+     */
+    private function groupedPermissions()
+    {
+        return Permission::allOrderedByGroup()
+            ->groupBy(fn (Permission $permission) => $permission->group ?? 'General');
     }
 
     private function guardProtectedRoleRename(Role $role, string $newName): void

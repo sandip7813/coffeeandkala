@@ -1,6 +1,8 @@
 @php
     $title = trim(($title ?? config('adminlte.title', 'AdminLTE 4')));
     $authType = $authType ?? 'login'; // login | register
+    $flashStatus = session('status');
+    $flashSuccess = session('success');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -36,6 +38,21 @@
             </div>
         </div>
     </div>
+    @if (filled($flashStatus) || filled($flashSuccess))
+        <script type="application/json" id="admin-flash">
+            @json([
+                'type' => 'success',
+                'message' => $flashStatus ?: $flashSuccess,
+            ])
+        </script>
+    @endif
+
+    @if ($errors->any())
+        <script type="application/json" id="admin-validation-errors">
+            @json($errors->all())
+        </script>
+    @endif
+
     @stack('js')
 </body>
 </html>

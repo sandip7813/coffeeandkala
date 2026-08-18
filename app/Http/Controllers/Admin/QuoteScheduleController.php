@@ -16,7 +16,7 @@ class QuoteScheduleController extends Controller
 {
     public function index(EnsureQuoteScheduledForDate $ensureQuoteScheduledForDate): View
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('assign-quote-dates'), 403);
 
         $schedules = collect(range(0, 13))
             ->map(fn (int $offset) => $ensureQuoteScheduledForDate->handle(Carbon::today()->addDays($offset)));
@@ -28,7 +28,7 @@ class QuoteScheduleController extends Controller
 
     public function update(Request $request, string $date): RedirectResponse
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('assign-quote-dates'), 403);
 
         $scheduleWindow = $this->scheduleWindow();
 
@@ -47,11 +47,6 @@ class QuoteScheduleController extends Controller
 
         return redirect()->route('admin.quotes.schedule.index')
             ->with('status', __('Quote assigned for :date.', ['date' => $data['date']]));
-    }
-
-    private function authorizeManage(): void
-    {
-        abort_unless(auth()->user()?->can('manage-quotes'), 403);
     }
 
     /**

@@ -3,8 +3,12 @@
         <label for="{{ $id }}" class="form-label">{{ $label }}</label>
     @endisset
 
-    @isset($prepend)
+    @php $isPassword = $type === 'password'; @endphp
+
+    @if (isset($prepend) || $isPassword)
         <div class="input-group {{ $igroupSize ? 'input-group-'.$igroupSize : '' }}">
+    @endif
+    @isset($prepend)
             <span class="input-group-text">{{ $prepend }}</span>
     @endisset
 
@@ -18,8 +22,15 @@
 
     @isset($append)
             <span class="input-group-text">{{ $append }}</span>
-        </div>
     @endisset
+    @if ($isPassword)
+            <button type="button" class="input-group-text js-password-toggle" tabindex="-1" aria-label="Show password">
+                <i class="bi bi-eye"></i>
+            </button>
+    @endif
+    @if (isset($prepend) || $isPassword)
+        </div>
+    @endif
 
     @if ($hasError())
         <div class="invalid-feedback d-block" id="{{ $id }}-error">{{ $errorMessage() }}</div>

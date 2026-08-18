@@ -21,7 +21,7 @@ class QuoteController extends Controller
 {
     public function index(Request $request): View
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('view-quotes'), 403);
 
         $filters = $request->only(['text', 'date_from', 'date_to']);
 
@@ -52,7 +52,7 @@ class QuoteController extends Controller
 
     public function create(): View
     {
-        $this->authorizeManage();
+        abort_unless(auth()->user()?->can('create-quotes'), 403);
 
         $scheduleDates = $this->upcomingScheduleDates();
 
@@ -93,7 +93,7 @@ class QuoteController extends Controller
 
     public function edit(Quote $quote): View
     {
-        $this->authorizeManage();
+        $this->authorizeManage($quote, 'edit-quotes');
 
         $scheduleDates = $this->upcomingScheduleDates();
         $selectedDates = $this->datesAssignedTo($quote, $scheduleDates);
@@ -126,7 +126,7 @@ class QuoteController extends Controller
 
     public function destroy(Quote $quote): RedirectResponse
     {
-        $this->authorizeManage();
+        $this->authorizeManage($quote, 'delete-quotes');
 
         $quote->delete();
 
@@ -134,9 +134,17 @@ class QuoteController extends Controller
             ->with('status', __('Quote deleted.'));
     }
 
-    private function authorizeManage(): void
+    /**
+     * A quote's own creator may always manage it; managing someone else's
+     * quote requires the given permission.
+     */
+    private function authorizeManage(Quote $quote, string $permission): void
     {
-        abort_unless(auth()->user()?->can('manage-quotes'), 403);
+        if ($quote->created_by === auth()->id()) {
+            return;
+        }
+
+        abort_unless(auth()->user()?->can($permission), 403);
     }
 
     /**

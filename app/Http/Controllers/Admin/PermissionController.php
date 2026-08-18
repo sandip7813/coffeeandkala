@@ -7,6 +7,7 @@ use App\Models\Permission;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -16,7 +17,19 @@ class PermissionController extends Controller
     {
         $this->authorizeManage();
 
-        $permissions = Permission::query()->orderBy('name')->paginate(20);
+        // Grouped by the canonical order (Permission::GROUP_ORDER) rather than
+        // alphabetically, so this can't be expressed as a plain DB ->orderBy().
+        $perPage = 20;
+        $page = request()->integer('page', 1);
+        $ordered = Permission::allOrderedByGroup();
+
+        $permissions = new LengthAwarePaginator(
+            $ordered->forPage($page, $perPage)->values(),
+            $ordered->count(),
+            $perPage,
+            $page,
+            ['path' => request()->url(), 'query' => request()->query()],
+        );
 
         return view('admin.permissions.index', compact('permissions'));
     }
@@ -35,11 +48,13 @@ class PermissionController extends Controller
         $data = $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9][a-z0-9._-]*$/i', 'unique:adminlte_permissions,name'],
             'label' => ['nullable', 'string', 'max:255'],
+            'group' => ['nullable', 'string', 'max:255'],
         ]);
 
         Permission::create([
             'name' => $data['name'],
             'label' => $data['label'] ?? null,
+            'group' => $data['group'] ?? null,
         ]);
 
         return redirect()->route('admin.permissions.index')
@@ -66,6 +81,7 @@ class PermissionController extends Controller
                 Rule::unique('adminlte_permissions', 'name')->ignore($permission->id),
             ],
             'label' => ['nullable', 'string', 'max:255'],
+            'group' => ['nullable', 'string', 'max:255'],
         ]);
 
         if ($this->isProtectedPermission($permission->name) && $data['name'] !== $permission->name) {
@@ -77,6 +93,7 @@ class PermissionController extends Controller
         $permission->update([
             'name' => $this->isProtectedPermission($permission->name) ? $permission->name : $data['name'],
             'label' => $data['label'] ?? null,
+            'group' => $data['group'] ?? null,
         ]);
 
         return redirect()->route('admin.permissions.index')
@@ -109,6 +126,15 @@ class PermissionController extends Controller
         return in_array($name, [
             'view-dashboard',
             'manage-users',
+            'delete-users',
+            'change-user-status',
+            'edit-categories',
+            'change-category-status',
+            'view-quotes',
+            'create-quotes',
+            'assign-quote-dates',
+            'edit-quotes',
+            'delete-quotes',
             'manage-roles',
             'manage-permissions',
         ], true);

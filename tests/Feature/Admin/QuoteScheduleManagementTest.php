@@ -103,3 +103,17 @@ test('editors cannot access the quote schedule', function () {
 
     $this->actingAs($user)->get(route('admin.quotes.schedule.index'))->assertForbidden();
 });
+
+test('a user with only assign-quote-dates can view and update the schedule', function () {
+    $user = userWithPermission('assign-quote-dates');
+    $quote = Quote::factory()->create();
+    $date = now()->addDays(3)->toDateString();
+
+    $this->actingAs($user)->get(route('admin.quotes.schedule.index'))->assertOk();
+
+    $this->actingAs($user)
+        ->put(route('admin.quotes.schedule.update', $date), ['quote_id' => $quote->id])
+        ->assertRedirect(route('admin.quotes.schedule.index'));
+
+    $this->assertDatabaseHas('quote_schedules', ['date' => $date.' 00:00:00', 'quote_id' => $quote->id]);
+});
