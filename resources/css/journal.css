@@ -15,21 +15,14 @@
     --journal-paper: #ebe4d6;
     --journal-paper-deep: #e0d7c6;
     color: var(--journal-ink);
-    background-color: var(--warm-paper);
+    background-color: #e7dcc6;
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.17  0 0 0 0 0.13  0 0 0 0 0.09  0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse at 50% 10%, rgba(139, 94, 60, 0.1), transparent 55%),
+        linear-gradient(180deg, #ede1c9 0%, #e7dcc6 55%, #ddcfae 100%);
+    background-repeat: repeat, no-repeat, no-repeat;
     position: relative;
     overflow: clip;
-}
-
-.journal-page::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.45;
-    background-image:
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
-    mix-blend-mode: multiply;
-    z-index: 0;
 }
 
 .journal-page > * {
@@ -106,61 +99,18 @@
     height: 100%;
     object-fit: cover;
     object-position: center 12%;
-    /* Feather the image's own top/bottom edges so it dissolves into the
-       hero field above and the Warm Paper below; left/right stay almost
-       untouched so the photo keeps its full width. */
-    -webkit-mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        #000 4%,
-        #000 92%,
-        transparent 100%
-    ),
-    linear-gradient(
-        to right,
-        transparent 0%,
-        #000 0.5%,
-        #000 99.5%,
-        transparent 100%
-    );
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(
-        to bottom,
-        transparent 0%,
-        #000 4%,
-        #000 92%,
-        transparent 100%
-    ),
-    linear-gradient(
-        to right,
-        transparent 0%,
-        #000 0.5%,
-        #000 99.5%,
-        transparent 100%
-    );
-    mask-composite: intersect;
 }
 
 .journal-hero-banner.is-expanded .journal-hero-image {
     height: auto;
     object-fit: contain;
-    -webkit-mask-image: none;
-    mask-image: none;
 }
 
 .journal-hero-veil {
     position: absolute;
     inset: 0;
     pointer-events: none;
-    /* Top edge blends into the hero field's own dark tone, bottom edge
-       blends into the Warm Paper below — left/right are left alone. */
-    background: linear-gradient(
-        to bottom,
-        var(--journal-hero-bg) 0%,
-        transparent 10%,
-        transparent 88%,
-        var(--warm-paper) 100%
-    );
+    background: none;
     transition: opacity 0.5s ease;
 }
 
