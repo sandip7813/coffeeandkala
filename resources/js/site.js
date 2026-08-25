@@ -447,6 +447,41 @@ document.addEventListener('DOMContentLoaded', () => {
         studioReveals.forEach((element) => element.classList.add('is-inview'));
     }
 
+    const studioIntroToggle = document.querySelector('[data-studio-intro-toggle]');
+    const studioIntroMore = document.querySelector('[data-studio-intro-more]');
+
+    if (studioIntroToggle && studioIntroMore) {
+        studioIntroToggle.addEventListener('click', () => {
+            const expanded = !studioIntroMore.classList.contains('is-open');
+
+            if (expanded) {
+                studioIntroMore.classList.add('is-open');
+                studioIntroMore.style.maxHeight = `${studioIntroMore.scrollHeight}px`;
+            } else {
+                studioIntroMore.style.maxHeight = `${studioIntroMore.scrollHeight}px`;
+                requestAnimationFrame(() => {
+                    studioIntroMore.classList.remove('is-open');
+                    studioIntroMore.style.maxHeight = '0px';
+                });
+            }
+
+            studioIntroToggle.textContent = expanded ? 'Know Less' : 'Know More';
+            studioIntroToggle.setAttribute('aria-expanded', String(expanded));
+        });
+
+        studioIntroMore.addEventListener('transitionend', (event) => {
+            if (event.propertyName === 'max-height' && studioIntroMore.classList.contains('is-open')) {
+                studioIntroMore.style.maxHeight = 'none';
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (studioIntroMore.classList.contains('is-open') && studioIntroMore.style.maxHeight !== 'none') {
+                studioIntroMore.style.maxHeight = `${studioIntroMore.scrollHeight}px`;
+            }
+        });
+    }
+
     const journalReveals = document.querySelectorAll('.journal-page .journal-reveal');
 
     if (journalReveals.length > 0 && 'IntersectionObserver' in window) {

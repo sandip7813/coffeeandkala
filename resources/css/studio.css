@@ -140,11 +140,12 @@
 }
 
 .studio-intro-title {
-    font-family: var(--font-serif);
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 500;
+    font-family: 'Cormorant Garamond', var(--font-serif);
+    font-size: 30px;
+    font-weight: 400;
     line-height: 1.08;
     letter-spacing: 0.01em;
+    text-transform: uppercase;
     color: var(--studio-ink);
     margin-bottom: 22px;
 }
@@ -157,33 +158,60 @@
 
 .studio-intro .studio-ornament {
     margin: 0 auto 28px;
+    background: linear-gradient(90deg, transparent, #000, transparent);
 }
 
 .studio-intro-copy {
     display: grid;
-    gap: 16px;
-    text-align: left;
-    max-width: none;
-    margin: 0 auto 28px;
+    gap: 14px;
+    text-align: justify;
+    max-width: 1080px;
+    margin: 0 auto;
 }
 
 .studio-intro-copy p {
-    font-family: var(--font-sans);
-    font-size: 20px;
-    font-weight: 300;
-    line-height: 1.75;
+    font-family: 'Amiri', var(--font-serif);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.65;
+    text-align: justify;
     color: var(--studio-muted);
     margin: 0;
 }
 
-.studio-intro-aside {
-    margin: 0;
+.studio-intro-more-wrap {
+    display: grid;
+    gap: 16px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+        max-height 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+        opacity 0.4s ease;
+}
+
+.studio-intro-more-wrap.is-open {
+    opacity: 1;
+}
+
+.studio-intro-toggle {
+    display: block;
+    margin: 18px auto 0;
+    padding: 0;
+    background: none;
+    border: 0;
     font-family: var(--font-sans);
     font-size: 11px;
+    font-weight: 600;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-weight: 500;
-    color: rgba(44, 33, 24, 0.45);
+    color: var(--studio-ember);
+    cursor: pointer;
+}
+
+.studio-intro-toggle:hover,
+.studio-intro-toggle:focus-visible {
+    color: var(--studio-ink);
 }
 
 .studio-wall {
