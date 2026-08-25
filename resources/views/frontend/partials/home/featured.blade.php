@@ -3,28 +3,28 @@
     $heroStories = [
         [
             'tag' => 'TRAVEL',
-            'title' => 'IN THE HEART OF JAIPUR',
+            'title' => 'In the heart of Jaipur',
             'desc' => 'A slow morning in the Pink City — where every corner carries a story older than time.',
             'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1800',
             'thumb' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=320',
         ],
         [
             'tag' => 'LIFESTYLE',
-            'title' => 'BREWED AT DAWN',
+            'title' => 'Brewed at dawn',
             'desc' => 'Quiet cups, open notebooks, and the soft ritual that starts every creative day.',
             'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1800',
             'thumb' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=320',
         ],
         [
             'tag' => 'PHOTOGRAPHY',
-            'title' => 'LIGHT OVER LANDSCAPE',
+            'title' => 'Light over landscape',
             'desc' => 'Frames that linger — where stillness, color, and memory meet in one glance.',
             'image' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1800',
             'thumb' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=320',
         ],
         [
             'tag' => 'ESSAYS',
-            'title' => 'WORDS BETWEEN SIPS',
+            'title' => 'Words between sips',
             'desc' => 'Short reflections for long evenings — stories written the way coffee is poured: slowly.',
             'image' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1800',
             'thumb' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=320',
@@ -39,6 +39,10 @@
     aria-label="Featured stories"
     data-hero-banner
 >
+    <div class="hero-banner-header">
+        <h2 class="hero-banner-heading">Latest Pieces</h2>
+    </div>
+
     <div class="hero-embla-wrap">
         <div class="hero-embla">
             <div class="hero-embla__viewport" data-hero-viewport>

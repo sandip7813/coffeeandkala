@@ -37,9 +37,11 @@
 <section id="sec-08" class="section-home-carousel section-visual-poetry" aria-label="Gallery of visual poetry">
     <div class="home-carousel-header animate-on-scroll animate-on-scroll--text">
         <div class="home-carousel-heading">
-            <h2 class="home-carousel-title">Gallery of visual poetry</h2>
+            <h2 class="home-carousel-title">Studio</h2>
         </div>
-        <a href="{{ route('studio') }}" class="home-carousel-link">Explore Studio <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></a>
+        <a href="{{ route('studio') }}" class="home-carousel-link" aria-label="Explore Studio">
+            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+        </a>
     </div>
 
     <div class="home-embla home-embla--studio" data-home-carousel data-slides-visible="4">
@@ -53,7 +55,6 @@
                             </div>
                             <div class="home-studio-card-body">
                                 <h3 class="home-studio-card-title">{{ $slide['title'] }}</h3>
-                                <span class="home-studio-card-medium">{{ $slide['medium'] }}</span>
                             </div>
                         </a>
                     </article>

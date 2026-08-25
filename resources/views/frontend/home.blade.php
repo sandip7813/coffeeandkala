@@ -11,4 +11,5 @@
     @include('frontend.partials.home.gallery-visual-storytelling')
     @include('frontend.partials.home.journal-carousel')
     @include('frontend.partials.home.visual-poetry')
+    @include('frontend.partials.home.poetry')
 @endsection

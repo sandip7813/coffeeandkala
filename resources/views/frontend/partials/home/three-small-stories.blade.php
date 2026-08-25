@@ -32,7 +32,7 @@
 >
     <header class="three-stories-header">
         <div class="three-stories-heading">
-            <h2 class="three-stories-title">Three Small Stories</h2>
+            <h2 class="three-stories-title">The Selection</h2>
         </div>
 
         <a href="{{ route('features') }}" class="three-stories-cta" aria-label="Unfold the stories">

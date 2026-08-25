@@ -20,8 +20,7 @@
 
         <p class="hero-editorial-tagline hero-reveal" data-hero-reveal data-reveal-mode="words"
             data-reveal-delay="2400">
-            An independent editorial magazine where every piece is crafted with time, guided by intention and published
-            with purpose
+            Where ideas are brewed, one thought at a time
         </p>
     </div>
 

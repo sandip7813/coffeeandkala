@@ -22,48 +22,56 @@
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-03">
                     <span class="nav-item-number">03</span>
-                    <div class="nav-item-title">Currently Pouring</div>
-                    <div class="nav-item-desc">Featured stories, poured slowly.</div>
+                    <div class="nav-item-title">The Edit</div>
+                    <div class="nav-item-desc">Latest editorial selection</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-04">
                     <span class="nav-item-number">04</span>
-                    <div class="nav-item-title">Three Small Stories</div>
-                    <div class="nav-item-desc">Brief pours for a quieter pause.</div>
+                    <div class="nav-item-title">Short Reads</div>
+                    <div class="nav-item-desc">Brief stories, ideas & observations</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-05">
                     <span class="nav-item-number">05</span>
-                    <div class="nav-item-title">Features Unfolded</div>
-                    <div class="nav-item-desc">Longer reads that ask you to stay.</div>
+                    <div class="nav-item-title">Features</div>
+                    <div class="nav-item-desc">A closer look</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-06">
                     <span class="nav-item-number">06</span>
-                    <div class="nav-item-title">Gallery of Visual Storytelling</div>
-                    <div class="nav-item-desc">Frames that refuse to stay quiet.</div>
+                    <div class="nav-item-title">Gallery</div>
+                    <div class="nav-item-desc">A collection of photography & visual expression</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-07">
                     <span class="nav-item-number">07</span>
-                    <div class="nav-item-title">From the Journal</div>
-                    <div class="nav-item-desc">Notes, essays, and quiet reads.</div>
+                    <div class="nav-item-title">The Journal</div>
+                    <div class="nav-item-desc">Perspectives on everything between</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
             <li>
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-08">
                     <span class="nav-item-number">08</span>
-                    <div class="nav-item-title">Gallery of visual poetry</div>
-                    <div class="nav-item-desc">Where colour finds its own language</div>
+                    <div class="nav-item-title">Studio</div>
+                    <div class="nav-item-desc">A collection of art & creative expression</div>
+                    <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
+                </a>
+            </li>
+            <li>
+                <a href="javascript:void(0)" class="nav-item" data-target="sec-09">
+                    <span class="nav-item-number">09</span>
+                    <div class="nav-item-title">Poetry</div>
+                    <div class="nav-item-desc">Words, Verses & Stories</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
