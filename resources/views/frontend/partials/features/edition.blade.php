@@ -76,6 +76,16 @@
 
         @if ($carouselEntries->isNotEmpty())
             <section class="section-home-carousel features-carousel" aria-label="More from this edition">
+                @if (!empty($categories))
+                    <nav class="features-category-table" aria-label="Feature categories">
+                        @foreach ($categories as $category)
+                            <a href="{{ route('features.show', $category['id']) }}" class="features-category-table-link">
+                                {{ $category['name'] }}
+                            </a>
+                        @endforeach
+                    </nav>
+                @endif
+
                 <div class="home-carousel-header">
                     <div class="home-carousel-heading">
                         <h2 class="home-carousel-title">More from this edition</h2>

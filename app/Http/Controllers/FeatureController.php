@@ -21,6 +21,7 @@ class FeatureController extends Controller
 
         return view('frontend.features', [
             'entries' => $entries,
+            'categories' => FeatureCatalog::all(),
         ]);
     }
 
