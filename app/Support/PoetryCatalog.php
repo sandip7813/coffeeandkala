@@ -17,8 +17,8 @@ class PoetryCatalog
                 'mood' => 'Longing',
                 'excerpt' => 'It rained the day you left, and the sky hasn\'t stopped since.',
                 'narration' => 'Written for the ones who measure time in weather — and know a sky doesn\'t have to be crying to be doing exactly that.',
-                'src' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=800',
+                'src' => asset('images/poetry/doors/the-weight-of-rain-large.jpg'),
+                'thumb' => asset('images/poetry/doors/the-weight-of-rain-thumb.jpg'),
                 'stanzas' => [
                     [
                         'It rained the day you left,',
@@ -50,8 +50,8 @@ class PoetryCatalog
                 'mood' => 'Unspoken',
                 'excerpt' => 'Some words are not meant to be spoken. They are meant to stay.',
                 'narration' => 'For the drawer in every house that keeps what was never sent — some letters were only ever meant to be written, not read.',
-                'src' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800',
+                'src' => asset('images/poetry/doors/things-we-left-unspoken-large.jpg'),
+                'thumb' => asset('images/poetry/doors/things-we-left-unspoken-thumb.jpg'),
                 'stanzas' => [
                     [
                         'There is a drawer in every house',
@@ -80,8 +80,8 @@ class PoetryCatalog
                 'mood' => 'Reflections',
                 'excerpt' => 'Silence isn\'t empty. It\'s full of everything we couldn\'t explain.',
                 'narration' => 'A study of the hours after a room goes quiet — when nothing is said, and somehow everything still is.',
-                'src' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?q=80&w=800',
+                'src' => asset('images/poetry/doors/the-colour-of-silence-large.jpg'),
+                'thumb' => asset('images/poetry/doors/the-colour-of-silence-thumb.jpg'),
                 'stanzas' => [
                     [
                         'Silence is not the absence of sound —',
@@ -113,8 +113,8 @@ class PoetryCatalog
                 'mood' => 'Hope',
                 'excerpt' => 'There is a quiet that lives between the dark and the dawn.',
                 'narration' => 'For the last hour of the night, before the birds have decided anything. Quietly, it is the most hopeful hour there is.',
-                'src' => 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1517256064527-09c73fc73e38?q=80&w=800',
+                'src' => asset('images/poetry/doors/before-the-morning-arrives-large.jpg'),
+                'thumb' => asset('images/poetry/doors/before-the-morning-arrives-thumb.jpg'),
                 'stanzas' => [
                     [
                         'There is a hush before the light,',
@@ -145,8 +145,8 @@ class PoetryCatalog
                 'mood' => 'Dreams',
                 'excerpt' => 'We sent our dreams away, hoping they\'d find their own shore.',
                 'narration' => 'A small elegy for every wish we ever set loose on water, trusting it to carry what we couldn\'t.',
-                'src' => 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1605649487212-47bdab064df7?q=80&w=800',
+                'src' => asset('images/poetry/doors/paper-boats-large.jpg'),
+                'thumb' => asset('images/poetry/doors/paper-boats-thumb.jpg'),
                 'stanzas' => [
                     [
                         'We used to fold our wishes',
@@ -178,8 +178,8 @@ class PoetryCatalog
                 'mood' => 'Threshold',
                 'excerpt' => 'Every doorway holds a version of me I haven\'t met yet.',
                 'narration' => 'On the rooms we avoid inside ourselves — and what happens the one night we\'re finally tired enough to knock.',
-                'src' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1600',
-                'thumb' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=800',
+                'src' => asset('images/poetry/doors/the-door-i-kept-closed-large.jpg'),
+                'thumb' => asset('images/poetry/doors/the-door-i-kept-closed-thumb.jpg'),
                 'stanzas' => [
                     [
                         'There is a door at the end of the hall',
