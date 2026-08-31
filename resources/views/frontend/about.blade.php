@@ -14,7 +14,9 @@
         <section class="about-split about-split--image-left">
             <figure class="about-frame about-reveal about-reveal--media">
                 <span class="about-frame-accent" aria-hidden="true"></span>
-                <img src="{{ asset('images/about/1-left.png') }}" alt="The creative pulse behind Coffee & Kala" loading="lazy">
+                <a href="{{ asset('images/about/1-left.png') }}" data-fancybox="about-story">
+                    <img src="{{ asset('images/about/1-left.png') }}" alt="The creative pulse behind Coffee & Kala" loading="lazy">
+                </a>
             </figure>
 
             <div class="about-split-copy about-reveal about-reveal--copy about-reveal-delay-2">
@@ -61,16 +63,20 @@
 
             <figure class="about-frame about-frame--offset about-reveal about-reveal--media about-reveal-delay-2">
                 <span class="about-frame-accent" aria-hidden="true"></span>
-                <img src="{{ asset('images/about/2-right.png') }}" alt="Open notebook with handwritten notes and a pen"
-                    loading="lazy">
+                <a href="{{ asset('images/about/2-right.png') }}" data-fancybox="about-story">
+                    <img src="{{ asset('images/about/2-right.png') }}" alt="Open notebook with handwritten notes and a pen"
+                        loading="lazy">
+                </a>
             </figure>
         </section>
 
         {{-- Image up · content down --}}
         <section class="about-stack about-stack--image-top">
             <figure class="about-cinema about-reveal about-reveal--media">
-                <img src="{{ asset('images/about/3-horizontal.png') }}" alt="Artist palette and brushes on a wooden table"
-                    loading="lazy">
+                <a href="{{ asset('images/about/3-horizontal.png') }}" data-fancybox="about-story">
+                    <img src="{{ asset('images/about/3-horizontal.png') }}" alt="Artist palette and brushes on a wooden table"
+                        loading="lazy">
+                </a>
             </figure>
 
             <div class="about-stack-copy about-reveal about-reveal--up about-reveal-delay-2">
@@ -131,8 +137,10 @@
             </div>
 
             <figure class="about-cinema about-cinema--soft about-reveal about-reveal--media about-reveal-delay-2">
-                <img src="{{ asset('images/about/4-horizontal.png') }}"
-                    alt="Friends gathered around a table sharing conversation" loading="lazy">
+                <a href="{{ asset('images/about/4-horizontal.png') }}" data-fancybox="about-story">
+                    <img src="{{ asset('images/about/4-horizontal.png') }}"
+                        alt="Friends gathered around a table sharing conversation" loading="lazy">
+                </a>
             </figure>
         </section>
 
@@ -140,18 +148,9 @@
         <section class="about-closing">
             <div class="about-closing-inner about-reveal about-reveal--up">
                 <span class="about-ornament about-ornament--light" aria-hidden="true"></span>
-                <p class="about-eyebrow">An open invitation</p>
                 <blockquote class="about-closing-quote">
                     Every cup holds a story.<br>What's yours?
                 </blockquote>
-                <p class="about-copy about-copy--centered">
-                    Fuel your passion. Scribble, paint, write, repeat — and find your way back here when
-                    the page fills up again.
-                </p>
-                <a href="{{ route('journal') }}" class="about-cta">
-                    Return to the journal
-                    <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                </a>
             </div>
         </section>
     </div>

@@ -87,35 +87,17 @@
                 @foreach ($poems as $i => $p)
                     <div class="poetry-book-page poetry-book-page--vined poetry-book-page--card" data-poem-slug="{{ $p['slug'] }}">
                         @include('frontend.partials.poetry.vine')
-                        <div class="poetry-book-page-inner">
+                        <div class="poetry-book-page-inner poetry-book-page-inner--index">
 
-                            <div class="poetry-book-card-top">
-                                <figure class="poetry-book-card-photo">
-                                    <img
-                                        src="{{ $p['src'] }}"
-                                        alt=""
-                                        loading="lazy"
-                                        width="700"
-                                        height="860"
-                                        decoding="async"
-                                    >
-                                </figure>
-                                <div class="poetry-book-card-intro">
-                                    <p class="poetry-eyebrow">{{ $p['mood'] }}</p>
-                                    <h3 class="poetry-book-card-title">{{ $p['title'] }}</h3>
-                                    <p class="poetry-book-card-excerpt">{{ $p['narration'] }}</p>
-                                    <p class="poetry-book-card-continue">
-                                        Continue reading
-                                        <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                                    </p>
-                                </div>
-                            </div>
+                            <p class="poetry-eyebrow">From the shelf</p>
+                            <h3 class="poetry-book-index-heading">More poems nearby</h3>
+                            <span class="poetry-ornament"></span>
 
-                            <div class="poetry-book-card-divider" aria-hidden="true">
-                                <img src="{{ \App\Support\BrandLogo::url() }}" alt="" class="poetry-book-card-seal">
-                            </div>
-
-                            <ol class="poetry-book-card-index">
+                            <ol class="poetry-book-card-index poetry-book-card-index--full">
+                                <li class="poetry-book-index-label poetry-book-index-label--start" aria-hidden="true">
+                                    <span class="poetry-book-index-label-mark"></span>
+                                    <span class="poetry-book-index-label-text">Previously</span>
+                                </li>
                                 @foreach ($p['nearby']['prev'] as $np)
                                     <li>
                                         <button type="button" class="poetry-book-index-link" data-poetry-book-jump="{{ $cardPageBySlug[$np['slug']] }}">
@@ -129,6 +111,10 @@
                                         </button>
                                     </li>
                                 @endforeach
+                                <li class="poetry-book-index-label poetry-book-index-label--mid" aria-hidden="true">
+                                    <span class="poetry-book-index-label-mark"></span>
+                                    <span class="poetry-book-index-label-text">Coming up</span>
+                                </li>
                                 @foreach ($p['nearby']['next'] as $np)
                                     <li>
                                         <button type="button" class="poetry-book-index-link" data-poetry-book-jump="{{ $cardPageBySlug[$np['slug']] }}">

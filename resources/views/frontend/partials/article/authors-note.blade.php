@@ -16,7 +16,6 @@
         <div class="article-authors-note-copy">
             <p class="article-authors-note-title">{{ $content['authors_note']['title'] }}</p>
             <p class="article-authors-note-body">{{ $content['authors_note']['body'] }}</p>
-            <p class="article-authors-note-signature">{{ $content['authors_note']['signature'] }}</p>
         </div>
     </div>
 </footer>

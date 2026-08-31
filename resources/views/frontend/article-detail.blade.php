@@ -19,13 +19,29 @@
                 @include('frontend.partials.article.title-mast')
             </div>
 
-            {{-- Upper section: two real grid columns. Column 1 carries the
-                 Introduction, Table of Contents and Editor's Note, left
-                 aligned. Column 2 is the Explore the Sections / Recently
-                 Published panel, and can sit on either side per category. --}}
+            {{-- Introduction, paired with the article's featured image —
+                 above and outside the sidebar row, so the sidebar (Explore
+                 the Sections / Recently Published) sits below this section
+                 rather than beside it. --}}
+            <div class="article-band article-intro-row">
+                <div class="article-intro-row-text">
+                    @include('frontend.partials.article.intro')
+                </div>
+
+                <figure class="article-featured-media">
+                    <span class="article-featured-media-accent" aria-hidden="true"></span>
+                    <a href="{{ $article['image'] }}" data-fancybox="article-featured">
+                        <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" loading="lazy">
+                    </a>
+                </figure>
+            </div>
+
+            {{-- Two real grid columns: column 1 carries the Table of
+                 Contents and Editor's Note, left aligned. Column 2 is the
+                 Explore the Sections / Recently Published panel, and can
+                 sit on either side per category. --}}
             <div @class(['article-upper', 'article-upper--sidebar-left' => $sidebarPosition === 'left'])>
                 <div class="article-upper-main">
-                    @include('frontend.partials.article.intro')
                     @include('frontend.partials.article.toc')
                     @include('frontend.partials.article.editors-note')
                 </div>

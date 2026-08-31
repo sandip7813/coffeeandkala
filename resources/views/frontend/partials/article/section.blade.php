@@ -13,14 +13,28 @@
 >
     @if ($hasMedia)
         <div class="article-section-media">
-            <img
-                src="{{ $section['image'] }}"
-                alt=""
-                loading="lazy"
-                width="{{ $section['layout'] === 'image-top' ? 1200 : 700 }}"
-                height="{{ $section['layout'] === 'image-top' ? 640 : 520 }}"
-                decoding="async"
-            >
+            @if (in_array($section['layout'], ['image-left', 'image-right'], true))
+                <span class="article-section-media-accent" aria-hidden="true"></span>
+                <a href="{{ $section['image'] }}" data-fancybox="article-body">
+                    <img
+                        src="{{ $section['image'] }}"
+                        alt=""
+                        loading="lazy"
+                        width="700"
+                        height="520"
+                        decoding="async"
+                    >
+                </a>
+            @else
+                <img
+                    src="{{ $section['image'] }}"
+                    alt=""
+                    loading="lazy"
+                    width="1200"
+                    height="640"
+                    decoding="async"
+                >
+            @endif
         </div>
     @endif
 

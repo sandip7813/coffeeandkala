@@ -897,98 +897,26 @@
     text-align: left;
 }
 
-.poetry-book-card-top {
-    display: flex;
-    align-items: flex-start;
-    gap: clamp(14px, 2.4vw, 22px);
-    margin-bottom: clamp(14px, 2.4vw, 22px);
-}
-
-.poetry-book-card-photo {
-    flex: 0 0 clamp(84px, 15vw, 128px);
-    margin: 4px 0 0;
-}
-
-.poetry-book-card-photo img {
-    display: block;
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 48% 52% 45% 55% / 55% 45% 58% 42%;
-    filter: saturate(0.92) sepia(0.1) brightness(0.96);
-    box-shadow: 0 14px 22px rgba(20, 13, 9, 0.26);
-}
-
-.poetry-book-card-intro {
-    flex: 1;
-    min-width: 0;
-}
-
 .poetry-book-page--card .poetry-eyebrow {
     margin-bottom: 6px;
 }
 
-.poetry-book-card-title {
+.poetry-book-index-heading {
     font-family: var(--font-serif);
-    font-style: italic;
-    font-size: clamp(16px, 1.9vw, 20px);
+    font-size: clamp(21px, 2.6vw, 28px);
     font-weight: 500;
-    line-height: 1.2;
+    line-height: 1.22;
     color: var(--poetry-ink);
-    margin: 0 0 8px;
+    margin: 0 0 16px;
 }
 
-.poetry-book-card-excerpt {
-    font-family: var(--font-sans);
-    font-size: 12.5px;
-    font-weight: 300;
-    line-height: 1.62;
-    color: var(--poetry-muted);
-    margin: 0 0 10px;
+.poetry-book-page-inner--index .poetry-ornament {
+    margin: 0 0 clamp(20px, 3vw, 28px);
 }
 
-.poetry-book-card-continue {
-    margin: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--font-sans);
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--poetry-faint);
-}
-
-.poetry-book-card-continue i {
-    font-size: 9px;
-    color: var(--poetry-ember);
-}
-
-/* The seal-and-ribbon divider between the introduction and the index. */
-.poetry-book-card-divider {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 4px;
-    margin: 4px 0 clamp(16px, 2.6vw, 24px);
-    background: linear-gradient(90deg, transparent, var(--poetry-ember) 12%, var(--poetry-ember) 88%, transparent);
-    opacity: 0.55;
-}
-
-.poetry-book-card-seal {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    box-shadow: 0 0 0 4px var(--poetry-paper), 0 2px 8px rgba(20, 13, 9, 0.35);
-}
-
-/* The index — the two poems shelved before this one, then the two after,
-   each a small round portrait strung along a single connecting thread. */
-/* Fills whatever height is left below the divider, so the index spreads
-   across the page instead of huddling under the fold with dead space
-   beneath it — the same way the intro row above it grew larger art. */
+/* The index — the poems shelved before this one, then the ones after, each
+   a small round portrait strung along a single connecting thread. It's the
+   whole page now, so it fills whatever height is left below the heading. */
 .poetry-book-card-index {
     position: relative;
     list-style: none;
@@ -1039,6 +967,74 @@
     border-radius: 50%;
     overflow: hidden;
     box-shadow: 0 0 0 3px var(--poetry-paper), 0 4px 10px rgba(20, 13, 9, 0.22);
+}
+
+/* The index now owns the whole page (the intro card above it is gone), so
+   it can afford larger portraits and type than the old under-the-fold strip. */
+.poetry-book-card-index--full {
+    padding: 4px 0;
+}
+
+.poetry-book-card-index--full::before {
+    left: 33px;
+}
+
+.poetry-book-card-index--full .poetry-book-index-link {
+    gap: 20px;
+}
+
+.poetry-book-card-index--full .poetry-book-index-photo {
+    flex-basis: clamp(58px, 7vw, 68px);
+    width: clamp(58px, 7vw, 68px);
+    height: clamp(58px, 7vw, 68px);
+}
+
+.poetry-book-card-index--full .poetry-book-index-title {
+    font-size: clamp(15px, 1.9vw, 19px);
+    white-space: normal;
+}
+
+/* Marks where "Previously" ends and "Coming up" begins along the thread —
+   a small hollow bead on the line, with the label riding at the far right
+   of the page, clear of the titles column. */
+.poetry-book-index-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+}
+
+/* A thin rule between the previous and next groups. */
+.poetry-book-index-label--mid {
+    margin-top: 10px;
+    border-top: 1px solid var(--poetry-line);
+}
+
+.poetry-book-index-label-mark {
+    flex: 0 0 clamp(58px, 7vw, 68px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.poetry-book-index-label-mark::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--poetry-paper);
+    border: 2px solid var(--poetry-ember);
+}
+
+.poetry-book-index-label-text {
+    margin-left: auto;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--poetry-ember);
 }
 
 .poetry-book-index-photo img {
@@ -1254,17 +1250,6 @@
 
     .poetry-book-page--vined {
         padding-left: clamp(38px, 11vw, 56px);
-    }
-
-    .poetry-book-card-photo {
-        flex-basis: 76px;
-    }
-
-    .poetry-book-card-excerpt {
-        -webkit-line-clamp: 2;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
     }
 
     .poetry-book-card-index {

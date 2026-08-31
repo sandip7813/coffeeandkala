@@ -693,7 +693,7 @@ body.layout-no-sidebar .site-header {
     font-family: 'Libertinus Math', 'Libre Caslon Display', var(--font-hero-display);
     font-size: clamp(26px, 3.6vw, 48px);
     font-weight: 400;
-    letter-spacing: 0.04em;
+    letter-spacing: normal;
     line-height: 1.08;
     text-transform: none;
     text-shadow: none;
@@ -1097,7 +1097,7 @@ body.layout-no-sidebar .site-header {
     font-family: 'Amiri', var(--font-serif);
     font-size: 13px;
     color: var(--coffee-beige);
-    font-weight: 300;
+    font-weight: 400;
     max-width: 420px;
 }
 
@@ -2655,11 +2655,11 @@ body.layout-no-sidebar .site-header {
     position: relative;
     z-index: 1;
     width: 100%;
-    max-width: 520px;
+    max-width: none;
     margin: 0;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
 }
 
 .thought-quote-body {
@@ -2696,9 +2696,10 @@ body.layout-no-sidebar .site-header {
 .thought-quote-text {
     position: relative;
     z-index: 1;
+    white-space: nowrap;
     font-family: 'STIX Two Text', 'Radley', var(--font-quote), Georgia, serif;
     font-size: clamp(16px, 1.8vw, 19px);
-    font-weight: 700;
+    font-weight: 400;
     font-style: normal;
     line-height: 1.5;
     letter-spacing: 0.01em;
@@ -2725,33 +2726,6 @@ body.layout-no-sidebar .site-header {
     will-change: transform, opacity;
 }
 
-.thought-quote-byline {
-    display: inline-flex;
-    align-items: center;
-    align-self: flex-end;
-    gap: 12px;
-    margin: clamp(10px, 2vh, 20px) 0 0;
-    padding: 0;
-    opacity: 1;
-}
-
-.thought-quote-rule {
-    display: inline-block;
-    width: 32px;
-    height: 1px;
-    background-color: #1a1a1a;
-}
-
-.thought-quote-brand {
-    font-family: 'Radley', var(--font-quote-byline), Georgia, serif;
-    font-size: clamp(12px, 1.05vw, 14px);
-    font-weight: 700;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: #1a1a1a;
-    white-space: nowrap;
-}
-
 @media (max-width: 720px) {
     :root {
         --section-inline: 18px;
@@ -2759,10 +2733,6 @@ body.layout-no-sidebar .site-header {
 
     .section-thought {
         padding: 28px 20px;
-    }
-
-    .thought-quote-byline {
-        gap: 8px;
     }
 
     .gallery-story-header {
@@ -2816,16 +2786,14 @@ body.layout-no-sidebar .site-header {
 
 @media (prefers-reduced-motion: reduce) {
     .thought-quote-mark,
-    .thought-reveal-word-inner,
-    .thought-quote-byline {
+    .thought-reveal-word-inner {
         opacity: 1;
         transform: none;
     }
 
     .thought-quote.is-revealed .thought-quote-mark--open,
     .thought-quote.is-revealed .thought-quote-mark--close,
-    .thought-quote.is-revealed .thought-reveal-word-inner,
-    .thought-quote.is-revealed .thought-quote-byline {
+    .thought-quote.is-revealed .thought-reveal-word-inner {
         animation-duration: 0.55s;
     }
 }
@@ -3841,9 +3809,21 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 
 .about-banner-image {
     display: block;
-    width: auto;
-    max-width: 100%;
+    width: 100%;
     height: auto;
+}
+
+/* The veil must overlay the image (position: absolute, anchored to
+   .about-banner-frame's position: relative) rather than flow as a flex
+   sibling next to it — otherwise the flex row's content overflows
+   .about-banner-frame's width, and justify-content: center recenters the
+   whole row, clipping the excess on the left via overflow: hidden and
+   exposing a gap on the right. */
+.about-banner-veil {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
 }
 
 /* Visible separator between banner and content */
@@ -3983,9 +3963,9 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 }
 
 .about-copy {
-    font-family: var(--font-sans);
-    font-size: 17.5px;
-    font-weight: 300;
+    font-family: 'Crimson Text', var(--font-serif);
+    font-size: 16px;
+    font-weight: 400;
     line-height: 1.9;
     color: var(--about-muted);
     text-align: justify;
@@ -4004,7 +3984,7 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 
 .about-stack--image-top .about-copy--centered,
 .about-stack--content-top .about-copy--centered {
-    max-width: 100ch;
+    max-width: 900px;
 }
 
 .about-pull {
@@ -4045,7 +4025,7 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 .about-split {
     position: relative;
     display: grid;
-    grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+    grid-template-columns: minmax(300px, 520px) minmax(0, 1fr);
     gap: clamp(28px, 5vw, 72px);
     align-items: center;
     min-height: 78vh;
@@ -4075,7 +4055,7 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 }
 
 .about-split--image-right {
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 520px);
 }
 
 .about-split-copy {
@@ -4092,16 +4072,20 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 .about-frame {
     position: relative;
     width: 100%;
-    max-width: 380px;
+    max-width: 520px;
     margin: 0;
     isolation: isolate;
+}
+
+.about-frame a {
+    display: block;
+    cursor: zoom-in;
 }
 
 .about-frame img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
+    height: auto;
     filter: saturate(0.92) contrast(1.04);
 }
 
@@ -4140,6 +4124,11 @@ body:has(.galleria-modal:not([hidden])) .site-header {
     margin: 0 auto;
     overflow: hidden;
     max-height: min(52vh, 480px);
+}
+
+.about-cinema a {
+    display: block;
+    cursor: zoom-in;
 }
 
 .about-cinema img {
@@ -4345,10 +4334,6 @@ body:has(.galleria-modal:not([hidden])) .site-header {
     .about-frame--offset {
         margin-left: auto;
         margin-right: auto;
-    }
-
-    .about-frame img {
-        aspect-ratio: 5 / 4;
     }
 
     .about-frame-accent,

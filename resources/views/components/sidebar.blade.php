@@ -6,8 +6,7 @@
             <li>
                 <a href="javascript:void(0)" class="nav-item active" data-target="sec-01">
                     <span class="nav-item-number">01</span>
-                    <div class="nav-item-title">Stories worth Sitting Down For</div>
-                    <div class="nav-item-desc">Art. Culture. Travel. People. Ideas.</div>
+                    <div class="nav-item-title">The Home Of Slow Publishing</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>
@@ -15,7 +14,6 @@
                 <a href="javascript:void(0)" class="nav-item" data-target="sec-02">
                     <span class="nav-item-number">02</span>
                     <div class="nav-item-title">Thought of the day</div>
-                    <div class="nav-item-desc">A quiet line for a slower morning.</div>
                     <i class="fa-solid fa-arrow-down nav-item-arrow"></i>
                 </a>
             </li>

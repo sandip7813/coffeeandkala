@@ -9,17 +9,6 @@
             height="512"
         >
         <div class="about-banner-veil features-banner-veil" aria-hidden="true"></div>
-        <button
-            type="button"
-            class="about-banner-zoom"
-            id="featuresBannerZoom"
-            aria-label="Show full banner image"
-            aria-expanded="false"
-            aria-controls="featuresBanner"
-            title="Show full image"
-        >
-            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-        </button>
     </div>
 </section>
 

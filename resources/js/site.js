@@ -303,78 +303,6 @@ document.addEventListener('DOMContentLoaded', () => {
         searchModal?.classList.remove('active');
     });
 
-    const aboutBanner = document.getElementById('aboutBanner');
-    const bannerZoomBtn = document.getElementById('aboutBannerZoom');
-    const galleryBanner = document.getElementById('galleryBanner');
-    const galleryBannerZoomBtn = document.getElementById('galleryBannerZoom');
-    const studioBanner = document.getElementById('studioBanner');
-    const studioBannerZoomBtn = document.getElementById('studioBannerZoom');
-    const journalBanner = document.getElementById('journalBanner');
-    const journalBannerZoomBtn = document.getElementById('journalBannerZoom');
-    const featuresBanner = document.getElementById('featuresBanner');
-    const featuresBannerZoomBtn = document.getElementById('featuresBannerZoom');
-    const categoryBanner = document.getElementById('categoryBanner');
-    const categoryBannerZoomBtn = document.getElementById('categoryBannerZoom');
-    const poetryBanner = document.getElementById('poetryBanner');
-    const poetryBannerZoomBtn = document.getElementById('poetryBannerZoom');
-
-    function setBannerExpanded(banner, button, expanded) {
-        if (!banner || !button) {
-            return;
-        }
-
-        banner.classList.toggle('is-expanded', expanded);
-        button.setAttribute('aria-expanded', String(expanded));
-        button.setAttribute(
-            'aria-label',
-            expanded ? 'Collapse banner image' : 'Show full banner image',
-        );
-        button.setAttribute('title', expanded ? 'Collapse image' : 'Show full image');
-
-        const icon = button.querySelector('i');
-
-        if (icon) {
-            icon.className = expanded
-                ? 'fa-solid fa-magnifying-glass-minus'
-                : 'fa-solid fa-magnifying-glass-plus';
-        }
-    }
-
-    bannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !aboutBanner?.classList.contains('is-expanded');
-        setBannerExpanded(aboutBanner, bannerZoomBtn, expanded);
-    });
-
-    galleryBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !galleryBanner?.classList.contains('is-expanded');
-        setBannerExpanded(galleryBanner, galleryBannerZoomBtn, expanded);
-    });
-
-    studioBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !studioBanner?.classList.contains('is-expanded');
-        setBannerExpanded(studioBanner, studioBannerZoomBtn, expanded);
-    });
-
-    journalBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !journalBanner?.classList.contains('is-expanded');
-        setBannerExpanded(journalBanner, journalBannerZoomBtn, expanded);
-    });
-
-    featuresBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !featuresBanner?.classList.contains('is-expanded');
-        setBannerExpanded(featuresBanner, featuresBannerZoomBtn, expanded);
-    });
-
-    categoryBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !categoryBanner?.classList.contains('is-expanded');
-        setBannerExpanded(categoryBanner, categoryBannerZoomBtn, expanded);
-    });
-
-    poetryBannerZoomBtn?.addEventListener('click', () => {
-        const expanded = !poetryBanner?.classList.contains('is-expanded');
-        setBannerExpanded(poetryBanner, poetryBannerZoomBtn, expanded);
-    });
-
     const aboutReveals = document.querySelectorAll('.about-page .about-reveal');
 
     if (aboutReveals.length > 0 && 'IntersectionObserver' in window) {
@@ -557,13 +485,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape') {
             searchModal?.classList.remove('active');
-            setBannerExpanded(aboutBanner, bannerZoomBtn, false);
-            setBannerExpanded(galleryBanner, galleryBannerZoomBtn, false);
-            setBannerExpanded(studioBanner, studioBannerZoomBtn, false);
-            setBannerExpanded(journalBanner, journalBannerZoomBtn, false);
-            setBannerExpanded(featuresBanner, featuresBannerZoomBtn, false);
-            setBannerExpanded(categoryBanner, categoryBannerZoomBtn, false);
-            setBannerExpanded(poetryBanner, poetryBannerZoomBtn, false);
             closeAllDrawers();
         }
     });

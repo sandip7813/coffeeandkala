@@ -17,7 +17,7 @@ class PoetryController extends Controller
     public function show(string $poem): View
     {
         $poems = array_map(
-            fn (array $p): array => [...$p, 'nearby' => PoetryCatalog::nearby($p['slug'])],
+            fn (array $p): array => [...$p, 'nearby' => PoetryCatalog::nearby($p['slug'], 3)],
             PoetryCatalog::all(),
         );
         $current = PoetryCatalog::find($poem);

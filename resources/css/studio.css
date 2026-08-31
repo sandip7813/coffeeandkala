@@ -76,18 +76,6 @@
         );
 }
 
-.studio-banner .about-banner-zoom {
-    border-color: rgba(44, 33, 24, 0.28);
-    background: rgba(250, 248, 244, 0.72);
-    color: var(--studio-ink);
-}
-
-.studio-banner .about-banner-zoom:hover {
-    background: rgba(250, 248, 244, 0.95);
-    border-color: rgba(44, 33, 24, 0.5);
-    color: #1a140f;
-}
-
 .studio-banner-divider {
     display: flex;
     align-items: center;

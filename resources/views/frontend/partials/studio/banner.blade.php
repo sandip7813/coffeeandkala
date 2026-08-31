@@ -9,17 +9,6 @@
             height="682"
         >
         <div class="about-banner-veil studio-banner-veil" aria-hidden="true"></div>
-        <button
-            type="button"
-            class="about-banner-zoom"
-            id="studioBannerZoom"
-            aria-label="Show full banner image"
-            aria-expanded="false"
-            aria-controls="studioBanner"
-            title="Show full image"
-        >
-            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-        </button>
     </div>
 </section>
 

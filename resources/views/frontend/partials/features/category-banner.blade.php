@@ -1,4 +1,4 @@
-{{-- Category banner with full-image zoom (same pattern as Features / About) --}}
+{{-- Category banner (same pattern as Features / About) --}}
 <section
     @class([
         'fc-banner',
@@ -20,16 +20,5 @@
             fetchpriority="high"
         >
         <div class="about-banner-veil fc-banner-veil" aria-hidden="true"></div>
-        <button
-            type="button"
-            class="about-banner-zoom"
-            id="categoryBannerZoom"
-            aria-label="Show full banner image"
-            aria-expanded="false"
-            aria-controls="categoryBanner"
-            title="Show full image"
-        >
-            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-        </button>
     </div>
 </section>

@@ -10,18 +10,6 @@
             height="887"
         >
         <div class="about-banner-veil poetry-banner-veil" aria-hidden="true"></div>
-
-        <button
-            type="button"
-            class="about-banner-zoom"
-            id="poetryBannerZoom"
-            aria-label="Show full banner image"
-            aria-expanded="false"
-            aria-controls="poetryBanner"
-            title="Show full image"
-        >
-            <i class="fa-solid fa-magnifying-glass-plus" aria-hidden="true"></i>
-        </button>
     </div>
 </section>
 

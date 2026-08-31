@@ -25,14 +25,6 @@
     max-height: min(64vh, 620px);
     object-fit: cover;
     object-position: center top;
-    transition: max-height 0.7s cubic-bezier(0.16, 1, 0.3, 1), height 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.features-theme .fc-banner.is-expanded .fc-banner-img {
-    height: auto;
-    max-height: none;
-    object-fit: contain;
-    object-position: center top;
 }
 
 .features-theme .fc-banner-veil {
@@ -43,43 +35,6 @@
             rgba(242, 238, 233, 0.02) 45%,
             transparent 100%
         );
-}
-
-.features-theme .fc-banner.is-expanded .fc-banner-veil {
-    opacity: 0.35;
-}
-
-.features-theme .fc-banner .about-banner-zoom {
-    border-color: rgba(45, 41, 38, 0.28);
-    background: rgba(247, 243, 238, 0.78);
-    color: #2d2926;
-}
-
-.features-theme .fc-banner .about-banner-zoom:hover {
-    background: rgba(247, 243, 238, 0.95);
-    border-color: rgba(45, 41, 38, 0.5);
-    color: #1a1614;
-}
-
-.features-theme .fc-banner .about-banner-zoom:focus-visible {
-    outline: 2px solid #2d2926;
-    outline-offset: 2px;
-}
-
-.features-theme--coffee-classics .fc-banner .about-banner-zoom {
-    border-color: rgba(243, 235, 225, 0.35);
-    background: rgba(31, 24, 20, 0.72);
-    color: #f3ebe1;
-}
-
-.features-theme--coffee-classics .fc-banner .about-banner-zoom:hover {
-    background: rgba(31, 24, 20, 0.9);
-    border-color: rgba(243, 235, 225, 0.7);
-    color: #fff;
-}
-
-.features-theme--coffee-classics .fc-banner .about-banner-zoom:focus-visible {
-    outline-color: #f3ebe1;
 }
 
 .features-theme .fc-crumb {

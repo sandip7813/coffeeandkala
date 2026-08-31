@@ -254,8 +254,10 @@ class PoetryCatalog
     /**
      * The `$each` poems before and after the given slug, in reading order
      * (furthest-back first, nearest-ahead last), wrapping at either end.
-     * Never returns the poem itself, and never repeats a poem even if the
-     * catalog is smaller than `$each * 2`.
+     * Never returns the poem itself. If the catalog is smaller than
+     * `$each * 2 + 1`, wrapping means the same poem can appear on both
+     * sides (e.g. with 6 poems and $each = 3, the poem directly opposite
+     * the current one is both the 3rd previous and the 3rd next).
      *
      * @return array{prev: list<array<string, mixed>>, next: list<array<string, mixed>>}
      */
@@ -264,7 +266,7 @@ class PoetryCatalog
         $poems = self::all();
         $index = array_search($slug, array_column($poems, 'slug'), true);
         $count = count($poems);
-        $each = min($each, intdiv($count - 1, 2));
+        $each = min($each, max($count - 1, 0));
 
         $prev = [];
         for ($i = $each; $i >= 1; $i--) {
