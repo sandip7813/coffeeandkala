@@ -12,17 +12,8 @@
                 <p class="fc-exp-kicker">{{ $category['eyebrow'] }} · Itinerary</p>
                 <h1 id="fcExpTitle">{{ $category['name'] }}</h1>
             </div>
-            <p class="fc-exp-tagline">{{ $category['tagline'] }}</p>
         </div>
         <p class="fc-exp-lead">{{ $category['lead'] }}</p>
-        <ul class="fc-exp-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    {{ $motif['label'] }}
-                </li>
-            @endforeach
-        </ul>
     </header>
 
     <section class="fc-exp-itinerary" aria-label="Articles in {{ $category['name'] }}">

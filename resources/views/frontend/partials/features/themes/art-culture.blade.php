@@ -12,15 +12,6 @@
             <h1 id="fcArtTitle">{{ $category['name'] }}</h1>
             <p class="fc-art-tagline">{{ $category['tagline'] }}</p>
         </div>
-        <p class="fc-art-lead">{{ $category['lead'] }}</p>
-        <ul class="fc-art-motifs" aria-label="Themes in this chapter">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    {{ $motif['label'] }}
-                </li>
-            @endforeach
-        </ul>
     </header>
 
     <section class="fc-art-catalogue" aria-label="Articles in {{ $category['name'] }}">

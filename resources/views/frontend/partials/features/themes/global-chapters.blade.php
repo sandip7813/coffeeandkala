@@ -13,14 +13,6 @@
             <p class="fc-global-tagline">{{ $category['tagline'] }}</p>
             <p class="fc-global-lead">{{ $category['lead'] }}</p>
         </div>
-        <ul class="fc-global-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    <span>{{ $motif['label'] }}</span>
-                </li>
-            @endforeach
-        </ul>
     </header>
 
     <section class="fc-global-route" aria-label="Articles in {{ $category['name'] }}">

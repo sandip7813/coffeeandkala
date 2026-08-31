@@ -2,7 +2,6 @@
 @include('frontend.partials.journal.category-crumb', ['category' => $category])
 
 <header class="jc-diary-head journal-reveal journal-reveal--up">
-    <p class="journal-eyebrow">Journal Category</p>
     <h1 class="jc-diary-title">{{ $category['name'] }}</h1>
     <p class="jc-diary-lead">
         Slow mornings and long roads, told one cup at a time — {{ $entries->total() }} {{ $entries->total() === 1 ? 'chapter' : 'chapters' }} and counting.

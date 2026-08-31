@@ -11,16 +11,6 @@
         <h1 id="fcBudgetTitle">{{ $category['name'] }}</h1>
         <p class="fc-budget-tagline">{{ $category['tagline'] }}</p>
         <p class="fc-budget-lead">{{ $category['lead'] }}</p>
-
-        <ul class="fc-budget-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid fa-check" aria-hidden="true"></i>
-                    <i class="fa-solid {{ $motif['icon'] }} fc-budget-motif-icon" aria-hidden="true"></i>
-                    <span>{{ $motif['label'] }}</span>
-                </li>
-            @endforeach
-        </ul>
     </div>
 </section>
 

@@ -12,14 +12,6 @@
         <span class="fc-lux-diamond" aria-hidden="true"></span>
         <p class="fc-lux-tagline">{{ $category['tagline'] }}</p>
         <p class="fc-lux-lead">{{ $category['lead'] }}</p>
-        <ul class="fc-lux-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    <span>{{ $motif['label'] }}</span>
-                </li>
-            @endforeach
-        </ul>
     </header>
 
     <section class="fc-lux-lookbook" aria-label="Articles in {{ $category['name'] }}">

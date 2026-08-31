@@ -14,15 +14,6 @@
         <h1 id="fcVineTitle">{{ $category['name'] }}</h1>
         <p class="fc-vine-tagline">{{ $category['tagline'] }}</p>
         <p class="fc-vine-lead">{{ $category['lead'] }}</p>
-
-        <ul class="fc-vine-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    <span>{{ $motif['label'] }}</span>
-                </li>
-            @endforeach
-        </ul>
     </header>
 
     <section class="fc-vine-flight" aria-label="Articles in {{ $category['name'] }}">

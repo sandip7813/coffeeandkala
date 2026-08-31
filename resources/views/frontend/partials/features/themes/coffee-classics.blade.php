@@ -11,15 +11,6 @@
         <h1 id="fcCoffeeTitle">{{ $category['name'] }}</h1>
         <p class="fc-coffee-tagline">{{ $category['tagline'] }}</p>
         <p class="fc-coffee-lead">{{ $category['lead'] }}</p>
-
-        <ul class="fc-coffee-motifs">
-            @foreach ($category['motifs'] as $motif)
-                <li>
-                    <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                    <span>{{ $motif['label'] }}</span>
-                </li>
-            @endforeach
-        </ul>
     </section>
 
     <section class="fc-coffee-shelf" aria-label="Articles in {{ $category['name'] }}">

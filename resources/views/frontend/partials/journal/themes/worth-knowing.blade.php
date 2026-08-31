@@ -2,7 +2,6 @@
 @include('frontend.partials.journal.category-crumb', ['category' => $category])
 
 <header class="jc-guide-head journal-reveal journal-reveal--up">
-    <p class="journal-eyebrow">Journal Category</p>
     <h1 class="jc-guide-title">{{ $category['name'] }}</h1>
     <p class="jc-guide-lead">
         Practical routes and honest tips — {{ $entries->total() }} {{ $entries->total() === 1 ? 'guide' : 'guides' }} to plan by.

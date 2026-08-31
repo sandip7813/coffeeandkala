@@ -10,19 +10,6 @@
     <h1 id="fcAtlasTitle">{{ $category['name'] }}</h1>
     <p class="fc-atlas-tagline">{{ $category['tagline'] }}</p>
     <p class="fc-atlas-lead">{{ $category['lead'] }}</p>
-
-    <aside class="fc-atlas-sticky" aria-hidden="true">
-        Some places don’t need famous — they need curious.
-    </aside>
-
-    <ul class="fc-atlas-motifs">
-        @foreach ($category['motifs'] as $motif)
-            <li>
-                <i class="fa-solid {{ $motif['icon'] }}" aria-hidden="true"></i>
-                <span>{{ $motif['label'] }}</span>
-            </li>
-        @endforeach
-    </ul>
 </section>
 
 <section class="fc-atlas-scrapbook" aria-label="Articles in {{ $category['name'] }}">

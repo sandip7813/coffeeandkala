@@ -5,7 +5,6 @@
 @include('frontend.partials.journal.category-crumb', ['category' => $category])
 
 <header class="jc-picture-head journal-reveal journal-reveal--up">
-    <p class="journal-eyebrow">Journal Category</p>
     <h1 class="jc-picture-title">{{ $category['name'] }}</h1>
     <p class="jc-picture-lead">
         Essays, portraits, and slow-looking dispatches — {{ $entries->total() }} {{ $entries->total() === 1 ? 'piece' : 'pieces' }} worth lingering on.
