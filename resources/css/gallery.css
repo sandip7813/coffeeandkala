@@ -75,21 +75,23 @@
     object-position: center 38%;
 }
 
-.gallery-banner-title {
-    position: relative;
-    z-index: 1;
-    width: min(100%, 1100px);
-    margin: 24px auto 0;
-    padding: 0 20px;
-    text-align: center;
-    white-space: nowrap;
-    font-family: 'Cormorant Garamond', var(--font-serif);
-    font-weight: 400;
-    font-size: 30px;
-    line-height: 1.1;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    color: #f7f0e7;
+/* Small accent rule between the banner and the title below it — same
+   device as the Studio banner divider. */
+.gallery-banner-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 22px 24px 0;
+    background: transparent;
+}
+
+.gallery-banner-divider-mark {
+    display: block;
+    width: 28px;
+    height: 2px;
+    background: var(--gallery-ember);
+    opacity: 0.85;
 }
 
 .gallery-eyebrow {
@@ -120,7 +122,7 @@
 }
 
 .gallery-intro {
-    padding: clamp(20px, 3vw, 40px) clamp(14px, 3vw, 36px) clamp(28px, 4vw, 48px);
+    padding: clamp(40px, 7vw, 88px) clamp(14px, 3vw, 36px) clamp(28px, 4vw, 48px);
     text-align: center;
     background: transparent;
 }
@@ -131,12 +133,15 @@
     padding-inline: 2px;
 }
 
+/* Same recipe as the Studio page's own intro title. */
 .gallery-intro-title {
-    font-family: var(--font-serif);
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 500;
+    font-family: 'Cormorant Garamond', var(--font-serif);
+    font-size: 30px;
+    font-weight: 400;
     line-height: 1.08;
-    color: #f7f0e7;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    color: var(--gallery-ink);
     margin-bottom: 22px;
 }
 

@@ -9,5 +9,8 @@
             height="408"
         >
     </div>
-    <h1 class="gallery-banner-title">Gallery of the Visual Storytelling</h1>
 </section>
+
+<div class="gallery-banner-divider" aria-hidden="true">
+    <span class="gallery-banner-divider-mark"></span>
+</div>

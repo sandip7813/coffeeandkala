@@ -1,6 +1,9 @@
 {{-- Editorial content above the poster wall --}}
 <section class="gallery-intro" aria-labelledby="galleryIntroTitle">
     <div class="gallery-intro-inner gallery-reveal gallery-reveal--up">
+        <h1 id="galleryIntroTitle" class="gallery-intro-title">Gallery of the Visual Storytelling</h1>
+        <span class="gallery-ornament" aria-hidden="true"></span>
+
         <div class="gallery-intro-copy" id="galleryIntroCopy" data-gallery-intro-copy>
             <p class="gallery-intro-lead">
                 This isn’t merely a gallery; it’s a living archive of time captured through the
