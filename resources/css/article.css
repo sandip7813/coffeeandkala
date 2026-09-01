@@ -112,6 +112,15 @@
     gap: clamp(28px, 3vw, 40px);
 }
 
+/* Mobile-only fabs/overlay/close button for the "Explore the Sections" /
+   "Recently Published" slide panels below — inert on desktop where the
+   panels render inline as normal .article-sidebar-panel content. */
+.article-mobile-fabs,
+.article-mobile-overlay,
+.article-mobile-panel-close {
+    display: none;
+}
+
 @media (max-width: 960px) {
     .article-upper,
     .article-upper--sidebar-left {
@@ -127,7 +136,137 @@
     }
 
     .article-sidebar {
-        margin-top: clamp(32px, 5vw, 48px);
+        margin-top: 0;
+    }
+
+    /* "Explore the Sections" / "Recently Published" collapse into two
+       floating edge fabs; each panel slides in from its own side rather
+       than sitting inline in the page flow. */
+    .article-mobile-fabs {
+        display: contents;
+    }
+
+    .article-mobile-fab {
+        position: fixed;
+        top: 50%;
+        z-index: 150;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border: 1px solid color-mix(in srgb, var(--art-ink) 14%, transparent);
+        background: var(--art-wall);
+        color: var(--art-accent);
+        font-size: 16px;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+        cursor: pointer;
+        transition: transform 0.25s ease;
+    }
+
+    .article-mobile-fab--left {
+        left: 0;
+        transform: translate(-8px, -50%);
+        border-radius: 0 50% 50% 0;
+    }
+
+    .article-mobile-fab--right {
+        right: 0;
+        transform: translate(8px, -50%);
+        border-radius: 50% 0 0 50%;
+    }
+
+    .article-mobile-fab--left:hover,
+    .article-mobile-fab--left.is-active {
+        transform: translate(0, -50%);
+    }
+
+    .article-mobile-fab--right:hover,
+    .article-mobile-fab--right.is-active {
+        transform: translate(0, -50%);
+    }
+
+    .article-mobile-overlay {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 190;
+        background: rgba(15, 12, 10, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .article-mobile-overlay.is-active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* Forced to a fixed, fully opaque light surface regardless of the
+       article's own theme (some themes — Coffee & Classics, the dark
+       Journal chapters — define --art-wall/--art-paper as translucent,
+       which is fine sitting over that page's own background but reads as
+       see-through/illegible floating over the whole viewport here). */
+    .article-mobile-panel {
+        --art-ink: #2d2926;
+        --art-muted: #6e5a4a;
+        --art-accent: #8b5e3c;
+        --art-paper: #f7f3ee;
+        --art-wall: #f7f3ee;
+        position: fixed;
+        top: calc(var(--header-height) + 16px);
+        bottom: 24px;
+        width: min(340px, 86vw);
+        z-index: 200;
+        margin: 0;
+        border-radius: 8px;
+        overflow-y: auto;
+        color: var(--art-ink);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Beats the later, lower-in-file `.article-sidebar-panel` background
+       (translucent color-mix) via the extra class, since both share the
+       same media-query-irrelevant specificity otherwise. */
+    .article-sidebar-panel.article-mobile-panel {
+        background: #f7f3ee;
+    }
+
+    .article-mobile-panel--left {
+        left: 0;
+        transform: translateX(-100%);
+    }
+
+    .article-mobile-panel--right {
+        right: 0;
+        transform: translateX(100%);
+    }
+
+    .article-mobile-panel.is-open {
+        transform: translateX(0);
+    }
+
+    .article-mobile-panel-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        background: color-mix(in srgb, var(--art-ink) 8%, transparent);
+        color: var(--art-ink);
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .article-mobile-panel-close:hover {
+        background: color-mix(in srgb, var(--art-ink) 16%, transparent);
     }
 }
 

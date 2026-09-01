@@ -103,7 +103,8 @@
 
 @media (max-width: 640px) {
     .journal-hero-banner {
-        height: min(58vh, 480px);
+        height: auto;
+        aspect-ratio: 815 / 455;
     }
 }
 
@@ -1057,6 +1058,14 @@
 
     .journal-category-index {
         font-size: clamp(34px, 10vw, 48px);
+    }
+
+    .journal-category-heading {
+        margin-bottom: 10px;
+    }
+
+    .journal-category-title {
+        margin: 0 0 12px;
     }
 }
 

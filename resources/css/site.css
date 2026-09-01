@@ -2735,9 +2735,18 @@ body.layout-no-sidebar .site-header {
         padding: 28px 20px;
     }
 
+    .thought-quote-body {
+        text-align: center;
+    }
+
+    .thought-quote-text {
+        white-space: normal;
+    }
+
     .gallery-story-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
     }
 
     .gallery-story-slide {
@@ -2755,8 +2764,9 @@ body.layout-no-sidebar .site-header {
     }
 
     .journal-feature-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
     }
 
     .journal-feature-block {
@@ -3113,6 +3123,30 @@ body:has(.galleria-modal:not([hidden])) .site-header {
     letter-spacing: 1px;
     color: var(--white);
     margin-bottom: 20px;
+}
+
+.footer-heading-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: default;
+}
+
+.footer-heading-caret {
+    display: none;
+    font-size: 12px;
+    color: var(--coffee-beige);
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
 }
 
 .footer-links {
@@ -3475,13 +3509,18 @@ body:has(.galleria-modal:not([hidden])) .site-header {
         border-bottom: 1px solid rgba(231, 221, 210, 0.9);
     }
 
+    .editorial-title {
+        font-size: clamp(28px, 5.6vw, 42px);
+    }
+
     .section-three-stories {
         padding: 52px var(--section-inline) 60px;
     }
 
     .three-stories-header {
-        flex-direction: column;
-        align-items: flex-start;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: nowrap;
         margin-bottom: 32px;
     }
 
@@ -3526,6 +3565,10 @@ body:has(.galleria-modal:not([hidden])) .site-header {
     .section-hero.hero-banner {
         min-height: auto;
         padding: 0;
+    }
+
+    .hero-banner-heading {
+        margin-bottom: 12px;
     }
 
     .hero-embla__slide {
@@ -3588,23 +3631,77 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 
     .site-footer .footer-main {
         grid-template-columns: 1fr;
-        gap: 48px;
-        padding: 56px 24px 40px;
+        gap: 32px;
+        padding: 40px 24px 28px;
     }
 
     .footer-brand {
         max-width: none;
+        gap: 14px;
+    }
+
+    .footer-contact-block {
+        padding-top: 14px;
     }
 
     .footer-nav {
         grid-template-columns: 1fr;
-        gap: 32px;
+        gap: 0;
+    }
+
+    .footer-col {
+        border-top: 1px solid var(--border-dark);
+        padding: 14px 0 6px;
+    }
+
+    .footer-col:last-child {
+        border-bottom: 1px solid var(--border-dark);
+    }
+
+    .footer-heading {
+        margin-bottom: 0;
+    }
+
+    .footer-heading-toggle {
+        cursor: pointer;
+        padding: 2px 0;
+    }
+
+    .footer-heading-caret {
+        display: inline-block;
+    }
+
+    .footer-col.is-open .footer-heading-caret {
+        transform: rotate(180deg);
+    }
+
+    .footer-col .footer-links {
+        gap: 10px;
+        box-sizing: border-box;
+        padding-top: 16px;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+            max-height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+            opacity 0.35s ease;
+    }
+
+    .footer-col.is-open .footer-links {
+        opacity: 1;
     }
 
     .footer-bottom {
         flex-direction: column;
         text-align: center;
-        padding: 20px 24px;
+        gap: 6px;
+        padding: 16px 24px;
+    }
+}
+
+@media (max-width: 720px) {
+    .gallery-story-index {
+        display: none;
     }
 }
 

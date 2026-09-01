@@ -55,7 +55,12 @@
 
         <nav class="footer-nav" aria-label="Footer">
             <div class="footer-col">
-                <h3 class="footer-heading">Explore</h3>
+                <h3 class="footer-heading">
+                    <button type="button" class="footer-heading-toggle" aria-expanded="false">
+                        Explore
+                        <i class="fa-solid fa-chevron-down footer-heading-caret" aria-hidden="true"></i>
+                    </button>
+                </h3>
                 <ul class="footer-links">
                     <li>
                         <a
@@ -103,7 +108,12 @@
             </div>
 
             <div class="footer-col">
-                <h3 class="footer-heading">Articles</h3>
+                <h3 class="footer-heading">
+                    <button type="button" class="footer-heading-toggle" aria-expanded="false">
+                        Articles
+                        <i class="fa-solid fa-chevron-down footer-heading-caret" aria-hidden="true"></i>
+                    </button>
+                </h3>
                 <ul class="footer-links">
                     <li><a href="{{ route('features.show', 'art-culture') }}">Art &amp; Culture</a></li>
                     <li><a href="{{ route('features.show', 'experiences') }}">Experiences</a></li>
@@ -117,7 +127,12 @@
             </div>
 
             <div class="footer-col">
-                <h3 class="footer-heading">Journal</h3>
+                <h3 class="footer-heading">
+                    <button type="button" class="footer-heading-toggle" aria-expanded="false">
+                        Journal
+                        <i class="fa-solid fa-chevron-down footer-heading-caret" aria-hidden="true"></i>
+                    </button>
+                </h3>
                 <ul class="footer-links">
                     <li><a href="{{ route('journal.category', 'the-bigger-picture') }}">The Bigger Picture</a></li>
                     <li><a href="{{ route('journal.category', 'worth-knowing') }}">Worth Knowing</a></li>

@@ -1,4 +1,33 @@
-<div class="article-sidebar-panel">
+<div class="article-mobile-fabs">
+    <button
+        type="button"
+        class="article-mobile-fab article-mobile-fab--left"
+        id="articleExploreFab"
+        aria-label="Explore the Sections"
+        aria-expanded="false"
+        aria-controls="articleExplorePanel"
+    >
+        <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
+    </button>
+    <button
+        type="button"
+        class="article-mobile-fab article-mobile-fab--right"
+        id="articleRecentFab"
+        aria-label="Recently Published"
+        aria-expanded="false"
+        aria-controls="articleRecentPanel"
+    >
+        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+    </button>
+</div>
+
+<div class="article-mobile-overlay" id="articleMobileOverlay"></div>
+
+<div class="article-sidebar-panel article-mobile-panel article-mobile-panel--left" id="articleExplorePanel">
+    <button type="button" class="article-mobile-panel-close" data-article-panel-close aria-label="Close Explore the Sections">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+
     <p class="article-sidebar-heading">Explore the Sections</p>
     <ul class="article-tree">
         @foreach ($subcategories as $branch)
@@ -27,7 +56,11 @@
     </ul>
 </div>
 
-<div class="article-sidebar-panel">
+<div class="article-sidebar-panel article-mobile-panel article-mobile-panel--right" id="articleRecentPanel">
+    <button type="button" class="article-mobile-panel-close" data-article-panel-close aria-label="Close Recently Published">
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+    </button>
+
     <p class="article-sidebar-heading">Recently Published</p>
     <ul class="article-sidebar-recent">
         @foreach ($recent as $item)

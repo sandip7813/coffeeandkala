@@ -134,4 +134,69 @@ import { smoothScrollTo } from './smooth-scroll';
     } else {
         revealTargets.forEach((target) => target.classList.add('is-inview'));
     }
+
+    // ─── Mobile "Explore the Sections" / "Recently Published" fabs ───
+    // Each panel slides in from its own screen edge; opening one closes
+    // the other, and the shared overlay + Escape key close whichever is open.
+    const mobilePanels = [
+        { fab: document.getElementById('articleExploreFab'), panel: document.getElementById('articleExplorePanel') },
+        { fab: document.getElementById('articleRecentFab'), panel: document.getElementById('articleRecentPanel') },
+    ].filter((entry) => entry.fab && entry.panel);
+
+    if (mobilePanels.length) {
+        const overlay = document.getElementById('articleMobileOverlay');
+        const body = document.body;
+
+        const closePanel = (entry) => {
+            entry.panel.classList.remove('is-open');
+            entry.fab.classList.remove('is-active');
+            entry.fab.setAttribute('aria-expanded', 'false');
+        };
+
+        const closeAllPanels = () => {
+            mobilePanels.forEach(closePanel);
+            overlay?.classList.remove('is-active');
+            body.style.overflow = '';
+        };
+
+        const openPanel = (entry) => {
+            mobilePanels.forEach((other) => {
+                if (other !== entry) {
+                    closePanel(other);
+                }
+            });
+
+            entry.panel.classList.add('is-open');
+            entry.fab.classList.add('is-active');
+            entry.fab.setAttribute('aria-expanded', 'true');
+            overlay?.classList.add('is-active');
+            body.style.overflow = 'hidden';
+        };
+
+        mobilePanels.forEach((entry) => {
+            entry.fab.addEventListener('click', () => {
+                if (entry.panel.classList.contains('is-open')) {
+                    closeAllPanels();
+                } else {
+                    openPanel(entry);
+                }
+            });
+
+            entry.panel.querySelector('[data-article-panel-close]')?.addEventListener('click', closeAllPanels);
+        });
+
+        overlay?.addEventListener('click', closeAllPanels);
+
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeAllPanels();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 960) {
+                closeAllPanels();
+            }
+        });
+    }
 })();

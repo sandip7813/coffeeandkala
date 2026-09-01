@@ -193,6 +193,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    document.querySelectorAll('.footer-heading-toggle').forEach((toggle) => {
+        const item = toggle.closest('.footer-col');
+        const links = item?.querySelector('.footer-links');
+
+        toggle.addEventListener('click', () => {
+            const expanded = !item?.classList.contains('is-open');
+
+            if (links) {
+                if (expanded) {
+                    item?.classList.add('is-open');
+                    links.style.maxHeight = `${links.scrollHeight}px`;
+                } else {
+                    links.style.maxHeight = `${links.scrollHeight}px`;
+                    requestAnimationFrame(() => {
+                        item?.classList.remove('is-open');
+                        links.style.maxHeight = '0px';
+                    });
+                }
+            } else {
+                item?.classList.toggle('is-open', expanded);
+            }
+
+            toggle.setAttribute('aria-expanded', String(expanded));
+        });
+
+        links?.addEventListener('transitionend', (event) => {
+            if (event.propertyName === 'max-height' && item?.classList.contains('is-open')) {
+                links.style.maxHeight = 'none';
+            }
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        document.querySelectorAll('.footer-col.is-open .footer-links').forEach((links) => {
+            links.style.maxHeight = 'none';
+        });
+    });
+
     document.querySelectorAll('.editorial-sidebar a, .mobile-drawer-right a').forEach((link) => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 1024) {
