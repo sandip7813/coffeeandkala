@@ -154,6 +154,17 @@ test('the sidebar shows a pending-approval badge only to users who can approve, 
     $response->assertSee(route('admin.gallery.index'), false);
 });
 
+test('the gallery edit page opens the image in a fancybox lightbox on click', function () {
+    $user = userWithPermission(['view-gallery', 'edit-gallery']);
+    $media = MediaFile::factory()->ofType('gallery')->create();
+
+    $response = $this->actingAs($user)->get(route('admin.gallery.edit', $media));
+
+    $response->assertOk();
+    $response->assertSee('data-fancybox="gallery-edit"', false);
+    $response->assertSee('href="'.$media->large_url.'"', false);
+});
+
 test('a user with edit-gallery can update title and caption', function () {
     $user = userWithPermission(['view-gallery', 'edit-gallery']);
     $media = MediaFile::factory()->ofType('gallery')->create(['title' => 'Old title', 'caption' => 'Old caption']);

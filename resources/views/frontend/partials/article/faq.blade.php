@@ -26,7 +26,7 @@
                     data-faq-panel
                 >
                     <div class="article-faq-answer">
-                        <p>{{ $item['answer'] }}</p>
+                        <p>{!! nl2br(e($item['answer'])) !!}</p>
                     </div>
                 </div>
             </div>

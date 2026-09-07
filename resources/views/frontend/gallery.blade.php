@@ -1,6 +1,6 @@
 @extends('layouts.gallery')
 
-@section('title', 'Gallery — Coffee & Kala')
+@seo($meta ?? null, 'Gallery — Coffee & Kala', 'A gallery of visual storytelling — photography and imagery from Coffee & Kala.', 'gallery, photography, visual storytelling, Coffee & Kala')
 
 @section('content')
     <div class="gallery-page">

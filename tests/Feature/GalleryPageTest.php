@@ -1,6 +1,11 @@
 <?php
 
+use App\Models\MediaFile;
+use Illuminate\Support\Str;
+
 test('the gallery page returns a successful response', function () {
+    $plate = MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->active()->create(['title' => 'A Real Gallery Plate']);
+
     $response = $this->get(route('gallery'));
 
     $response->assertSuccessful();
@@ -25,15 +30,41 @@ test('the gallery page returns a successful response', function () {
     expect(
         str_contains($html, 'resources/js/gallery.js') || str_contains($html, 'build/assets/gallery-')
     )->toBeTrue();
-    $response->assertSee('The Last Light Over the Northern Rail Corridor at Dusk', false);
+    $response->assertSee($plate->title, false);
+    $response->assertSee($plate->thumbnail_url, false);
     $response->assertSee('gallery-poster-title', false);
-    $response->assertSee('w=400', false);
     $response->assertSee('galleria/1.6.1', false);
     $response->assertDontSee('data-fancybox', false);
     $response->assertDontSee('@fancyapps/ui', false);
     $response->assertDontSee('lightgallery', false);
     $response->assertDontSee('editorialSidebar', false);
     $response->assertDontSee('toggleLeftDrawer', false);
+});
+
+test('only active gallery images appear on the gallery page', function () {
+    $active = MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->active()->create(['title' => 'An Active Plate']);
+    $pending = MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->pending()->create(['title' => 'A Pending Plate']);
+    $inactive = MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->inactive()->create(['title' => 'An Inactive Plate']);
+    $studio = MediaFile::factory()->ofType(MediaFile::TYPE_STUDIO)->active()->create(['title' => 'A Studio Work']);
+
+    $response = $this->get(route('gallery'));
+
+    $response->assertSuccessful();
+    $response->assertSee($active->title, false);
+    $response->assertDontSee($pending->title, false);
+    $response->assertDontSee($inactive->title, false);
+    $response->assertDontSee($studio->title, false);
+});
+
+test('a gallery plate title longer than 50 characters is trimmed', function () {
+    $longTitle = str_repeat('A very long gallery plate title indeed. ', 3);
+    MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->active()->create(['title' => $longTitle]);
+
+    $response = $this->get(route('gallery'));
+
+    $response->assertSuccessful();
+    $response->assertDontSee($longTitle, false);
+    $response->assertSee(Str::limit($longTitle, 50), false);
 });
 
 test('gallery links from the header and home navigation', function () {

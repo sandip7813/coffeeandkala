@@ -31,7 +31,7 @@ abstract class UpdateMediaFileRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'caption' => ['required', 'string', 'max:255'],
+            'caption' => ['required', 'string', 'max:2000'],
         ];
     }
 }

@@ -291,11 +291,16 @@
     display: block;
 }
 
+/* object-fit: contain — the frame keeps its exact aspect-ratio box, but the
+   full photo shows inside it (letterboxed on the frame's own dark
+   background where the image's aspect ratio doesn't fill the box) instead
+   of being cropped to cover it. */
 .gallery-poster-sheet img {
     display: block;
     width: 100%;
     aspect-ratio: 4 / 5;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
     background: #1a1410;
 }
 

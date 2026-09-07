@@ -220,13 +220,18 @@ return [
             'active' => ['admin'],
         ],
         [
-            'text' => 'Quotes',
-            'route' => 'admin.quotes.index',
-            'icon' => 'bi bi-chat-quote',
-            // The link opens the quotes list itself; create/edit/delete/assign
-            // are reached from buttons on that page, so viewing it is the gate.
-            'can' => 'view-quotes',
-            'active' => ['admin/quotes', 'admin/quotes/*'],
+            'text' => 'Our Story',
+            'route' => 'admin.our-story.edit',
+            'icon' => 'bi bi-book',
+            'can' => 'manage-our-story',
+            'active' => ['admin/our-story', 'admin/our-story/*'],
+        ],
+        [
+            'text' => 'Home Page',
+            'route' => 'admin.home-sections.edit',
+            'icon' => 'bi bi-house-gear',
+            'can' => 'manage-home-sections',
+            'active' => ['admin/home-sections', 'admin/home-sections/*'],
         ],
         [
             'text' => 'Gallery',
@@ -241,6 +246,27 @@ return [
             'icon' => 'bi bi-easel',
             'can' => 'view-studio',
             'active' => ['admin/studio', 'admin/studio/*'],
+        ],
+        [
+            'text' => 'Poetry',
+            'route' => 'admin.poetry.index',
+            'icon' => 'bi bi-journal-text',
+            'can' => 'view-poetry',
+            'active' => ['admin/poetry', 'admin/poetry/*'],
+        ],
+        [
+            'text' => 'Features (Articles)',
+            'route' => 'admin.features.index',
+            'icon' => 'bi bi-journal-richtext',
+            'can' => 'view-features',
+            'active' => ['admin/features', 'admin/features/*'],
+        ],
+        [
+            'text' => 'Journals (Blogs)',
+            'route' => 'admin.journals.index',
+            'icon' => 'bi bi-journal-text',
+            'can' => 'view-journals',
+            'active' => ['admin/journals', 'admin/journals/*'],
         ],
         ['header' => 'Administration'],
         [
@@ -264,6 +290,22 @@ return [
             'icon' => 'bi bi-gear',
             'can' => 'manage-brand',
             'active' => ['admin/settings', 'admin/settings/*'],
+        ],
+        [
+            'text' => 'Quotes',
+            'route' => 'admin.quotes.index',
+            'icon' => 'bi bi-chat-quote',
+            // The link opens the quotes list itself; create/edit/delete/assign
+            // are reached from buttons on that page, so viewing it is the gate.
+            'can' => 'view-quotes',
+            'active' => ['admin/quotes', 'admin/quotes/*'],
+        ],
+        [
+            'text' => 'Meta Data',
+            'route' => 'admin.meta.edit',
+            'icon' => 'bi bi-search',
+            'can' => 'manage-meta',
+            'active' => ['admin/meta', 'admin/meta/*'],
         ],
         ['header' => 'Access Control'],
         [

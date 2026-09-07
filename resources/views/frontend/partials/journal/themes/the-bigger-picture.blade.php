@@ -11,31 +11,35 @@
     </p>
 </header>
 
-<ol class="jc-picture-list">
-    @foreach ($entries as $entry)
-        <li class="jc-picture-item journal-reveal journal-reveal--up" style="--portal-delay: {{ $loop->index * 0.06 }}s">
-            <article class="jc-picture-frame">
-                <a href="{{ $entry['href'] }}" class="jc-picture-media">
-                    <img src="{{ $entry['image'] }}" alt="" loading="lazy" width="1280" height="720" decoding="async">
-                    <span class="jc-picture-count" aria-hidden="true">
-                        {{ sprintf('%02d', ($entries->currentPage() - 1) * $entries->perPage() + $loop->iteration) }}
-                        / {{ sprintf('%02d', $entries->total()) }}
-                    </span>
-                </a>
-
-                <div class="jc-picture-caption">
-                    <time datetime="{{ $entry['date'] }}" class="jc-picture-date">{{ $entry['date_label'] }}</time>
-                    <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
-                    <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
-                    <a href="{{ $entry['href'] }}" class="journal-continued">
-                        Read the story
-                        <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+@if ($entries->isNotEmpty())
+    <ol class="jc-picture-list">
+        @foreach ($entries as $entry)
+            <li class="jc-picture-item journal-reveal journal-reveal--up" style="--portal-delay: {{ $loop->index * 0.06 }}s">
+                <article class="jc-picture-frame">
+                    <a href="{{ $entry['href'] }}" class="jc-picture-media">
+                        <img src="{{ $entry['image'] }}" alt="" loading="lazy" width="1280" height="720" decoding="async">
+                        <span class="jc-picture-count" aria-hidden="true">
+                            {{ sprintf('%02d', ($entries->currentPage() - 1) * $entries->perPage() + $loop->iteration) }}
+                            / {{ sprintf('%02d', $entries->total()) }}
+                        </span>
                     </a>
-                </div>
-            </article>
-        </li>
-    @endforeach
-</ol>
+
+                    <div class="jc-picture-caption">
+                        <time datetime="{{ $entry['date'] }}" class="jc-picture-date">{{ $entry['date_label'] }}</time>
+                        <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
+                        <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
+                        <a href="{{ $entry['href'] }}" class="journal-continued">
+                            Read the story
+                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </article>
+            </li>
+        @endforeach
+    </ol>
+@else
+    <p class="jc-empty">No pieces found in this category yet.</p>
+@endif
 
 @include('frontend.partials.journal.category-pagination', ['entries' => $entries, 'category' => $category])
 @include('frontend.partials.journal.category-footer', ['category' => $category, 'categories' => $categories])

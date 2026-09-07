@@ -12,34 +12,39 @@
     <p class="fc-atlas-lead">{{ $category['lead'] }}</p>
 </section>
 
-<section class="fc-atlas-scrapbook" aria-label="Articles in {{ $category['name'] }}">
-    @foreach ($category['articles'] as $article)
-        <article
-            @class([
-                'fc-atlas-clip',
-                'fc-atlas-clip--'.$loop->iteration,
-                'features-reveal',
-                'features-reveal--up',
-            ])
-            style="--portal-delay: {{ $loop->index * 0.1 }}s"
-        >
-            <span class="fc-atlas-tape" aria-hidden="true"></span>
-            <a href="{{ $article['href'] }}">
-                <div class="fc-atlas-media">
-                    <img src="{{ $article['image'] }}" alt="" loading="lazy" width="800" height="560" decoding="async">
-                </div>
-                <div class="fc-atlas-body">
-                    <span class="fc-atlas-tag">{{ $article['tag'] }}</span>
-                    <h2>{{ $article['title'] }}</h2>
-                    <p>{{ Str::limit($article['excerpt'], 500) }}</p>
-                    <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
-                </div>
-            </a>
-        </article>
-    @endforeach
-</section>
+@if (count($category['articles']))
+    <section class="fc-atlas-scrapbook" aria-label="Articles in {{ $category['name'] }}">
+        @foreach ($category['articles'] as $article)
+            <article
+                @class([
+                    'fc-atlas-clip',
+                    'fc-atlas-clip--'.$loop->iteration,
+                    'features-reveal',
+                    'features-reveal--up',
+                ])
+                style="--portal-delay: {{ $loop->index * 0.1 }}s"
+            >
+                <span class="fc-atlas-tape" aria-hidden="true"></span>
+                <a href="{{ $article['href'] }}">
+                    <div class="fc-atlas-media">
+                        <img src="{{ $article['image'] }}" alt="" loading="lazy" width="800" height="560" decoding="async">
+                    </div>
+                    <div class="fc-atlas-body">
+                        <span class="fc-atlas-tag">{{ $article['tag'] }}</span>
+                        <h2>{{ $article['title'] }}</h2>
+                        <p>{{ Str::limit($article['excerpt'], 500) }}</p>
+                        <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+                    </div>
+                </a>
+            </article>
+        @endforeach
+    </section>
+@else
+    <p class="fc-empty">No articles found in this chapter yet.</p>
+@endif
 
 @include('frontend.partials.features.theme-footer', [
     'category' => $category,
     'categories' => $categories,
+    'entries' => $entries,
 ])

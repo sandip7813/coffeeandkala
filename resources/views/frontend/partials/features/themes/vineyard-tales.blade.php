@@ -16,45 +16,50 @@
         <p class="fc-vine-lead">{{ $category['lead'] }}</p>
     </header>
 
-    <section class="fc-vine-flight" aria-label="Articles in {{ $category['name'] }}">
-        <p class="fc-vine-flight-label" aria-hidden="true">
-            <span></span>
-            This flight
-            <span></span>
-        </p>
+    @if (count($category['articles']))
+        <section class="fc-vine-flight" aria-label="Articles in {{ $category['name'] }}">
+            <p class="fc-vine-flight-label" aria-hidden="true">
+                <span></span>
+                This flight
+                <span></span>
+            </p>
 
-        <div class="fc-vine-rack">
-            @foreach ($category['articles'] as $article)
-                <article
-                    class="fc-vine-pour features-reveal features-reveal--up"
-                    style="--portal-delay: {{ $loop->index * 0.08 }}s; --pour-index: {{ $loop->iteration }}"
-                >
-                    <a href="{{ $article['href'] }}" class="fc-vine-pour-link">
-                        <span class="fc-vine-foil" aria-hidden="true"></span>
-                        <div class="fc-vine-neck">
-                            <span class="fc-vine-year">{{ \Illuminate\Support\Str::of($article['date'])->substr(0, 4) }}</span>
-                            <span class="fc-vine-tag">{{ $article['tag'] }}</span>
-                        </div>
-                        <div class="fc-vine-glass">
-                            <img src="{{ $article['image'] }}" alt="" loading="lazy" width="480" height="640" decoding="async">
-                        </div>
-                        <div class="fc-vine-labelcard">
-                            <h2>{{ $article['title'] }}</h2>
-                            <p>{{ Str::limit($article['excerpt'], 80) }}</p>
-                            <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
-                            <span class="fc-vine-cta">
-                                Pour the story
-                                <i class="fa-solid fa-wine-glass" aria-hidden="true"></i>
-                            </span>
-                        </div>
-                    </a>
-                </article>
-            @endforeach
-        </div>
-    </section>
+            <div class="fc-vine-rack">
+                @foreach ($category['articles'] as $article)
+                    <article
+                        class="fc-vine-pour features-reveal features-reveal--up"
+                        style="--portal-delay: {{ $loop->index * 0.08 }}s; --pour-index: {{ $loop->iteration }}"
+                    >
+                        <a href="{{ $article['href'] }}" class="fc-vine-pour-link">
+                            <span class="fc-vine-foil" aria-hidden="true"></span>
+                            <div class="fc-vine-neck">
+                                <span class="fc-vine-year">{{ \Illuminate\Support\Str::of($article['date'])->substr(0, 4) }}</span>
+                                <span class="fc-vine-tag">{{ $article['tag'] }}</span>
+                            </div>
+                            <div class="fc-vine-glass">
+                                <img src="{{ $article['image'] }}" alt="" loading="lazy" width="480" height="640" decoding="async">
+                            </div>
+                            <div class="fc-vine-labelcard">
+                                <h2>{{ $article['title'] }}</h2>
+                                <p>{{ Str::limit($article['excerpt'], 80) }}</p>
+                                <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+                                <span class="fc-vine-cta">
+                                    Pour the story
+                                    <i class="fa-solid fa-wine-glass" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </a>
+                    </article>
+                @endforeach
+            </div>
+        </section>
+    @else
+        <p class="fc-empty">No articles found in this chapter yet.</p>
+    @endif
 </div>
 
 @include('frontend.partials.features.theme-footer', [
     'category' => $category,
     'categories' => $categories,
+    'entries' => $entries,
 ])

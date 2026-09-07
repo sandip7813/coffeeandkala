@@ -7,7 +7,7 @@
                 @csrf
 
                 <x-adminlte-input name="title" label="{{ __('Title') }} *" maxlength="255" required :value="old('title')" />
-                <x-adminlte-input name="caption" label="{{ __('Caption') }} *" maxlength="255" required :value="old('caption')" />
+                <x-adminlte-textarea name="caption" label="{{ __('Caption') }} *" rows="4" required>{{ old('caption') }}</x-adminlte-textarea>
 
                 <x-adminlte-input-file name="image" label="{{ __('Image') }} *" accept="image/*" required />
                 <p class="form-text mb-3">

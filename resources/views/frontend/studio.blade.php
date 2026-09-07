@@ -1,6 +1,6 @@
 @extends('layouts.studio')
 
-@section('title', 'Studio — Coffee & Kala')
+@seo($meta ?? null, 'Studio — Coffee & Kala', 'A gallery of visual poetry — behind-the-scenes work from the Coffee & Kala Studio.', 'studio, photography, visual poetry, Coffee & Kala')
 
 @section('content')
     <div class="studio-page">

@@ -15,6 +15,10 @@
             ? \App\Models\MediaFile::ofType('gallery')->pending()->count() : 0,
         'admin.studio.index' => $sidebarUser?->can('approve-studio')
             ? \App\Models\MediaFile::ofType('studio')->pending()->count() : 0,
+        'admin.features.index' => $sidebarUser?->can('approve-features')
+            ? \App\Models\Article::ofType(\App\Models\Article::TYPE_FEATURE)->pending()->count() : 0,
+        'admin.journals.index' => $sidebarUser?->can('approve-journals')
+            ? \App\Models\Article::ofType(\App\Models\Article::TYPE_JOURNAL)->pending()->count() : 0,
     ];
 
     foreach ($items as &$sidebarItem) {

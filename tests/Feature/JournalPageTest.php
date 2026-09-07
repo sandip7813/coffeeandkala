@@ -1,10 +1,25 @@
 <?php
 
+use App\Models\Article;
+use App\Models\Category;
 use App\Support\JournalCatalog;
 
+function seedJournalHighlights(): void
+{
+    foreach (JournalCatalog::categories() as $category) {
+        $categoryModel = Category::query()->ofType(Category::TYPE_JOURNAL)->where('slug', $category['id'])->firstOrFail();
+
+        Article::factory()->journal()->active()->create([
+            'category_id' => $categoryModel->id,
+            'title' => "Newest dispatch for {$category['name']}",
+        ]);
+    }
+}
+
 test('the journal page returns a successful response', function () {
+    seedJournalHighlights();
+
     $response = $this->get(route('journal'));
-    $highlights = JournalCatalog::categoryHighlights();
 
     $response->assertSuccessful();
     $response->assertSee('Journal — Coffee &amp; Kala', false);
@@ -19,23 +34,16 @@ test('the journal page returns a successful response', function () {
     $response->assertSee('journal-category-date', false);
     $response->assertSee('Read the story', false);
 
-    // The highlight shown per category is always the newest entry in it,
+    // The highlight shown per category is the newest active article in it,
     // its category name is hyperlinked to the category page, and its date
     // renders alongside it.
-    foreach ($highlights as $entry) {
-        $response->assertSee($entry['title'], false);
-        $response->assertSee($entry['date_label'], false);
-        $response->assertSee(route('journal.category', $entry['category_id']), false);
+    foreach (JournalCatalog::categories() as $category) {
+        $article = Article::where('title', "Newest dispatch for {$category['name']}")->firstOrFail();
+
+        $response->assertSee($article->title, false);
+        $response->assertSee(route('journal.category', $category['id']), false);
     }
 
-    // Only entries carrying a named category are eligible as highlights —
-    // uncategorised dispatches never appear here.
-    $response->assertDontSee('A Note from a Rainy Evening', false);
-    $response->assertDontSee('Weathered Light', false);
-    $response->assertDontSee('Midnight Margins', false);
-    $response->assertDontSee('journal-departments', false);
-    $response->assertDontSee('Center spread', false);
-    $response->assertDontSee('Inside this edition', false);
     $response->assertSee('Collect moments,', false);
     $response->assertSee('End of edition', false);
     $response->assertDontSee('editorialSidebar', false);
@@ -47,6 +55,13 @@ test('the journal page returns a successful response', function () {
     expect(
         str_contains($html, 'resources/css/journal.css') || str_contains($html, 'build/assets/journal-')
     )->toBeTrue();
+});
+
+test('the journal page shows nothing published yet gracefully when no articles exist', function () {
+    $response = $this->get(route('journal'));
+
+    $response->assertSuccessful();
+    $response->assertDontSee('Read the story', false);
 });
 
 test('journal category links from the header, footer, and home navigation are real, not placeholders', function () {

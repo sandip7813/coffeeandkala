@@ -1,6 +1,6 @@
 @extends('layouts.journal')
 
-@section('title', 'Journal — Coffee & Kala')
+@seo($meta ?? null, 'Journal — Coffee & Kala', 'Slow dispatches on coffee culture, craft, and everyday ritual — the Coffee & Kala Journal.', 'journal, coffee culture, essays, dispatches, Coffee & Kala')
 
 @section('content')
     <div class="journal-page">

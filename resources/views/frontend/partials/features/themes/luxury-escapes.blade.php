@@ -14,48 +14,53 @@
         <p class="fc-lux-lead">{{ $category['lead'] }}</p>
     </header>
 
-    <section class="fc-lux-lookbook" aria-label="Articles in {{ $category['name'] }}">
-        @foreach ($category['articles'] as $article)
-            <article
-                @class([
-                    'fc-lux-panel',
-                    'fc-lux-panel--hero' => $loop->first,
-                    'features-reveal',
-                    'features-reveal--up',
-                ])
-                style="--portal-delay: {{ $loop->index * 0.08 }}s"
-            >
-                <a href="{{ $article['href'] }}" class="fc-lux-panel-link">
-                    <img
-                        src="{{ $article['image'] }}"
-                        alt=""
-                        class="fc-lux-panel-image"
-                        loading="lazy"
-                        width="1400"
-                        height="700"
-                        decoding="async"
-                    >
-                    <div class="fc-lux-panel-veil" aria-hidden="true"></div>
-                    <div class="fc-lux-panel-copy">
-                        <div class="fc-lux-panel-meta">
-                            <span class="fc-lux-panel-no">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                            <span>{{ $article['tag'] }}</span>
-                            <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+    @if (count($category['articles']))
+        <section class="fc-lux-lookbook" aria-label="Articles in {{ $category['name'] }}">
+            @foreach ($category['articles'] as $article)
+                <article
+                    @class([
+                        'fc-lux-panel',
+                        'fc-lux-panel--hero' => $loop->first,
+                        'features-reveal',
+                        'features-reveal--up',
+                    ])
+                    style="--portal-delay: {{ $loop->index * 0.08 }}s"
+                >
+                    <a href="{{ $article['href'] }}" class="fc-lux-panel-link">
+                        <img
+                            src="{{ $article['image'] }}"
+                            alt=""
+                            class="fc-lux-panel-image"
+                            loading="lazy"
+                            width="1400"
+                            height="700"
+                            decoding="async"
+                        >
+                        <div class="fc-lux-panel-veil" aria-hidden="true"></div>
+                        <div class="fc-lux-panel-copy">
+                            <div class="fc-lux-panel-meta">
+                                <span class="fc-lux-panel-no">{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                                <span>{{ $article['tag'] }}</span>
+                                <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+                            </div>
+                            <h2>{{ $article['title'] }}</h2>
+                            <p>{{ Str::limit($article['excerpt'], 500) }}</p>
+                            <span class="fc-lux-cta">
+                                Enter the suite
+                                <i class="fa-solid fa-gem" aria-hidden="true"></i>
+                            </span>
                         </div>
-                        <h2>{{ $article['title'] }}</h2>
-                        <p>{{ Str::limit($article['excerpt'], 500) }}</p>
-                        <span class="fc-lux-cta">
-                            Enter the suite
-                            <i class="fa-solid fa-gem" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                </a>
-            </article>
-        @endforeach
-    </section>
+                    </a>
+                </article>
+            @endforeach
+        </section>
+    @else
+        <p class="fc-empty">No articles found in this chapter yet.</p>
+    @endif
 </div>
 
 @include('frontend.partials.features.theme-footer', [
     'category' => $category,
     'categories' => $categories,
+    'entries' => $entries,
 ])

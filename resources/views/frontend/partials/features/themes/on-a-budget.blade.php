@@ -14,26 +14,31 @@
     </div>
 </section>
 
-<section class="fc-budget-grid" aria-label="Articles in {{ $category['name'] }}">
-    @foreach ($category['articles'] as $article)
-        <article class="fc-budget-card features-reveal features-reveal--up" style="--portal-delay: {{ $loop->index * 0.08 }}s">
-            <a href="{{ $article['href'] }}">
-                <div class="fc-budget-card-media">
-                    <img src="{{ $article['image'] }}" alt="" loading="lazy" width="700" height="480" decoding="async">
-                    <span class="fc-budget-pin" aria-hidden="true">{{ $article['tag'] }}</span>
-                </div>
-                <div class="fc-budget-card-body">
-                    <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
-                    <h2>{{ $article['title'] }}</h2>
-                    <p>{{ Str::limit($article['excerpt'], 80) }}</p>
-                    <span class="fc-budget-cta">Open tip sheet →</span>
-                </div>
-            </a>
-        </article>
-    @endforeach
-</section>
+@if (count($category['articles']))
+    <section class="fc-budget-grid" aria-label="Articles in {{ $category['name'] }}">
+        @foreach ($category['articles'] as $article)
+            <article class="fc-budget-card features-reveal features-reveal--up" style="--portal-delay: {{ $loop->index * 0.08 }}s">
+                <a href="{{ $article['href'] }}">
+                    <div class="fc-budget-card-media">
+                        <img src="{{ $article['image'] }}" alt="" loading="lazy" width="700" height="480" decoding="async">
+                        <span class="fc-budget-pin" aria-hidden="true">{{ $article['tag'] }}</span>
+                    </div>
+                    <div class="fc-budget-card-body">
+                        <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+                        <h2>{{ $article['title'] }}</h2>
+                        <p>{{ Str::limit($article['excerpt'], 80) }}</p>
+                        <span class="fc-budget-cta">Open tip sheet →</span>
+                    </div>
+                </a>
+            </article>
+        @endforeach
+    </section>
+@else
+    <p class="fc-empty">No articles found in this chapter yet.</p>
+@endif
 
 @include('frontend.partials.features.theme-footer', [
     'category' => $category,
     'categories' => $categories,
+    'entries' => $entries,
 ])

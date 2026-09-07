@@ -1,5 +1,5 @@
 {{-- Shared chapter strip + themed closing for category pages --}}
-@include('frontend.partials.features.pagination', ['category' => $category])
+@include('frontend.partials.features.pagination', ['category' => $category, 'entries' => $entries])
 
 <nav class="fc-siblings features-reveal features-reveal--up" aria-label="Other chapters">
     <div class="fc-siblings-inner">

@@ -4,8 +4,14 @@ use App\Actions\Quotes\EnsureQuoteScheduledForDate;
 use App\Http\Controllers\Admin\ArtisanController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FeatureArticleController;
 use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\HomeSectionController;
+use App\Http\Controllers\Admin\JournalArticleController;
+use App\Http\Controllers\Admin\MetaController;
+use App\Http\Controllers\Admin\OurStoryController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\PoemController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\Admin\QuoteScheduleController;
@@ -20,13 +26,18 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\FeatureController;
+use App\Http\Controllers\GalleryController as FrontendGalleryController;
 use App\Http\Controllers\JournalController;
+use App\Http\Controllers\OurStoryController as FrontendOurStoryController;
 use App\Http\Controllers\PoetryController;
+use App\Http\Controllers\StudioController as FrontendStudioController;
+use App\Models\HomeSectionArticle;
+use App\Models\HomeSectionMedia;
+use App\Models\Meta;
 use App\Support\FeatureCatalog;
-use App\Support\GalleryCatalog;
+use App\Support\HomeMediaSections;
+use App\Support\HomeSections;
 use App\Support\JournalCatalog;
-use App\Support\PoetryCatalog;
-use App\Support\StudioCatalog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
@@ -34,24 +45,26 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function (EnsureQuoteScheduledForDate $ensureQuoteScheduledForDate) {
     $quote = $ensureQuoteScheduledForDate->handle(Carbon::today())->quote;
 
-    return view('frontend.home', compact('quote'));
+    $homeSections = collect(HomeSectionArticle::SECTIONS)
+        ->mapWithKeys(fn (string $section) => [$section => HomeSections::picks($section)]);
+
+    return view('frontend.home', [
+        'quote' => $quote,
+        'latestPieces' => $homeSections[HomeSectionArticle::SECTION_LATEST_PIECES],
+        'theSelection' => $homeSections[HomeSectionArticle::SECTION_THE_SELECTION],
+        'homeFeatures' => $homeSections[HomeSectionArticle::SECTION_FEATURES],
+        'homeJournal' => $homeSections[HomeSectionArticle::SECTION_JOURNAL],
+        'homeGallery' => HomeMediaSections::picks(HomeSectionMedia::SECTION_GALLERY),
+        'homeStudio' => HomeMediaSections::picks(HomeSectionMedia::SECTION_STUDIO),
+        'meta' => Meta::forPage('home'),
+    ]);
 })->name('home');
 
-Route::get('/our-story', function () {
-    return view('frontend.about');
-})->name('about');
+Route::get('/our-story', [FrontendOurStoryController::class, 'index'])->name('about');
 
-Route::get('/gallery', function () {
-    $plates = GalleryCatalog::all();
+Route::get('/gallery', [FrontendGalleryController::class, 'index'])->name('gallery');
 
-    return view('frontend.gallery', ['plates' => $plates]);
-})->name('gallery');
-
-Route::get('/studio', function () {
-    $works = StudioCatalog::all();
-
-    return view('frontend.studio', ['works' => $works]);
-})->name('studio');
+Route::get('/studio', [FrontendStudioController::class, 'index'])->name('studio');
 
 Route::get('/journal', [JournalController::class, 'index'])->name('journal');
 Route::get('/journal/{category}', [JournalController::class, 'show'])
@@ -70,9 +83,7 @@ Route::get('/features/{category}/{article}', [FeatureController::class, 'showArt
     ->name('features.article');
 
 Route::get('/poetry', [PoetryController::class, 'index'])->name('poetry');
-Route::get('/poetry/{poem}', [PoetryController::class, 'show'])
-    ->whereIn('poem', PoetryCatalog::slugs())
-    ->name('poetry.show');
+Route::get('/poetry/{poem}', [PoetryController::class, 'show'])->name('poetry.show');
 
 // AdminLTE authentication routes (public registration disabled — admins are created by super admin)
 Route::middleware('guest')->group(function () {
@@ -182,6 +193,28 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::put('settings/contact', [SettingsController::class, 'updateContact'])->name('settings.contact.update');
     });
 
+    Route::middleware('can:manage-home-sections')->group(function () {
+        Route::get('home-sections', [HomeSectionController::class, 'edit'])->name('home-sections.edit');
+        Route::get('home-sections/search-articles', [HomeSectionController::class, 'searchArticles'])->name('home-sections.search-articles');
+        Route::put('home-sections/{section}', [HomeSectionController::class, 'update'])->name('home-sections.update');
+        Route::put('home-sections-meta', [HomeSectionController::class, 'updateMeta'])->name('home-sections.meta.update');
+    });
+
+    Route::middleware('can:manage-our-story')->group(function () {
+        Route::get('our-story', [OurStoryController::class, 'edit'])->name('our-story.edit');
+        Route::put('our-story', [OurStoryController::class, 'update'])->name('our-story.update');
+        Route::put('our-story/{article}/sections/reorder', [OurStoryController::class, 'reorderSections'])->name('our-story.sections.reorder');
+        Route::put('our-story/{article}/sections/{section}/status', [OurStoryController::class, 'updateSectionStatus'])->name('our-story.sections.status.update');
+        Route::put('our-story-meta', [OurStoryController::class, 'updateMeta'])->name('our-story.meta.update');
+    });
+
+    Route::middleware('can:manage-meta')->group(function () {
+        Route::get('meta', [MetaController::class, 'edit'])->name('meta.edit');
+        Route::put('meta/page/{key}', [MetaController::class, 'updatePage'])->name('meta.page.update');
+        Route::get('meta/content/{type}', [MetaController::class, 'contentList'])->name('meta.content.list');
+        Route::put('meta/content/{type}/{id}', [MetaController::class, 'updateContentMeta'])->name('meta.content.update');
+    });
+
     // Each action below is gated by its own granular permission (checked in the
     // controller / form request), so route middleware only applies where a
     // single permission maps cleanly to a single route.
@@ -215,6 +248,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     Route::put('gallery/{media}', [GalleryController::class, 'update'])->name('gallery.update');
     Route::put('gallery/{media}/status', [GalleryController::class, 'updateStatus'])->name('gallery.status.update');
     Route::put('gallery/{media}/approve', [GalleryController::class, 'approve'])->name('gallery.approve');
+    Route::put('gallery/{media}/home-section', [GalleryController::class, 'toggleHomeSection'])->name('gallery.home-section.toggle');
     Route::delete('gallery/{media}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
     Route::get('studio', [StudioController::class, 'index'])->name('studio.index');
@@ -224,5 +258,47 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     Route::put('studio/{media}', [StudioController::class, 'update'])->name('studio.update');
     Route::put('studio/{media}/status', [StudioController::class, 'updateStatus'])->name('studio.status.update');
     Route::put('studio/{media}/approve', [StudioController::class, 'approve'])->name('studio.approve');
+    Route::put('studio/{media}/home-section', [StudioController::class, 'toggleHomeSection'])->name('studio.home-section.toggle');
     Route::delete('studio/{media}', [StudioController::class, 'destroy'])->name('studio.destroy');
+
+    Route::get('poetry', [PoemController::class, 'index'])->name('poetry.index');
+    Route::get('poetry/create', [PoemController::class, 'create'])->name('poetry.create');
+    Route::post('poetry', [PoemController::class, 'store'])->name('poetry.store');
+    Route::get('poetry/{poem}/edit', [PoemController::class, 'edit'])->name('poetry.edit');
+    Route::put('poetry/{poem}', [PoemController::class, 'update'])->name('poetry.update');
+    Route::put('poetry/{poem}/status', [PoemController::class, 'updateStatus'])->name('poetry.status.update');
+    Route::put('poetry/{poem}/approve', [PoemController::class, 'approve'])->name('poetry.approve');
+    Route::delete('poetry/{poem}', [PoemController::class, 'destroy'])->name('poetry.destroy');
+    Route::put('poetry-meta', [PoemController::class, 'updateMeta'])->name('poetry.meta.update');
+
+    // Features and Journals share identical functionality (see
+    // AbstractArticleController); each action is gated by its own granular
+    // '*-features'/'*-journals' permission checked in the controller, and
+    // approval is restricted to super admins directly (not a delegable
+    // permission), so no route middleware is used here.
+    Route::get('features/search-creators', [FeatureArticleController::class, 'searchCreators'])->name('features.search-creators');
+    Route::get('features', [FeatureArticleController::class, 'index'])->name('features.index');
+    Route::get('features/create', [FeatureArticleController::class, 'create'])->name('features.create');
+    Route::post('features', [FeatureArticleController::class, 'store'])->name('features.store');
+    Route::get('features/{article}/edit', [FeatureArticleController::class, 'edit'])->name('features.edit');
+    Route::put('features/{article}', [FeatureArticleController::class, 'update'])->name('features.update');
+    Route::put('features/{article}/status', [FeatureArticleController::class, 'updateStatus'])->name('features.status.update');
+    Route::put('features/{article}/sections/reorder', [FeatureArticleController::class, 'reorderSections'])->name('features.sections.reorder');
+    Route::put('features/{article}/sections/{section}/status', [FeatureArticleController::class, 'updateSectionStatus'])->name('features.sections.status.update');
+    Route::put('features/{article}/approve', [FeatureArticleController::class, 'approve'])->name('features.approve');
+    Route::put('features/{article}/home-sections/{section}', [FeatureArticleController::class, 'toggleHomeSection'])->name('features.home-sections.toggle');
+    Route::delete('features/{article}', [FeatureArticleController::class, 'destroy'])->name('features.destroy');
+
+    Route::get('journals/search-creators', [JournalArticleController::class, 'searchCreators'])->name('journals.search-creators');
+    Route::get('journals', [JournalArticleController::class, 'index'])->name('journals.index');
+    Route::get('journals/create', [JournalArticleController::class, 'create'])->name('journals.create');
+    Route::post('journals', [JournalArticleController::class, 'store'])->name('journals.store');
+    Route::get('journals/{article}/edit', [JournalArticleController::class, 'edit'])->name('journals.edit');
+    Route::put('journals/{article}', [JournalArticleController::class, 'update'])->name('journals.update');
+    Route::put('journals/{article}/status', [JournalArticleController::class, 'updateStatus'])->name('journals.status.update');
+    Route::put('journals/{article}/sections/reorder', [JournalArticleController::class, 'reorderSections'])->name('journals.sections.reorder');
+    Route::put('journals/{article}/sections/{section}/status', [JournalArticleController::class, 'updateSectionStatus'])->name('journals.sections.status.update');
+    Route::put('journals/{article}/approve', [JournalArticleController::class, 'approve'])->name('journals.approve');
+    Route::put('journals/{article}/home-sections/{section}', [JournalArticleController::class, 'toggleHomeSection'])->name('journals.home-sections.toggle');
+    Route::delete('journals/{article}', [JournalArticleController::class, 'destroy'])->name('journals.destroy');
 });

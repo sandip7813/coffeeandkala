@@ -8,25 +8,29 @@
     </p>
 </header>
 
-<ul class="jc-guide-grid">
-    @foreach ($entries as $entry)
-        <li class="jc-guide-card journal-reveal journal-reveal--up" style="--portal-delay: {{ $loop->index * 0.06 }}s">
-            <a href="{{ $entry['href'] }}" class="jc-guide-media">
-                <img src="{{ $entry['image'] }}" alt="" loading="lazy" width="640" height="480" decoding="async">
-                <span class="jc-guide-pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Guide</span>
-            </a>
-            <div class="jc-guide-body">
-                <time datetime="{{ $entry['date'] }}">{{ $entry['date_label'] }}</time>
-                <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
-                <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
-                <a href="{{ $entry['href'] }}" class="journal-continued">
-                    Read the guide
-                    <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+@if ($entries->isNotEmpty())
+    <ul class="jc-guide-grid">
+        @foreach ($entries as $entry)
+            <li class="jc-guide-card journal-reveal journal-reveal--up" style="--portal-delay: {{ $loop->index * 0.06 }}s">
+                <a href="{{ $entry['href'] }}" class="jc-guide-media">
+                    <img src="{{ $entry['image'] }}" alt="" loading="lazy" width="640" height="480" decoding="async">
+                    <span class="jc-guide-pin"><i class="fa-solid fa-location-dot" aria-hidden="true"></i> Guide</span>
                 </a>
-            </div>
-        </li>
-    @endforeach
-</ul>
+                <div class="jc-guide-body">
+                    <time datetime="{{ $entry['date'] }}">{{ $entry['date_label'] }}</time>
+                    <h2><a href="{{ $entry['href'] }}">{{ $entry['title'] }}</a></h2>
+                    <p>{{ Str::limit($entry['excerpt'], 80) }}</p>
+                    <a href="{{ $entry['href'] }}" class="journal-continued">
+                        Read the guide
+                        <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </li>
+        @endforeach
+    </ul>
+@else
+    <p class="jc-empty">No guides found in this category yet.</p>
+@endif
 
 @include('frontend.partials.journal.category-pagination', ['entries' => $entries, 'category' => $category])
 @include('frontend.partials.journal.category-footer', ['category' => $category, 'categories' => $categories])

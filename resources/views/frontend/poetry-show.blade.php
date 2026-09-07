@@ -1,6 +1,6 @@
 @extends('layouts.poetry')
 
-@section('title', $current['title'].' — The Poetry Shelf — Coffee & Kala')
+@seo($meta ?? null, $current['title'].' — The Poetry Shelf — Coffee & Kala', $current['excerpt'] ?? 'A poem from the Coffee & Kala poetry collection.', 'poetry, poem, Coffee & Kala')
 
 @php
     $pageCount = 3 + count($poems) * 2 + 1; // cover + (contents ×2) + (poem ×2 each) + closing
@@ -89,15 +89,19 @@
                         @include('frontend.partials.poetry.vine')
                         <div class="poetry-book-page-inner poetry-book-page-inner--index">
 
-                            <p class="poetry-eyebrow">From the shelf</p>
-                            <h3 class="poetry-book-index-heading">More poems nearby</h3>
-                            <span class="poetry-ornament"></span>
+                            @if (! empty($p['nearby']['prev']) || ! empty($p['nearby']['next']))
+                                <p class="poetry-eyebrow">From the shelf</p>
+                                <h3 class="poetry-book-index-heading">More poems nearby</h3>
+                                <span class="poetry-ornament"></span>
+                            @endif
 
                             <ol class="poetry-book-card-index poetry-book-card-index--full">
-                                <li class="poetry-book-index-label poetry-book-index-label--start" aria-hidden="true">
-                                    <span class="poetry-book-index-label-mark"></span>
-                                    <span class="poetry-book-index-label-text">Previously</span>
-                                </li>
+                                @if (! empty($p['nearby']['prev']))
+                                    <li class="poetry-book-index-label poetry-book-index-label--start" aria-hidden="true">
+                                        <span class="poetry-book-index-label-mark"></span>
+                                        <span class="poetry-book-index-label-text">Previously</span>
+                                    </li>
+                                @endif
                                 @foreach ($p['nearby']['prev'] as $np)
                                     <li>
                                         <button type="button" class="poetry-book-index-link" data-poetry-book-jump="{{ $cardPageBySlug[$np['slug']] }}">
@@ -105,16 +109,17 @@
                                                 <img src="{{ $np['thumb'] }}" alt="" loading="lazy">
                                             </span>
                                             <span class="poetry-book-index-info">
-                                                <span class="poetry-book-index-kicker">{{ $np['mood'] }}</span>
                                                 <span class="poetry-book-index-title">{{ $np['title'] }}</span>
                                             </span>
                                         </button>
                                     </li>
                                 @endforeach
-                                <li class="poetry-book-index-label poetry-book-index-label--mid" aria-hidden="true">
-                                    <span class="poetry-book-index-label-mark"></span>
-                                    <span class="poetry-book-index-label-text">Coming up</span>
-                                </li>
+                                @if (! empty($p['nearby']['next']))
+                                    <li class="poetry-book-index-label poetry-book-index-label--mid" aria-hidden="true">
+                                        <span class="poetry-book-index-label-mark"></span>
+                                        <span class="poetry-book-index-label-text">Coming up</span>
+                                    </li>
+                                @endif
                                 @foreach ($p['nearby']['next'] as $np)
                                     <li>
                                         <button type="button" class="poetry-book-index-link" data-poetry-book-jump="{{ $cardPageBySlug[$np['slug']] }}">
@@ -122,7 +127,6 @@
                                                 <img src="{{ $np['thumb'] }}" alt="" loading="lazy">
                                             </span>
                                             <span class="poetry-book-index-info">
-                                                <span class="poetry-book-index-kicker">{{ $np['mood'] }}</span>
                                                 <span class="poetry-book-index-title">{{ $np['title'] }}</span>
                                             </span>
                                         </button>

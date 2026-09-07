@@ -1,94 +1,60 @@
-{{-- SECTION 07: FROM THE JOURNAL — editorial feature slider --}}
-@php
-    $journalPosts = [
-        [
-            'tag' => 'Essay',
-            'collection' => 'Quiet Hours',
-            'title' => 'A Note from a Rainy Evening',
-            'excerpt' => 'Raindrops, old songs and a notebook. The perfect recipe for clarity — a slow pour of thoughts that only arrive when the house has gone quiet.',
-            'date' => '12 Mar 2026',
-            'image' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?q=80&w=1600',
-        ],
-        [
-            'tag' => 'Travel',
-            'collection' => 'Slow Corridors',
-            'title' => 'Letters from a Slow Train',
-            'excerpt' => 'Windows blur into watercolour. Somewhere between stations, a story finds its pace — and the journey becomes the essay.',
-            'date' => '28 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?q=80&w=1600',
-        ],
-        [
-            'tag' => 'Culture',
-            'collection' => 'Market Light',
-            'title' => 'The Colour of Quiet Markets',
-            'excerpt' => 'Spice, cloth, and conversation — a living collage of mornings that refuse haste, and colours that linger long after the stall is packed away.',
-            'date' => '14 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=1600',
-        ],
-        [
-            'tag' => 'Lifestyle',
-            'collection' => 'Morning Ritual',
-            'title' => 'Brewing Between Pages',
-            'excerpt' => 'Steam rising over unfinished sentences. The day begins before the world asks for anything — cup warm, page open, mind unhurried.',
-            'date' => '02 Feb 2026',
-            'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=1600',
-        ],
-    ];
-@endphp
-
-<section
-    id="sec-07"
-    class="section-journal-feature"
-    aria-label="From the Journal"
-    data-journal-feature
->
-    <header class="journal-feature-header">
-        <div class="journal-feature-heading">
-            <h2 class="journal-feature-title">Journal</h2>
-        </div>
-        <a href="{{ route('journal') }}" class="journal-feature-view-all" aria-label="Read the journal">
-            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-        </a>
-    </header>
-
-    <div class="journal-feature-slider">
-        <div class="journal-feature-viewport" data-journal-feature-viewport>
-            <div class="journal-feature-container">
-                @foreach ($journalPosts as $post)
-                    <article class="journal-feature-slide">
-                        <div class="journal-feature-rule journal-feature-rule--top" aria-hidden="true"></div>
-
-                        <div class="journal-feature-block">
-                            <div
-                                class="journal-feature-media"
-                                style="background-image: url('{{ $post['image'] }}')"
-                                role="img"
-                                aria-label="{{ $post['title'] }}"
-                            ></div>
-
-                            <div class="journal-feature-panel">
-                                <p class="journal-feature-meta">
-                                    {{ strtoupper($post['collection']) }} — {{ strtoupper($post['tag']) }}
-                                </p>
-                                <h3 class="journal-feature-card-title">
-                                    <a href="{{ route('journal') }}">{{ $post['title'] }}</a>
-                                </h3>
-                                <p class="journal-feature-excerpt">{{ $post['excerpt'] }}</p>
-                                <time class="journal-feature-date" datetime="{{ $post['date'] }}">{{ $post['date'] }}</time>
-                            </div>
-                        </div>
-
-                        <div class="journal-feature-rule journal-feature-rule--bottom" aria-hidden="true"></div>
-                    </article>
-                @endforeach
+{{-- SECTION 07: Journal — picked by a super admin in Admin > Home Page
+     Sections (see App\Support\HomeSections); hidden entirely when nothing
+     has been picked. --}}
+@if (! empty($posts))
+    <section
+        id="sec-07"
+        class="section-journal-feature"
+        aria-label="Journal"
+        data-journal-feature
+    >
+        <header class="journal-feature-header">
+            <div class="journal-feature-heading">
+                <h2 class="journal-feature-title">Journal</h2>
             </div>
-        </div>
+            <a href="{{ route('journal') }}" class="journal-feature-view-all" aria-label="Read the journal">
+                <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+            </a>
+        </header>
 
-        <button type="button" class="journal-feature-nav journal-feature-nav--prev" data-journal-feature-prev aria-label="Previous">
-            <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-        </button>
-        <button type="button" class="journal-feature-nav journal-feature-nav--next" data-journal-feature-next aria-label="Next">
-            <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-        </button>
-    </div>
-</section>
+        <div class="journal-feature-slider">
+            <div class="journal-feature-viewport" data-journal-feature-viewport>
+                <div class="journal-feature-container">
+                    @foreach ($posts as $post)
+                        <article class="journal-feature-slide">
+                            <div class="journal-feature-rule journal-feature-rule--top" aria-hidden="true"></div>
+
+                            <div class="journal-feature-block">
+                                <div class="journal-feature-media">
+                                    <img src="{{ $post['image'] }}" alt="{{ $post['title'] }}" loading="lazy" class="journal-feature-media-img">
+                                </div>
+
+                                <div class="journal-feature-panel">
+                                    <p class="journal-feature-meta">
+                                        {{ Str::upper($post['category_name']) }}
+                                    </p>
+                                    <h3 class="journal-feature-card-title">
+                                        <a href="{{ $post['href'] }}">{{ $post['title'] }}</a>
+                                    </h3>
+                                    <p class="journal-feature-excerpt">{{ Str::limit($post['excerpt'], 220) }}</p>
+                                    <time class="journal-feature-date" datetime="{{ $post['date'] }}">{{ $post['date_label'] }}</time>
+                                </div>
+                            </div>
+
+                            <div class="journal-feature-rule journal-feature-rule--bottom" aria-hidden="true"></div>
+                        </article>
+                    @endforeach
+                </div>
+            </div>
+
+            @if (count($posts) > 1)
+                <button type="button" class="journal-feature-nav journal-feature-nav--prev" data-journal-feature-prev aria-label="Previous">
+                    <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="journal-feature-nav journal-feature-nav--next" data-journal-feature-next aria-label="Next">
+                    <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                </button>
+            @endif
+        </div>
+    </section>
+@endif

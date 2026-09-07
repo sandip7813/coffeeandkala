@@ -6,8 +6,10 @@ use App\Actions\StoreMediaFile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreMediaFileRequest;
 use App\Http\Requests\Admin\UpdateMediaFileRequest;
+use App\Models\HomeSectionMedia;
 use App\Models\MediaFile;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -41,7 +43,12 @@ abstract class MediaFileController extends Controller
 
         $hasActiveFilters = collect($filters)->filter(fn ($value) => filled($value))->isNotEmpty();
 
-        return view("admin.{$this->type()}.index", compact('media', 'filters', 'hasActiveFilters'));
+        $canManageHomeSections = (bool) $user?->can('manage-home-sections');
+        $homeSectionMediaIds = $canManageHomeSections
+            ? HomeSectionMedia::query()->where('section', $this->type())->whereIn('media_id', $media->pluck('id'))->pluck('media_id')->all()
+            : [];
+
+        return view("admin.{$this->type()}.index", compact('media', 'filters', 'hasActiveFilters', 'canManageHomeSections', 'homeSectionMediaIds'));
     }
 
     public function create(): View
@@ -73,7 +80,11 @@ abstract class MediaFileController extends Controller
 
         abort_unless(auth()->user()?->can("edit-{$this->type()}"), 403);
 
-        return view("admin.{$this->type()}.edit", compact('media'));
+        $canManageHomeSections = (bool) auth()->user()?->can('manage-home-sections');
+        $onHomePage = $canManageHomeSections
+            && HomeSectionMedia::query()->where('section', $this->type())->where('media_id', $media->id)->exists();
+
+        return view("admin.{$this->type()}.edit", compact('media', 'canManageHomeSections', 'onHomePage'));
     }
 
     protected function updateMedia(UpdateMediaFileRequest $request, MediaFile $media): RedirectResponse
@@ -116,6 +127,44 @@ abstract class MediaFileController extends Controller
 
         return redirect()->route("admin.{$this->type()}.index", request()->query())
             ->with('status', __('Approved.'));
+    }
+
+    /**
+     * Instantly adds/removes this image from the homepage's own Gallery/
+     * Studio carousel — gated on 'manage-home-sections' rather than this
+     * controller's usual '*-gallery'/'*-studio' permissions, since it's
+     * specifically that permission's feature. A gallery image can only join
+     * the Gallery carousel (and a studio image only Studio) — there's a
+     * single section per type, so nothing further to pick.
+     */
+    public function toggleHomeSection(MediaFile $media): JsonResponse
+    {
+        $this->assertType($media);
+
+        abort_unless(auth()->user()?->can('manage-home-sections'), 403);
+
+        $existing = HomeSectionMedia::query()
+            ->where('section', $this->type())
+            ->where('media_id', $media->id)
+            ->first();
+
+        if ($existing) {
+            $existing->delete();
+
+            return response()->json(['active' => false]);
+        }
+
+        abort_unless($media->status === MediaFile::STATUS_ACTIVE, 422);
+
+        $nextOrder = (int) (HomeSectionMedia::query()->forSection($this->type())->max('sort_order') ?? -1) + 1;
+
+        HomeSectionMedia::create([
+            'section' => $this->type(),
+            'media_id' => $media->id,
+            'sort_order' => $nextOrder,
+        ]);
+
+        return response()->json(['active' => true]);
     }
 
     public function destroy(MediaFile $media, StoreMediaFile $storeMediaFile): RedirectResponse

@@ -204,17 +204,31 @@
 }
 
 /*
- * Table search panels (Users, Categories, Quotes, Gallery, Studio) always
- * slide open/closed, even when the OS "reduce motion" setting strips
- * Bootstrap's default collapse transition — this toggle is a minor,
- * non-essential animation rather than a large motion effect, so it's fine to
- * keep it smooth for everyone.
+ * Table search panels (Users, Categories, Quotes, Gallery, Studio, Poetry,
+ * Features, Journals) always slide open/closed, even when the OS "reduce
+ * motion" setting strips Bootstrap's default collapse transition — this
+ * toggle is a minor, non-essential animation rather than a large motion
+ * effect, so it's fine to keep it smooth for everyone.
  */
 #userSearch.collapsing,
 #categorySearch.collapsing,
 #quoteSearch.collapsing,
 #gallerySearch.collapsing,
-#studioSearch.collapsing {
+#studioSearch.collapsing,
+#poetrySearch.collapsing,
+#featuresSearch.collapsing,
+#journalsSearch.collapsing {
+    transition: height 0.35s ease !important;
+}
+
+/*
+ * Same treatment for the accordion-style panels (Home Page Sections,
+ * Permissions, Meta Data) — each `.accordion-collapse` slides smoothly
+ * rather than snapping open/closed.
+ */
+.home-sections-accordion .accordion-collapse.collapsing,
+.permissions-accordion .accordion-collapse.collapsing,
+.meta-accordion .accordion-collapse.collapsing {
     transition: height 0.35s ease !important;
 }
 

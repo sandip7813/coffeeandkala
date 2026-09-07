@@ -14,8 +14,9 @@
         </span>
 
         <div class="article-authors-note-copy">
-            <p class="article-authors-note-title">{{ $content['authors_note']['title'] }}</p>
-            <p class="article-authors-note-body">{{ $content['authors_note']['body'] }}</p>
+            <div class="article-authors-note-body">
+                {!! $content['authors_note']['body'] !!}
+            </div>
         </div>
     </div>
 </footer>

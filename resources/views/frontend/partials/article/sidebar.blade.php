@@ -9,16 +9,18 @@
     >
         <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
     </button>
-    <button
-        type="button"
-        class="article-mobile-fab article-mobile-fab--right"
-        id="articleRecentFab"
-        aria-label="Recently Published"
-        aria-expanded="false"
-        aria-controls="articleRecentPanel"
-    >
-        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-    </button>
+    @if (! empty($recent))
+        <button
+            type="button"
+            class="article-mobile-fab article-mobile-fab--right"
+            id="articleRecentFab"
+            aria-label="Recently Published"
+            aria-expanded="false"
+            aria-controls="articleRecentPanel"
+        >
+            <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+        </button>
+    @endif
 </div>
 
 <div class="article-mobile-overlay" id="articleMobileOverlay"></div>
@@ -56,29 +58,31 @@
     </ul>
 </div>
 
-<div class="article-sidebar-panel article-mobile-panel article-mobile-panel--right" id="articleRecentPanel">
-    <button type="button" class="article-mobile-panel-close" data-article-panel-close aria-label="Close Recently Published">
-        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-    </button>
+@if (! empty($recent))
+    <div class="article-sidebar-panel article-mobile-panel article-mobile-panel--right" id="articleRecentPanel">
+        <button type="button" class="article-mobile-panel-close" data-article-panel-close aria-label="Close Recently Published">
+            <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+        </button>
 
-    <p class="article-sidebar-heading">Recently Published</p>
-    <ul class="article-sidebar-recent">
-        @foreach ($recent as $item)
-            <li>
-                <a href="{{ $item['href'] }}" class="article-sidebar-recent-link">
-                    <span
-                        class="article-sidebar-recent-media"
-                        style="background-image: url('{{ $item['image'] }}')"
-                        role="img"
-                        aria-label="{{ $item['title'] }}"
-                    ></span>
-                    <span class="article-sidebar-recent-body">
-                        <span class="article-sidebar-recent-tag">{{ $item['category_name'] }}</span>
-                        <span class="article-sidebar-recent-title">{{ $item['title'] }}</span>
-                        <time datetime="{{ $item['date'] }}">{{ $item['date_label'] }}</time>
-                    </span>
-                </a>
-            </li>
-        @endforeach
-    </ul>
-</div>
+        <p class="article-sidebar-heading">Recently Published</p>
+        <ul class="article-sidebar-recent">
+            @foreach ($recent as $item)
+                <li>
+                    <a href="{{ $item['href'] }}" class="article-sidebar-recent-link">
+                        <span
+                            class="article-sidebar-recent-media"
+                            style="background-image: url('{{ $item['image'] }}')"
+                            role="img"
+                            aria-label="{{ $item['title'] }}"
+                        ></span>
+                        <span class="article-sidebar-recent-body">
+                            <span class="article-sidebar-recent-tag">{{ $item['category_name'] }}</span>
+                            <span class="article-sidebar-recent-title">{{ $item['title'] }}</span>
+                            <time datetime="{{ $item['date'] }}">{{ $item['date_label'] }}</time>
+                        </span>
+                    </a>
+                </li>
+            @endforeach
+        </ul>
+    </div>
+@endif

@@ -1,66 +1,39 @@
-{{-- SECTION 04: Three Small Stories --}}
-@php
-    $smallStories = [
-        [
-            'number' => '01',
-            'tag' => 'PLACE',
-            'title' => 'The Window Seat in Udaipur',
-            'excerpt' => 'A morning that refused the itinerary — lake light, slow steam, and a city that lets you arrive twice.',
-            'image' => 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=900',
-        ],
-        [
-            'number' => '02',
-            'tag' => 'RITUAL',
-            'title' => 'The Second Cup',
-            'excerpt' => 'Between the first pour and the open page — a quiet interval where the day decides its pace.',
-            'image' => 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?q=80&w=900',
-        ],
-        [
-            'number' => '03',
-            'tag' => 'PEOPLE',
-            'title' => 'Tableside Echoes',
-            'excerpt' => 'Names half-remembered, laughter folded into the evening — stories that stay after the cups are cleared.',
-            'image' => 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=900',
-        ],
-    ];
-@endphp
+{{-- SECTION 04: The Selection — picked by a super admin in Admin > Home
+     Page Sections (see App\Support\HomeSections); hidden entirely when
+     nothing has been picked. --}}
+@if (! empty($stories))
+    <section
+        id="sec-04"
+        class="section-three-stories"
+        aria-label="The Selection"
+    >
+        <header class="three-stories-header">
+            <div class="three-stories-heading">
+                <h2 class="three-stories-title">The Selection</h2>
+            </div>
 
-<section
-    id="sec-04"
-    class="section-three-stories"
-    aria-label="Three Small Stories"
->
-    <header class="three-stories-header">
-        <div class="three-stories-heading">
-            <h2 class="three-stories-title">The Selection</h2>
+            <a href="{{ route('features') }}" class="three-stories-cta" aria-label="Unfold the stories">
+                <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+            </a>
+        </header>
+
+        <div class="three-stories-grid">
+            @foreach ($stories as $story)
+                <article class="three-story">
+                    <a href="{{ $story['href'] }}" class="three-story-card">
+                        <img src="{{ $story['image'] }}" alt="{{ $story['title'] }}" loading="lazy" class="three-story-media">
+
+                        <div class="three-story-body">
+                            <span class="three-story-tag">{{ Str::upper($story['tag']) }}</span>
+                            <h3 class="three-story-heading">{{ $story['title'] }}</h3>
+                            <span class="three-story-link">
+                                Read Story
+                                <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </a>
+                </article>
+            @endforeach
         </div>
-
-        <a href="{{ route('features') }}" class="three-stories-cta" aria-label="Unfold the stories">
-            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-        </a>
-    </header>
-
-    <div class="three-stories-grid">
-        @foreach ($smallStories as $story)
-            <article class="three-story">
-                <a href="{{ route('features') }}" class="three-story-card">
-                    <div
-                        class="three-story-media"
-                        style="background-image: url('{{ $story['image'] }}')"
-                        role="img"
-                        aria-label="{{ $story['title'] }}"
-                    ></div>
-
-                    <div class="three-story-body">
-                        <span class="three-story-tag">{{ $story['tag'] }}</span>
-                        <h3 class="three-story-heading">{{ $story['title'] }}</h3>
-                        <span class="three-story-link">
-                            Read Story
-                            <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                </a>
-            </article>
-        @endforeach
-    </div>
-</section>
+    </section>
+@endif

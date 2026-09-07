@@ -34,7 +34,7 @@ abstract class StoreMediaFileRequest extends FormRequest
 
         return [
             'title' => ['required', 'string', 'max:255'],
-            'caption' => ['required', 'string', 'max:255'],
+            'caption' => ['required', 'string', 'max:2000'],
             'image' => ['required', 'image', "mimes:{$formats}", "max:{$maxSizeKb}"],
         ];
     }

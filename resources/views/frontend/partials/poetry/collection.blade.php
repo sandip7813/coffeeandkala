@@ -40,7 +40,6 @@
                             <span class="poetry-door-excerpt">{{ $poem['excerpt'] }}</span>
 
                             <span class="poetry-door-meta">
-                                <span class="poetry-door-mood">{{ $poem['mood'] }}</span>
                                 <span class="poetry-door-enter">
                                     Enter
                                     <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i>

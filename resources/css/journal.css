@@ -257,8 +257,7 @@
 .journal-category-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 4;
-    object-fit: cover;
+    height: auto;
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -713,8 +712,7 @@
 .jc-diary-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 1;
-    object-fit: cover;
+    height: auto;
     transition: transform 0.5s ease;
 }
 
@@ -816,8 +814,7 @@
 .jc-guide-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    height: auto;
     transition: transform 0.5s ease;
 }
 
@@ -953,8 +950,7 @@
 .jc-picture-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 3 / 2;
-    object-fit: cover;
+    height: auto;
     transition: transform 0.5s ease;
 }
 
@@ -1028,10 +1024,6 @@
     .jc-picture-list {
         grid-template-columns: minmax(0, 1fr);
     }
-
-    .jc-picture-media img {
-        aspect-ratio: 16 / 10;
-    }
 }
 
 /* Responsive */
@@ -1050,10 +1042,6 @@
         margin-top: 0;
         max-width: none;
         justify-self: stretch;
-    }
-
-    .journal-category-media img {
-        aspect-ratio: 16 / 10;
     }
 
     .journal-category-index {
@@ -1075,4 +1063,12 @@
         transform: none;
         transition: none;
     }
+}
+
+.jc-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--journal-muted);
 }

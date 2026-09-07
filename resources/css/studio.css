@@ -365,13 +365,18 @@
     );
 }
 
+/* object-fit: contain — the mat keeps its exact aspect-ratio box, but the
+   full photo shows inside it (letterboxed on the mat's own background
+   where the image's aspect ratio doesn't fill the box) instead of being
+   cropped to cover it. */
 .studio-photo-mat img {
     position: relative;
     z-index: 1;
     display: block;
     width: 100%;
     aspect-ratio: 4 / 5;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
     background: #e7d9c4;
 }
 

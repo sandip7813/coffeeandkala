@@ -15,47 +15,52 @@
         </div>
     </header>
 
-    <section class="fc-global-route" aria-label="Articles in {{ $category['name'] }}">
-        <div class="fc-global-spine" aria-hidden="true"></div>
+    @if (count($category['articles']))
+        <section class="fc-global-route" aria-label="Articles in {{ $category['name'] }}">
+            <div class="fc-global-spine" aria-hidden="true"></div>
 
-        @foreach ($category['articles'] as $article)
-            <article
-                @class([
-                    'fc-global-stop',
-                    'fc-global-stop--alt' => $loop->even,
-                    'features-reveal',
-                    'features-reveal--up',
-                ])
-                style="--portal-delay: {{ $loop->index * 0.08 }}s"
-            >
-                <div class="fc-global-pin" aria-hidden="true">
-                    <span>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
-                    <i class="fa-solid fa-location-dot"></i>
-                </div>
-
-                <a href="{{ $article['href'] }}" class="fc-global-chapter">
-                    <div class="fc-global-chapter-media">
-                        <img src="{{ $article['image'] }}" alt="" loading="lazy" width="860" height="520" decoding="async">
+            @foreach ($category['articles'] as $article)
+                <article
+                    @class([
+                        'fc-global-stop',
+                        'fc-global-stop--alt' => $loop->even,
+                        'features-reveal',
+                        'features-reveal--up',
+                    ])
+                    style="--portal-delay: {{ $loop->index * 0.08 }}s"
+                >
+                    <div class="fc-global-pin" aria-hidden="true">
+                        <span>{{ str_pad((string) $loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+                        <i class="fa-solid fa-location-dot"></i>
                     </div>
-                    <div class="fc-global-chapter-body">
-                        <div class="fc-global-meta">
-                            <span>{{ $article['tag'] }}</span>
-                            <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+
+                    <a href="{{ $article['href'] }}" class="fc-global-chapter">
+                        <div class="fc-global-chapter-media">
+                            <img src="{{ $article['image'] }}" alt="" loading="lazy" width="860" height="520" decoding="async">
                         </div>
-                        <h2>{{ $article['title'] }}</h2>
-                        <p>{{ Str::limit($article['excerpt'], 500) }}</p>
-                        <span class="fc-global-cta">
-                            Open chapter
-                            <i class="fa-solid fa-passport" aria-hidden="true"></i>
-                        </span>
-                    </div>
-                </a>
-            </article>
-        @endforeach
-    </section>
+                        <div class="fc-global-chapter-body">
+                            <div class="fc-global-meta">
+                                <span>{{ $article['tag'] }}</span>
+                                <time datetime="{{ $article['date'] }}">{{ $article['date_label'] }}</time>
+                            </div>
+                            <h2>{{ $article['title'] }}</h2>
+                            <p>{{ Str::limit($article['excerpt'], 500) }}</p>
+                            <span class="fc-global-cta">
+                                Open chapter
+                                <i class="fa-solid fa-passport" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </a>
+                </article>
+            @endforeach
+        </section>
+    @else
+        <p class="fc-empty">No articles found in this chapter yet.</p>
+    @endif
 </div>
 
 @include('frontend.partials.features.theme-footer', [
     'category' => $category,
     'categories' => $categories,
+    'entries' => $entries,
 ])

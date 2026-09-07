@@ -75,4 +75,94 @@ return [
         ],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Feature & Journal Article Images
+    |--------------------------------------------------------------------------
+    |
+    | Settings for images attached to Features/Journals articles (featured
+    | image, per-section image, and section image galleries) via the
+    | polymorphic media_files.mediable_* columns.
+    |
+    */
+
+    'features' => [
+        'disk' => 'public',
+        'directory' => 'features',
+        'thumbnail_directory' => 'features/thumbnails',
+        'large_directory' => 'features/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
+    'journals' => [
+        'disk' => 'public',
+        'directory' => 'journals',
+        'thumbnail_directory' => 'journals/thumbnails',
+        'large_directory' => 'journals/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
+    'our-story' => [
+        'disk' => 'public',
+        'directory' => 'our-story',
+        'thumbnail_directory' => 'our-story/thumbnails',
+        'large_directory' => 'our-story/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Poetry Featured Images
+    |--------------------------------------------------------------------------
+    |
+    | Settings for a poem's featured image, attached via the polymorphic
+    | media_files.mediable_* columns (role 'featured') — same mechanism as
+    | Article/Our Story's featured image.
+    |
+    */
+
+    'poetry' => [
+        'disk' => 'public',
+        'directory' => 'poetry',
+        'thumbnail_directory' => 'poetry/thumbnails',
+        'large_directory' => 'poetry/large',
+        'formats' => ['jpg', 'jpeg', 'png', 'webp'],
+        'max_size_kb' => 2048,
+        'thumbnail' => [
+            'width' => 400,
+            'height' => 400,
+        ],
+        'large' => [
+            'width' => 1600,
+            'height' => 1600,
+        ],
+    ],
+
 ];

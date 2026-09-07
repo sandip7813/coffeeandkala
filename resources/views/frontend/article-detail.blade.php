@@ -1,6 +1,11 @@
 @extends('layouts.article')
 
-@section('title', $article['title'].' — '.$sourceLabel.' — Coffee & Kala')
+@seo(
+    $meta ?? null,
+    $article['title'].' — '.$sourceLabel.' — Coffee & Kala',
+    \Illuminate\Support\Str::limit($article['excerpt'] ?? 'Read '.$article['title'].' on Coffee & Kala.', 160),
+    'Coffee & Kala, '.$sourceLabel.', '.$article['title'],
+)
 
 @section('content')
     <div
@@ -60,7 +65,9 @@
                     @endforeach
                 </div>
 
-                @include('frontend.partials.article.faq')
+                @if (! empty($content['faq']))
+                    @include('frontend.partials.article.faq')
+                @endif
                 @include('frontend.partials.article.authors-note')
                 @include('frontend.partials.article.footer-crosslinks')
             </div>

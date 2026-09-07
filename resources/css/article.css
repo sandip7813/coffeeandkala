@@ -52,6 +52,19 @@
     background-color: var(--warm-paper);
 }
 
+/* Our Story reuses the About page's own palette (site.css) rather than
+   Features'/Journal's, so its content reads as a continuation of the same
+   page instead of a different theme dropped in. */
+.article-theme--our-story {
+    --art-ink: var(--about-ink, #241912);
+    --art-muted: var(--about-muted, #6a5345);
+    --art-accent: var(--about-ember, #9a6240);
+    --art-paper: var(--about-paper, #f1e8dc);
+    --art-wall: var(--about-paper-deep, #e7d9c4);
+    --art-page-width: 1360px;
+    color: var(--art-ink);
+}
+
 .article-theme {
     position: relative;
     padding-bottom: clamp(48px, 7vw, 96px);
@@ -342,10 +355,15 @@
 
 /* ─── Introduction ─── */
 
+.article-intro,
+.article-intro * {
+    background: transparent !important;
+    font-family: 'Amiri', var(--font-serif) !important;
+}
+
 .article-intro {
     margin: 0 0 clamp(32px, 4vw, 48px);
-    text-align: left;
-    font-family: 'Amiri', var(--font-serif);
+    text-align: justify;
     font-size: clamp(18px, 2vw, 21px);
     line-height: 1.75;
 }
@@ -404,8 +422,7 @@
 .article-featured-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
+    height: auto;
     box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.45);
     filter: saturate(0.95) contrast(1.03);
 }
@@ -621,13 +638,18 @@
     background: var(--art-wall);
 }
 
+.article-editors-note-body,
+.article-editors-note-body * {
+    background: transparent !important;
+    color: var(--art-ink) !important;
+    font-family: 'Amiri', var(--font-serif) !important;
+}
+
 .article-editors-note-body {
     margin: 0;
-    font-family: 'Amiri', var(--font-serif);
     font-size: clamp(16px, 1.7vw, 18px);
     line-height: 1.8;
     text-align: justify;
-    color: var(--art-ink);
 }
 
 /* ─── Words & Images: dynamic section layouts ───
@@ -665,15 +687,144 @@
     color: var(--art-ink);
 }
 
-.article-section-body p {
-    margin: 0 0 1em;
-    font-family: 'Amiri', var(--font-serif);
-    font-size: 16px;
-    line-height: 1.75;
-    color: color-mix(in srgb, var(--art-ink) 88%, var(--art-muted) 12%);
+/* Video sections sit in the same two-column grid as image-left/right, but
+   the title spans the full row above both columns instead of being
+   squeezed into the text column alongside the companion content. */
+.article-section-title-full {
+    grid-column: 1 / -1;
+    margin: 0 0 clamp(18px, 2.2vw, 24px);
+    font-family: var(--font-serif);
+    font-weight: 500;
+    font-size: clamp(22px, 2.6vw, 30px);
+    line-height: 1.25;
+    color: var(--art-ink);
 }
 
-.article-section-body p:last-child {
+/* Admin-authored content is sanitized server-side (see HtmlSanitizer) to
+   strip inline style/class attributes before it ever reaches this page —
+   the !important here is a second line of defense, so this typography
+   always wins even over anything that slips through unsanitized. Scoped to
+   .article-section-content specifically (not .article-section-body as a
+   whole) so it never touches the section's own <h2> title, which sits
+   alongside it, not inside it. */
+.article-section-content,
+.article-section-content p,
+.article-section-content li,
+.article-section-content h1,
+.article-section-content h2,
+.article-section-content h3,
+.article-section-content h4 {
+    background: transparent !important;
+    color: color-mix(in srgb, var(--art-ink) 88%, var(--art-muted) 12%) !important;
+    font-family: 'Amiri', var(--font-serif) !important;
+}
+
+.article-section-content p {
+    margin: 0 0 1em;
+    /* Matches .article-intro's font-size exactly. */
+    font-size: clamp(18px, 2vw, 21px);
+    line-height: 1.75;
+    text-align: justify;
+}
+
+.article-section-content p:last-child {
+    margin-bottom: 0;
+}
+
+/* Lists inside any admin-authored rich text — the site's base reset strips
+   the browser default list-style, so every ul/ol needs its own here, styled
+   to match the surrounding body copy rather than a plain browser bullet.
+   font-size/line-height are repeated explicitly per zone (not just
+   inherited) and !important, the same defensive reasoning as the
+   background/color/font-family resets above: nothing admin-authored should
+   be able to make a <li> look different from its own paragraph text. */
+.article-intro ul,
+.article-intro ol,
+.article-section-content ul,
+.article-section-content ol,
+.article-editors-note-body ul,
+.article-editors-note-body ol,
+.article-authors-note-body ul,
+.article-authors-note-body ol {
+    margin: 0 0 1em;
+    padding-left: 1.6em;
+}
+
+.article-intro li,
+.article-intro li *,
+.article-section-content li,
+.article-section-content li *,
+.article-editors-note-body li,
+.article-editors-note-body li *,
+.article-authors-note-body li,
+.article-authors-note-body li * {
+    font-family: 'Amiri', var(--font-serif) !important;
+}
+
+.article-intro li,
+.article-section-content li,
+.article-editors-note-body li,
+.article-authors-note-body li {
+    margin-bottom: 0.5em;
+    line-height: 1.75 !important;
+}
+
+.article-intro li,
+.article-section-content li {
+    font-size: clamp(18px, 2vw, 21px) !important;
+}
+
+.article-editors-note-body li {
+    font-size: clamp(16px, 1.7vw, 18px) !important;
+}
+
+.article-authors-note-body li {
+    font-size: clamp(17px, 1.9vw, 21px) !important;
+}
+
+.article-intro ul li,
+.article-section-content ul li,
+.article-editors-note-body ul li,
+.article-authors-note-body ul li {
+    list-style: none;
+    position: relative;
+}
+
+/* A small rotated-square (diamond) bullet, in the site's accent colour —
+   more in keeping with the page's editorial styling than a plain dot. */
+.article-intro ul li::before,
+.article-section-content ul li::before,
+.article-editors-note-body ul li::before,
+.article-authors-note-body ul li::before {
+    content: '';
+    position: absolute;
+    left: -1.4em;
+    top: 0.65em;
+    width: 7px;
+    height: 7px;
+    background: var(--art-accent);
+    transform: rotate(45deg);
+}
+
+.article-intro ol,
+.article-section-content ol,
+.article-editors-note-body ol,
+.article-authors-note-body ol {
+    list-style: decimal;
+}
+
+.article-intro ol li::marker,
+.article-section-content ol li::marker,
+.article-editors-note-body ol li::marker,
+.article-authors-note-body ol li::marker {
+    color: var(--art-accent);
+    font-weight: 600;
+}
+
+.article-intro li:last-child,
+.article-section-content li:last-child,
+.article-editors-note-body li:last-child,
+.article-authors-note-body li:last-child {
     margin-bottom: 0;
 }
 
@@ -689,9 +840,11 @@
 
 .article-section-media img {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 760px;
+    margin: 0 auto;
     border-radius: 3px;
 }
 
@@ -701,7 +854,7 @@
 .article-section--image-left,
 .article-section--image-right {
     display: grid;
-    grid-template-columns: minmax(160px, 260px) minmax(0, 1fr);
+    grid-template-columns: minmax(220px, 380px) minmax(0, 1fr);
     gap: clamp(24px, 3vw, 40px);
     align-items: center;
 }
@@ -722,7 +875,6 @@
     background: none;
     border: none;
     border-radius: 0;
-    aspect-ratio: 4 / 5;
     overflow: visible;
 }
 
@@ -737,7 +889,6 @@
 .article-section--image-left .article-section-media a,
 .article-section--image-right .article-section-media a {
     display: block;
-    height: 100%;
     cursor: zoom-in;
 }
 
@@ -756,16 +907,236 @@
 
     .article-section--image-left .article-section-media,
     .article-section--image-right .article-section-media {
-        max-width: 240px;
+        max-width: 320px;
         margin: 0 auto;
     }
 }
 
-/* Stacked: image on top, text below */
+/* Stacked: image on top, text below — no fixed aspect-ratio, so the image
+   shows at its own natural proportions instead of being letterboxed. */
 .article-section--image-top .article-section-media {
-    aspect-ratio: 16 / 8;
+    width: fit-content;
+    max-width: 900px;
+    margin: 0 auto clamp(18px, 2.6vw, 26px);
+}
+
+/* Video sections reuse the same two-column grid as image-left/right —
+   embed on one side, its companion (text/image/nothing) on the other. */
+.article-section--video-left,
+.article-section--video-right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(24px, 3vw, 40px);
+    align-items: center;
+}
+
+.article-section--video-right {
+    direction: rtl;
+}
+
+.article-section--video-right > * {
+    direction: ltr;
+}
+
+.article-section-media-video {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
     overflow: hidden;
-    margin-bottom: clamp(18px, 2.6vw, 26px);
+    border-radius: 14px;
+    background: #0c0b0a;
+    box-shadow:
+        0 34px 60px -30px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+}
+
+.article-section-video-trigger {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.article-section-video-trigger img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.01);
+    filter: saturate(1.05) contrast(1.03);
+    transition: transform 0.7s ease;
+}
+
+.article-section-video-trigger:hover img {
+    transform: scale(1.08);
+}
+
+/* A cinematic vignette + bottom gradient — the two cues (frame + shading)
+   that make a still image read as "a video", not a flat photo. */
+.article-section-video-trigger::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(180deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.72) 100%),
+        radial-gradient(120% 100% at 50% 0%, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
+    pointer-events: none;
+}
+
+/* A slim inset border, like a viewfinder frame around the still. */
+.article-section-video-trigger::after {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.32);
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.article-section-video-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: clamp(60px, 7vw, 84px);
+    height: clamp(60px, 7vw, 84px);
+    border-radius: 50%;
+    background: rgba(20, 16, 12, 0.55);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    color: #fff;
+    font-size: clamp(18px, 2vw, 24px);
+    backdrop-filter: blur(2px);
+    box-shadow: 0 14px 32px -10px rgba(0, 0, 0, 0.65);
+    transform: translate(-50%, -50%);
+    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.article-section-video-play::before {
+    content: '';
+    position: absolute;
+    inset: -12px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.55);
+    opacity: 0;
+    transform: scale(0.85);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.article-section-video-play i {
+    margin-left: 3px;
+}
+
+.article-section-video-trigger:hover .article-section-video-play {
+    background: var(--art-accent);
+    border-color: var(--art-accent);
+    box-shadow: 0 18px 40px -12px rgba(0, 0, 0, 0.75);
+    transform: translate(-50%, -50%) scale(1.08);
+}
+
+.article-section-video-trigger:hover .article-section-video-play::before {
+    opacity: 1;
+    transform: scale(1.18);
+}
+
+/* A small "Watch the video" pill, bottom-left of the frame — the label a
+   video platform card carries, rather than a plain unlabeled photo. */
+.article-section-video-label {
+    position: absolute;
+    left: 16px;
+    bottom: 14px;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 999px;
+    background: rgba(12, 10, 9, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(3px);
+    color: #fff;
+    font-family: var(--font-serif);
+    font-size: clamp(12px, 1.2vw, 14px);
+    letter-spacing: 0.02em;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.article-section-video-label i {
+    color: #ff4d4d;
+    font-size: 1.1em;
+}
+
+.article-section-video-trigger:hover .article-section-video-label {
+    background: rgba(12, 10, 9, 0.72);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.article-section-video-companion-image {
+    display: block;
+    margin-bottom: 1em;
+    cursor: zoom-in;
+}
+
+.article-section-video-companion-image img {
+    display: block;
+    width: 100%;
+    border-radius: 6px;
+}
+
+@media (max-width: 720px) {
+    .article-section--video-left,
+    .article-section--video-right {
+        grid-template-columns: minmax(0, 1fr);
+        direction: ltr;
+    }
+}
+
+/* Gallery sections: content up top, a responsive thumbnail grid below —
+   reusing the same matted-frame look as the article's other images. */
+.article-section-gallery {
+    display: grid;
+    /* auto-fit (not auto-fill) collapses empty tracks, which is what lets
+       justify-content actually center the row when there are fewer images
+       than fit a full width. */
+    grid-template-columns: repeat(auto-fit, minmax(240px, 320px));
+    justify-content: center;
+    /* Without a fixed square aspect-ratio, tiles vary in height by their
+       own image — align to the top of each row instead of stretching
+       shorter tiles to match the tallest one. */
+    align-items: start;
+    gap: 18px;
+    margin-top: clamp(18px, 2.4vw, 26px);
+}
+
+.article-section-gallery-item {
+    display: block;
+    padding: 8px;
+    border: 1px solid color-mix(in srgb, var(--art-ink) 22%, transparent);
+    border-radius: 6px;
+    box-sizing: border-box;
+    cursor: zoom-in;
+}
+
+.article-section-gallery-item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 3px;
+}
+
+/* Editor's/Author's Note now render admin-authored rich text (real <p>
+   tags from the WYSIWYG editor) instead of a single hand-wrapped paragraph
+   — reset their inner spacing to match the original single-paragraph look. */
+.article-editors-note-body p,
+.article-authors-note-body p {
+    margin: 0 0 1em;
+}
+
+.article-editors-note-body p:last-child,
+.article-authors-note-body p:last-child {
+    margin-bottom: 0;
 }
 
 /* ─── FAQ accordion ─── */
@@ -805,9 +1176,9 @@
     background: none;
     border: 0;
     text-align: left;
-    font-family: var(--font-serif);
+    font-family: 'Amiri', var(--font-serif);
     font-weight: 600;
-    font-size: 15.5px;
+    font-size: clamp(18px, 2vw, 21px);
     color: var(--art-ink);
 }
 
@@ -836,8 +1207,8 @@
 .article-faq-answer p {
     margin: 0;
     font-family: 'Amiri', var(--font-serif);
-    font-size: 15px;
-    line-height: 1.7;
+    font-size: clamp(18px, 2vw, 21px);
+    line-height: 1.75;
     color: var(--art-muted);
 }
 
@@ -859,11 +1230,11 @@
 
 .article-authors-note-label {
     margin: 0 0 20px;
-    font-family: var(--font-serif);
-    font-size: 11px;
+    font-family: 'Tangerine', var(--font-serif);
+    font-size: clamp(34px, 4vw, 48px);
     font-weight: 700;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
+    letter-spacing: normal;
+    text-transform: none;
     color: var(--art-accent);
 }
 
@@ -900,22 +1271,19 @@
     min-width: 0;
 }
 
-.article-authors-note-title {
-    margin: 0 0 4px;
-    font-family: 'Tangerine', var(--font-serif);
-    font-weight: 700;
-    font-size: clamp(30px, 3.6vw, 42px);
-    line-height: 1.2;
-    color: var(--art-ink);
+.article-authors-note-body,
+.article-authors-note-body * {
+    background: transparent !important;
+    color: var(--art-ink) !important;
+    font-family: 'Amiri', var(--font-serif) !important;
 }
 
 .article-authors-note-body {
     margin: 0;
-    font-family: 'Amiri', var(--font-serif);
     font-style: italic;
     font-size: clamp(17px, 1.9vw, 21px);
     line-height: 1.65;
-    color: var(--art-ink);
+    text-align: justify;
 }
 
 @media (max-width: 560px) {

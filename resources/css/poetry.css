@@ -1282,3 +1282,11 @@
         transition: none;
     }
 }
+
+.poetry-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--poetry-muted);
+}

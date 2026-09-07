@@ -40,6 +40,33 @@ class AdminLteRbacSeeder extends Seeder
             'change-studio-status' => ['label' => 'Change Studio Image Status', 'group' => 'Studio'],
             'approve-studio' => ['label' => 'Approve Studio Image', 'group' => 'Studio'],
 
+            'view-features' => ['label' => 'View Features', 'group' => 'Features'],
+            'create-features' => ['label' => 'Create Feature Article', 'group' => 'Features'],
+            'edit-features' => ['label' => 'Edit Feature Article', 'group' => 'Features'],
+            'delete-features' => ['label' => 'Delete Feature Article', 'group' => 'Features'],
+            'change-features-status' => ['label' => 'Change Feature Article Status', 'group' => 'Features'],
+            'approve-features' => ['label' => 'Approve Feature Article', 'group' => 'Features'],
+
+            'view-journals' => ['label' => 'View Journals', 'group' => 'Journals'],
+            'create-journals' => ['label' => 'Create Journal Article', 'group' => 'Journals'],
+            'edit-journals' => ['label' => 'Edit Journal Article', 'group' => 'Journals'],
+            'delete-journals' => ['label' => 'Delete Journal Article', 'group' => 'Journals'],
+            'change-journals-status' => ['label' => 'Change Journal Article Status', 'group' => 'Journals'],
+            'approve-journals' => ['label' => 'Approve Journal Article', 'group' => 'Journals'],
+
+            'view-poetry' => ['label' => 'View Poetry', 'group' => 'Poetry'],
+            'upload-poetry' => ['label' => 'Add Poem', 'group' => 'Poetry'],
+            'edit-poetry' => ['label' => 'Edit Poem', 'group' => 'Poetry'],
+            'delete-poetry' => ['label' => 'Delete Poem', 'group' => 'Poetry'],
+            'change-poetry-status' => ['label' => 'Change Poem Status', 'group' => 'Poetry'],
+            'approve-poetry' => ['label' => 'Approve Poem', 'group' => 'Poetry'],
+
+            'manage-home-sections' => ['label' => 'Manage Home Page Sections', 'group' => 'Home Page'],
+
+            'manage-our-story' => ['label' => 'Manage Our Story', 'group' => 'Our Story'],
+
+            'manage-meta' => ['label' => 'Manage Meta Data', 'group' => 'Meta Data'],
+
             'manage-roles' => ['label' => 'Manage Roles', 'group' => 'Roles & Permissions'],
             'manage-permissions' => ['label' => 'Manage Permissions', 'group' => 'Roles & Permissions'],
 

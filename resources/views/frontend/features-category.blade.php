@@ -1,6 +1,6 @@
 @extends('layouts.features')
 
-@section('title', $category['name'].' — Features — Coffee & Kala')
+@seo($meta ?? null, $category['name'].' — Features — Coffee & Kala', $category['name'].' — in-depth Features stories on coffee culture and craft from Coffee & Kala.', $category['name'].', features, Coffee & Kala')
 
 @section('content')
     <div
@@ -14,6 +14,7 @@
         @include('frontend.partials.features.themes.'.$category['id'], [
             'category' => $category,
             'categories' => $categories,
+            'entries' => $entries,
         ])
     </div>
 @endsection

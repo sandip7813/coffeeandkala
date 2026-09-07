@@ -46,12 +46,22 @@ class CategoryController extends Controller
     {
         abort_unless(auth()->user()?->can('edit-categories'), 403);
 
-        return view('admin.categories.edit', compact('category'));
+        $meta = $category->meta()->firstOrCreate([]);
+
+        return view('admin.categories.edit', compact('category', 'meta'));
     }
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        $category->update($request->validated());
+        $data = $request->validated();
+
+        $category->update(collect($data)->except(['meta_title', 'meta_description', 'meta_keywords'])->all());
+
+        $category->meta()->firstOrCreate([])->update([
+            'title' => $data['meta_title'] ?? null,
+            'description' => $data['meta_description'] ?? null,
+            'keywords' => $data['meta_keywords'] ?? null,
+        ]);
 
         return redirect()->route('admin.categories.index')
             ->with('status', __('Category updated.'));

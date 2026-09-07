@@ -483,8 +483,12 @@
     border-radius: 0;
 }
 
-.features-carousel .home-studio-card-media {
-    height: 170px;
+/* A real <img>, not a background-image div, so the full photo shows at its
+   own natural proportions instead of being cropped to fill a fixed box. */
+.features-carousel-media {
+    display: block;
+    width: 100%;
+    height: auto;
 }
 
 .features-carousel .home-embla {
@@ -512,8 +516,7 @@
 .features-lead-figure img {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
+    height: auto;
     filter: grayscale(0.1) contrast(1.05);
 }
 
@@ -586,10 +589,31 @@
     align-items: start;
 }
 
+/* No sidebar here — the "last 12 updated" grid runs the full width. */
+.features-front.features-front--full {
+    display: block;
+}
+
 .features-columns {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 28px clamp(18px, 3vw, 32px);
+}
+
+.features-columns.features-columns--full {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 960px) {
+    .features-columns.features-columns--full {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 640px) {
+    .features-columns.features-columns--full {
+        grid-template-columns: minmax(0, 1fr);
+    }
 }
 
 .features-story-card {
@@ -606,8 +630,7 @@
 .features-story-card-media img {
     display: block;
     width: 100%;
-    aspect-ratio: 4 / 3;
-    object-fit: cover;
+    height: auto;
     filter: grayscale(0.15) contrast(1.04);
     transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
 }
@@ -1211,4 +1234,12 @@
         opacity: 1;
         transform: none;
     }
+}
+
+.fc-empty {
+    padding: 3rem 1.5rem;
+    text-align: center;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    color: var(--features-muted);
 }

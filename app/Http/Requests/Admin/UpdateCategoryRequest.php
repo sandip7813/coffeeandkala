@@ -46,6 +46,10 @@ class UpdateCategoryRequest extends FormRequest
             'description' => ['nullable', 'string'],
             'sort_order' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'boolean'],
+
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'meta_keywords' => ['nullable', 'string', 'max:255'],
         ];
     }
 

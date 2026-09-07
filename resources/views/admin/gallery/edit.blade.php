@@ -9,3 +9,7 @@
 @section('content')
     @include('admin.media._edit', ['type' => 'gallery', 'icon' => 'bi bi-images', 'media' => $media])
 @stop
+
+@push('js')
+    @vite('resources/js/admin-home-section-toggles.js')
+@endpush

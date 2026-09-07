@@ -16,6 +16,58 @@ class StoreMediaFile
      */
     public function handle(string $type, UploadedFile $file, string $title, string $caption, User $uploadedBy): MediaFile
     {
+        $paths = $this->storeSizes($type, $file);
+
+        // Anyone who can approve this type's uploads (super admins included,
+        // via the RBAC layer's built-in super-admin bypass) skips the pending
+        // queue for their own uploads.
+        $canApprove = $uploadedBy->can("approve-{$type}");
+
+        return MediaFile::create([
+            ...$paths,
+            'type' => $type,
+            'title' => $title,
+            'caption' => $caption,
+            'status' => $canApprove ? MediaFile::STATUS_ACTIVE : MediaFile::STATUS_PENDING,
+            'uploaded_by' => $uploadedBy->id,
+            'approved_by' => $canApprove ? $uploadedBy->id : null,
+            'approved_at' => $canApprove ? now() : null,
+        ]);
+    }
+
+    /**
+     * Store an image attached to an Article/ArticleSection (featured image,
+     * section image, or a gallery image within a section). Unlike gallery/
+     * studio uploads these don't go through their own pending/approve cycle
+     * — the owning Article's own approval covers them — so they're created
+     * active straight away.
+     */
+    public function handleForMediable(string $type, UploadedFile $file, User $uploadedBy, string $mediableType, int $mediableId, string $role, int $sortOrder = 0, string $caption = ''): MediaFile
+    {
+        $paths = $this->storeSizes($type, $file);
+
+        return MediaFile::create([
+            ...$paths,
+            'type' => $type,
+            'title' => '',
+            'caption' => $caption,
+            'status' => MediaFile::STATUS_ACTIVE,
+            'uploaded_by' => $uploadedBy->id,
+            'mediable_type' => $mediableType,
+            'mediable_id' => $mediableId,
+            'role' => $role,
+            'sort_order' => $sortOrder,
+        ]);
+    }
+
+    /**
+     * Store the original, large, and thumbnail copies of an upload for the
+     * given media $type, returning the paths/filename to persist.
+     *
+     * @return array{file_name: string, thumbnail_path: string, large_path: string, original_path: string}
+     */
+    private function storeSizes(string $type, UploadedFile $file): array
+    {
         $disk = config("media.{$type}.disk");
         $directory = config("media.{$type}.directory");
         $largeDirectory = config("media.{$type}.large_directory");
@@ -27,32 +79,18 @@ class StoreMediaFile
         $largePath = $this->storeResized(
             $file, $largeDirectory, $filename, $disk,
             config("media.{$type}.large.width"), config("media.{$type}.large.height"),
-            crop: false,
         );
         $thumbnailPath = $this->storeResized(
             $file, $thumbnailDirectory, $filename, $disk,
             config("media.{$type}.thumbnail.width"), config("media.{$type}.thumbnail.height"),
-            crop: true,
         );
 
-        // Anyone who can approve this type's uploads (super admins included,
-        // via the RBAC layer's built-in super-admin bypass) skips the pending
-        // queue for their own uploads.
-        $canApprove = $uploadedBy->can("approve-{$type}");
-
-        return MediaFile::create([
-            'type' => $type,
+        return [
             'file_name' => $filename,
             'thumbnail_path' => $thumbnailPath,
             'large_path' => $largePath,
             'original_path' => $originalPath,
-            'title' => $title,
-            'caption' => $caption,
-            'status' => $canApprove ? MediaFile::STATUS_ACTIVE : MediaFile::STATUS_PENDING,
-            'uploaded_by' => $uploadedBy->id,
-            'approved_by' => $canApprove ? $uploadedBy->id : null,
-            'approved_at' => $canApprove ? now() : null,
-        ]);
+        ];
     }
 
     /**
@@ -70,12 +108,12 @@ class StoreMediaFile
     }
 
     /**
-     * Resize the uploaded image and store it. When $crop is true the image is
-     * cropped to a centered square before resizing (thumbnail); otherwise it
-     * is scaled down to fit within the given bounds, preserving aspect ratio
-     * (large copy).
+     * Resize the uploaded image and store it — scaled down to fit within
+     * the given bounds, preserving the original aspect ratio (never
+     * cropped, never upscaled past the source's own size), for both the
+     * large copy and the thumbnail alike.
      */
-    private function storeResized(UploadedFile $file, string $directory, string $filename, string $disk, int $width, int $height, bool $crop): string
+    private function storeResized(UploadedFile $file, string $directory, string $filename, string $disk, int $width, int $height): string
     {
         $mimeType = $file->getMimeType();
         $source = $this->readImage($file->getRealPath(), $mimeType);
@@ -93,22 +131,9 @@ class StoreMediaFile
         $sourceWidth = imagesx($source);
         $sourceHeight = imagesy($source);
 
-        if ($crop) {
-            $cropSize = min($sourceWidth, $sourceHeight);
-            $srcX = (int) (($sourceWidth - $cropSize) / 2);
-            $srcY = (int) (($sourceHeight - $cropSize) / 2);
-            $srcWidth = $srcHeight = $cropSize;
-            $destWidth = $width;
-            $destHeight = $height;
-        } else {
-            $srcX = $srcY = 0;
-            $srcWidth = $sourceWidth;
-            $srcHeight = $sourceHeight;
-
-            $scale = min($width / $sourceWidth, $height / $sourceHeight, 1);
-            $destWidth = max(1, (int) round($sourceWidth * $scale));
-            $destHeight = max(1, (int) round($sourceHeight * $scale));
-        }
+        $scale = min($width / $sourceWidth, $height / $sourceHeight, 1);
+        $destWidth = max(1, (int) round($sourceWidth * $scale));
+        $destHeight = max(1, (int) round($sourceHeight * $scale));
 
         $destination = imagecreatetruecolor($destWidth, $destHeight);
 
@@ -124,8 +149,8 @@ class StoreMediaFile
 
         imagecopyresampled(
             $destination, $source,
-            0, 0, $srcX, $srcY,
-            $destWidth, $destHeight, $srcWidth, $srcHeight,
+            0, 0, 0, 0,
+            $destWidth, $destHeight, $sourceWidth, $sourceHeight,
         );
 
         $contents = $this->encodeImage($destination, $mimeType);

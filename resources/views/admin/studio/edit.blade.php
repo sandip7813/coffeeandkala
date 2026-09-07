@@ -9,3 +9,7 @@
 @section('content')
     @include('admin.media._edit', ['type' => 'studio', 'icon' => 'bi bi-easel', 'media' => $media])
 @stop
+
+@push('js')
+    @vite('resources/js/admin-home-section-toggles.js')
+@endpush

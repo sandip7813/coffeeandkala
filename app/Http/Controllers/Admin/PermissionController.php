@@ -7,7 +7,6 @@ use App\Models\Permission;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
@@ -19,19 +18,13 @@ class PermissionController extends Controller
 
         // Grouped by the canonical order (Permission::GROUP_ORDER) rather than
         // alphabetically, so this can't be expressed as a plain DB ->orderBy().
-        $perPage = 20;
-        $page = request()->integer('page', 1);
-        $ordered = Permission::allOrderedByGroup();
+        // Rendered as one accordion panel per group (see the view) rather than
+        // paginated — with permissions bucketed by group, a flat page-20 split
+        // could sever a group across two pages, and the accordion already
+        // keeps a long list manageable without that trade-off.
+        $groupedPermissions = Permission::allOrderedByGroup()->groupBy(fn (Permission $permission): string => $permission->group ?? __('General'));
 
-        $permissions = new LengthAwarePaginator(
-            $ordered->forPage($page, $perPage)->values(),
-            $ordered->count(),
-            $perPage,
-            $page,
-            ['path' => request()->url(), 'query' => request()->query()],
-        );
-
-        return view('admin.permissions.index', compact('permissions'));
+        return view('admin.permissions.index', compact('groupedPermissions'));
     }
 
     public function create(): View

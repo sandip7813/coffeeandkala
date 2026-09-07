@@ -46,6 +46,21 @@
                     <div class="card-body p-2">
                         <p class="mb-1 fw-semibold text-truncate" title="{{ $item->title }}">{{ $item->title }}</p>
                         <p class="mb-2 small text-muted text-truncate" title="{{ $item->caption }}">{{ $item->caption }}</p>
+                        @if ($canManageHomeSections ?? false)
+                            <div class="form-check form-switch mb-2" title="{{ $item->status !== 'active' && ! in_array($item->id, $homeSectionMediaIds ?? [], true) ? __('Only active images can be added.') : __('Show on the homepage :section carousel', ['section' => \App\Support\HomeMediaSections::LABELS[$type]]) }}">
+                                <input
+                                    type="checkbox" class="form-check-input" role="switch"
+                                    id="home-section-{{ $item->id }}"
+                                    @checked(in_array($item->id, $homeSectionMediaIds ?? [], true))
+                                    @disabled($item->status !== 'active' && ! in_array($item->id, $homeSectionMediaIds ?? [], true))
+                                    data-home-section-toggle
+                                    data-section-label="{{ \App\Support\HomeMediaSections::LABELS[$type] }}"
+                                    data-article-title="{{ $item->title }}"
+                                    data-toggle-url="{{ route("admin.{$type}.home-section.toggle", $item) }}"
+                                >
+                                <label class="form-check-label small" for="home-section-{{ $item->id }}">{{ __('Home Page') }}</label>
+                            </div>
+                        @endif
                         <div class="d-flex justify-content-between align-items-center">
                             @if ($item->status === 'active')
                                 <span class="badge bg-success">{{ __('Active') }}</span>

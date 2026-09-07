@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -39,6 +40,10 @@ class MediaFile extends Model
         'uploaded_by',
         'approved_by',
         'approved_at',
+        'mediable_type',
+        'mediable_id',
+        'role',
+        'sort_order',
     ];
 
     protected static function booted(): void
@@ -69,6 +74,15 @@ class MediaFile extends Model
     public function approver(): BelongsTo
     {
         return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * The Article/ArticleSection this file is attached to, when it's an
+     * article-linked image rather than a standalone Gallery/Studio upload.
+     */
+    public function mediable(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function scopeOfType(Builder $query, string $type): Builder

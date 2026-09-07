@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Models\MediaFile;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -27,8 +28,8 @@ class DashboardStats
         $categories = FeatureCatalog::all();
 
         return [
-            'gallery_plates' => GalleryCatalog::count(),
-            'studio_works' => StudioCatalog::count(),
+            'gallery_plates' => MediaFile::query()->ofType(MediaFile::TYPE_GALLERY)->active()->count(),
+            'studio_works' => MediaFile::query()->ofType(MediaFile::TYPE_STUDIO)->active()->count(),
             'journal_entries' => JournalCatalog::count(),
             'feature_categories' => count($categories),
             'feature_articles' => collect($categories)->sum(fn (array $category): int => count($category['articles'])),

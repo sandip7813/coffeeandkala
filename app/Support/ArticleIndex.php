@@ -2,10 +2,13 @@
 
 namespace App\Support;
 
+use App\Models\Article;
+
 /**
  * Cross-catalog helpers for the article detail page's sidebar: the combined
- * sub-category directory (Features + Journal) and a "recently published"
- * feed merged from both catalogs.
+ * sub-category directory (Features + Journal category chrome, unaffected by
+ * this build) and a "recently published" feed merged from real Articles of
+ * both types.
  */
 class ArticleIndex
 {
@@ -73,42 +76,32 @@ class ArticleIndex
     }
 
     /**
-     * The most recently dated articles/entries across both catalogs, for the
-     * sidebar's "Recently published" panel.
+     * The most recently published real articles across both Features and
+     * Journals, for the sidebar's "Recently published" panel.
      *
      * @return list<array{title: string, category_name: string, category_href: string, date: string, date_label: string, href: string, image: string}>
      */
     public static function recent(int $limit = 6, ?string $excludeHref = null): array
     {
-        $features = collect(FeatureCatalog::all())->flatMap(
-            fn (array $category): array => collect($category['articles'])
-                ->map(fn (array $article): array => [
-                    'title' => $article['title'],
-                    'category_name' => $category['name'],
-                    'category_href' => route('features.show', $category['id']),
-                    'date' => $article['date'],
-                    'date_label' => $article['date_label'],
-                    'href' => $article['href'],
-                    'image' => $article['image'],
-                ])
-                ->all()
-        );
+        $features = Article::query()
+            ->ofType(Article::TYPE_FEATURE)
+            ->active()
+            ->with('featuredImage', 'category')
+            ->latest()
+            ->take($limit)
+            ->get()
+            ->map(fn (Article $article): ?array => self::recentEntry($article, 'features.show', 'features.article'))
+            ->filter();
 
-        $journalCategories = collect(JournalCatalog::categories())->keyBy('id');
-
-        $journal = collect(JournalCatalog::all())->map(function (array $entry) use ($journalCategories): array {
-            $category = $journalCategories->get($entry['category_id']);
-
-            return [
-                'title' => $entry['title'],
-                'category_name' => $category['name'] ?? $entry['tag'],
-                'category_href' => $category === null ? '#' : route('journal.category', $category['id']),
-                'date' => $entry['date'],
-                'date_label' => $entry['date_label'],
-                'href' => $entry['href'],
-                'image' => $entry['image'],
-            ];
-        });
+        $journal = Article::query()
+            ->ofType(Article::TYPE_JOURNAL)
+            ->active()
+            ->with('featuredImage', 'category')
+            ->latest()
+            ->take($limit)
+            ->get()
+            ->map(fn (Article $article): ?array => self::recentEntry($article, 'journal.category', 'journal.article'))
+            ->filter();
 
         return $features->concat($journal)
             ->reject(fn (array $entry): bool => $excludeHref !== null && $entry['href'] === $excludeHref)
@@ -116,6 +109,28 @@ class ArticleIndex
             ->take($limit)
             ->values()
             ->all();
+    }
+
+    /**
+     * @return array{title: string, category_name: string, category_href: string, date: string, date_label: string, href: string, image: ?string}|null
+     */
+    private static function recentEntry(Article $article, string $categoryRoute, string $articleRoute): ?array
+    {
+        $categorySlug = $article->category?->slug;
+
+        if ($categorySlug === null) {
+            return null;
+        }
+
+        return [
+            'title' => $article->title,
+            'category_name' => $article->category->title,
+            'category_href' => route($categoryRoute, $categorySlug),
+            'date' => $article->created_at->toDateString(),
+            'date_label' => $article->created_at->format('j M Y'),
+            'href' => route($articleRoute, ['category' => $categorySlug, 'article' => $article->slug]),
+            'image' => $article->featuredImage?->large_url,
+        ];
     }
 
     /**

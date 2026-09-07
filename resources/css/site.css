@@ -981,12 +981,17 @@ body.layout-no-sidebar .site-header {
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
 }
 
+/* object-fit: contain — the box keeps its exact height/width, but the full
+   photo shows inside it (letterboxed on the card's own espresso background
+   where the image's aspect ratio doesn't fill the box) instead of being
+   cropped to cover it. */
 .hero-banner-media {
     position: absolute;
     inset: 0;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
     transform: scale(1.06);
     transition: transform 6.5s ease-out;
 }
@@ -1472,15 +1477,29 @@ body.layout-no-sidebar .site-header {
     overflow: visible;
 }
 
+/* A wrapper around a real <img> (::after below needs an element to render
+   on — it doesn't render on <img> itself) — object-fit: contain keeps this
+   exact box size but shows the full photo inside it, letterboxed on the
+   card's own espresso background, instead of being cropped to cover it. */
 .visual-feature-media {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: clamp(420px, 62vh, 640px);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    /* An explicit height (not min-height) — the absolutely-positioned img
+       below needs a definite box to size against, otherwise its own
+       percentage sizing collapses and the box stops holding this height. */
+    height: clamp(420px, 62vh, 640px);
+    background-color: var(--espresso);
     border: 1px solid rgba(247, 245, 241, 0.85);
+    overflow: hidden;
+}
+
+.visual-feature-media-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
 }
 
 .visual-feature-media::after {
@@ -1745,6 +1764,7 @@ body.layout-no-sidebar .site-header {
     height: clamp(560px, 78vh, 900px);
     overflow: hidden;
     border-radius: 0;
+    background: var(--espresso);
     box-shadow: var(--shadow-section-image);
     text-decoration: none;
     color: inherit;
@@ -1760,12 +1780,17 @@ body.layout-no-sidebar .site-header {
     pointer-events: none;
 }
 
+/* object-fit: contain — the card keeps its exact height, but the full
+   photo shows inside it (letterboxed on the card's own espresso background
+   where the image's aspect ratio doesn't fill the box) instead of being
+   cropped to cover it. */
 .gallery-story-media {
     position: absolute;
     inset: 0;
-    background-position: center top;
-    background-size: cover;
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
     transform-origin: center top;
     transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -1960,15 +1985,29 @@ body.layout-no-sidebar .site-header {
     overflow: visible;
 }
 
+/* A wrapper around a real <img> (::after below needs an element to render
+   on — it doesn't render on <img> itself) — object-fit: contain keeps this
+   exact box size but shows the full photo inside it, letterboxed on the
+   card's own espresso background, instead of being cropped to cover it. */
 .journal-feature-media {
     position: relative;
     width: 100%;
-    height: 100%;
-    min-height: clamp(460px, 68vh, 700px);
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    /* An explicit height (not min-height) — the absolutely-positioned img
+       below needs a definite box to size against, otherwise its own
+       percentage sizing collapses and the box stops holding this height. */
+    height: clamp(460px, 68vh, 700px);
+    background-color: var(--espresso);
     border: 1px solid rgba(247, 245, 241, 0.85);
+    overflow: hidden;
+}
+
+.journal-feature-media-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
 }
 
 .journal-feature-media::after {
@@ -2231,7 +2270,6 @@ body.layout-no-sidebar .site-header {
 }
 
 .home-gallery-card-media,
-.home-studio-card-media,
 .home-journal-card-media {
     background-position: center;
     background-size: cover;
@@ -2275,8 +2313,17 @@ body.layout-no-sidebar .site-header {
     overflow: hidden;
 }
 
+/* object-fit: contain — the frame keeps its exact height, but the full
+   photo shows inside it (letterboxed on the frame's own espresso
+   background where the image's aspect ratio doesn't fill the box) instead
+   of being cropped to cover it. */
 .home-studio-card-media {
+    display: block;
+    width: 100%;
     height: 240px;
+    object-fit: contain;
+    object-position: center;
+    background: var(--espresso);
     border-radius: 0;
 }
 
@@ -2458,17 +2505,23 @@ body.layout-no-sidebar .site-header {
     aspect-ratio: 4 / 5;
     overflow: hidden;
     border-radius: 0;
+    background: var(--espresso);
     box-shadow: var(--shadow-section-image);
     text-decoration: none;
     color: inherit;
 }
 
+/* object-fit: contain — the card keeps its exact aspect-ratio box, but the
+   full photo shows inside it (letterboxed on the card's own espresso
+   background where the image's aspect ratio doesn't fill the box) instead
+   of being cropped to cover it. */
 .three-story-media {
     position: absolute;
     inset: 0;
-    background-position: center;
-    background-size: cover;
-    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
 }
 
 .three-story-body {
