@@ -31,7 +31,7 @@
         @foreach ($sectionLabels as $section => $label)
             @php
                 $picked = $sections[$section];
-                $isOpen = $activeSection === $section || (! $activeSection && $loop->first);
+                $isOpen = $activeSection === $section;
             @endphp
 
             <div class="accordion-item home-section-card">
@@ -124,6 +124,28 @@
 
 @section('css')
     <style>
+        /* Small gap between accordion items — since they're no longer
+           flush against each other, each one needs its own top border
+           and full corner rounding instead of only the first/last item
+           getting it (Bootstrap's default assumes a flush stack). */
+        .home-sections-accordion .accordion-item {
+            margin-bottom: 1rem;
+            border-top-width: var(--bs-accordion-border-width) !important;
+            border-radius: var(--bs-accordion-border-radius) !important;
+        }
+
+        .home-sections-accordion .accordion-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .home-sections-accordion .accordion-item .accordion-button {
+            border-radius: var(--bs-accordion-inner-border-radius) var(--bs-accordion-inner-border-radius) 0 0 !important;
+        }
+
+        .home-sections-accordion .accordion-item .accordion-collapse {
+            border-radius: 0 0 var(--bs-accordion-border-radius) var(--bs-accordion-border-radius);
+        }
+
         .home-section-list {
             list-style: none;
             margin: 0;

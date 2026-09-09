@@ -82,6 +82,32 @@
     </div>
 @stop
 
+@section('css')
+    <style>
+        /* Small gap between accordion items — since they're no longer
+           flush against each other, each one needs its own top border
+           and full corner rounding instead of only the first/last item
+           getting it (Bootstrap's default assumes a flush stack). */
+        .meta-accordion .accordion-item {
+            margin-bottom: 1rem;
+            border-top-width: var(--bs-accordion-border-width) !important;
+            border-radius: var(--bs-accordion-border-radius) !important;
+        }
+
+        .meta-accordion .accordion-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .meta-accordion .accordion-item .accordion-button {
+            border-radius: var(--bs-accordion-inner-border-radius) var(--bs-accordion-inner-border-radius) 0 0 !important;
+        }
+
+        .meta-accordion .accordion-item .accordion-collapse {
+            border-radius: 0 0 var(--bs-accordion-border-radius) var(--bs-accordion-border-radius);
+        }
+    </style>
+@stop
+
 @section('js')
     @vite('resources/js/admin-meta.js')
 @stop

@@ -16,78 +16,89 @@
 @stop
 
 @section('content')
-    <div class="accordion permissions-accordion" id="permissions-accordion">
-        @forelse ($groupedPermissions as $group => $permissions)
-            @php $panelId = 'permissions-group-'.\Illuminate\Support\Str::slug($group); @endphp
+    @if ($groupedPermissions->isEmpty())
+        <p class="text-center text-muted py-4">{{ __('adminlte.no_permissions') }}</p>
+    @else
+        <div class="accordion permissions-accordion permissions-accordion--columns" id="permissions-accordion">
+            @foreach ($groupedPermissions as $group => $permissions)
+                @php $panelId = 'permissions-group-'.\Illuminate\Support\Str::slug($group); @endphp
 
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="{{ $panelId }}-heading">
-                    <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#{{ $panelId }}-collapse"
-                        aria-expanded="false"
-                        aria-controls="{{ $panelId }}-collapse"
-                    >
-                        <span class="flex-grow-1">{{ $group }}</span>
-                        <span class="badge text-bg-secondary me-2">{{ $permissions->count() }}</span>
-                    </button>
-                </h2>
-                <div id="{{ $panelId }}-collapse" class="accordion-collapse collapse" aria-labelledby="{{ $panelId }}-heading">
-                    <div class="accordion-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-hover mb-0 align-middle">
-                                <thead>
-                                    <tr>
-                                        <th>{{ __('adminlte.name') }}</th>
-                                        <th>{{ __('adminlte.label') }}</th>
-                                        <th class="text-end" style="width: 4.5rem;">{{ __('adminlte.actions') }}</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($permissions as $permission)
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="{{ $panelId }}-heading">
+                        <button
+                            class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#{{ $panelId }}-collapse"
+                            aria-expanded="false"
+                            aria-controls="{{ $panelId }}-collapse"
+                        >
+                            <span class="flex-grow-1">{{ $group }}</span>
+                            <span class="badge text-bg-secondary me-2">{{ $permissions->count() }}</span>
+                        </button>
+                    </h2>
+                    <div id="{{ $panelId }}-collapse" class="accordion-collapse collapse" aria-labelledby="{{ $panelId }}-heading">
+                        <div class="accordion-body p-0">
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0 align-middle">
+                                    <thead>
                                         <tr>
-                                            <td><code>{{ $permission->name }}</code></td>
-                                            <td>{{ $permission->label }}</td>
-                                            <td class="text-end">
-                                                <x-admin.row-actions>
-                                                    <li>
-                                                        <a class="dropdown-item d-flex align-items-center gap-2"
-                                                           href="{{ route('admin.permissions.edit', $permission) }}">
-                                                            <i class="bi bi-pencil" aria-hidden="true"></i>
-                                                            <span>{{ __('adminlte.edit') }}</span>
-                                                        </a>
-                                                    </li>
-                                                    <li><hr class="dropdown-divider"></li>
-                                                    <li>
-                                                        <form method="POST" action="{{ route('admin.permissions.destroy', $permission) }}"
-                                                              data-confirm-delete
-                                                              data-confirm-title="Delete this permission?"
-                                                              data-confirm-text="{{ $permission->label ?? $permission->name }} will be permanently removed. This cannot be undone."
-                                                              data-confirm-button="Yes, delete permission"
-                                                              data-cancel-button="{{ __('adminlte.cancel') }}">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit"
-                                                                    class="dropdown-item d-flex align-items-center gap-2 text-danger">
-                                                                <i class="bi bi-trash" aria-hidden="true"></i>
-                                                                <span>{{ __('adminlte.delete') }}</span>
-                                                            </button>
-                                                        </form>
-                                                    </li>
-                                                </x-admin.row-actions>
-                                            </td>
+                                            <th>{{ __('adminlte.name') }}</th>
+                                            <th>{{ __('adminlte.label') }}</th>
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($permissions as $permission)
+                                            <tr>
+                                                <td><code>{{ $permission->name }}</code></td>
+                                                <td>{{ $permission->label }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        @empty
-            <p class="text-center text-muted py-4">{{ __('adminlte.no_permissions') }}</p>
-        @endforelse
-    </div>
+            @endforeach
+        </div>
+    @endif
+@stop
+
+@section('css')
+    <style>
+        .permissions-accordion--columns {
+            column-count: 2;
+            column-gap: 1rem;
+        }
+
+        /* With items broken into columns, each one sits on its own rather
+           than flush against its neighbour — so, unlike a normal single-
+           column accordion, every item needs its own top border and full
+           corner rounding instead of only the first/last item getting it. */
+        .permissions-accordion--columns .accordion-item {
+            break-inside: avoid-column;
+            margin-bottom: 1rem;
+            border-top-width: var(--bs-accordion-border-width) !important;
+            border-radius: var(--bs-accordion-border-radius) !important;
+        }
+
+        .permissions-accordion--columns .accordion-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .permissions-accordion--columns .accordion-item .accordion-button {
+            border-radius: var(--bs-accordion-inner-border-radius) var(--bs-accordion-inner-border-radius) 0 0 !important;
+        }
+
+        .permissions-accordion--columns .accordion-item .accordion-collapse {
+            border-radius: 0 0 var(--bs-accordion-border-radius) var(--bs-accordion-border-radius);
+        }
+
+        @media (max-width: 991.98px) {
+            .permissions-accordion--columns {
+                column-count: 1;
+            }
+        }
+    </style>
 @stop
