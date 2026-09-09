@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 
@@ -65,6 +66,14 @@ class Category extends Model
     public function meta(): MorphOne
     {
         return $this->morphOne(Meta::class, 'metable');
+    }
+
+    /**
+     * Articles filed under this category.
+     */
+    public function articles(): HasMany
+    {
+        return $this->hasMany(Article::class);
     }
 
     public function scopeOfType(Builder $query, string $type): Builder

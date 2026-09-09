@@ -53,6 +53,29 @@ test('super admin can view the features list', function () {
         ->assertSee($article->title);
 });
 
+test('an active article shows a "View Article" link to its public page, regardless of its category\'s status', function () {
+    $user = User::factory()->superAdmin()->create();
+    $category = Category::factory()->create(['type' => Category::TYPE_FEATURE, 'status' => false]);
+    $article = Article::factory()->feature()->active()->create(['category_id' => $category->id]);
+
+    $this->actingAs($user)
+        ->get(route('admin.features.index'))
+        ->assertOk()
+        ->assertSee('View Article')
+        ->assertSee(route('features.article', ['category' => $category->slug, 'article' => $article->slug]), false);
+});
+
+test('a pending article has no "View Article" link since it has no public page yet', function () {
+    $user = User::factory()->superAdmin()->create();
+    $article = Article::factory()->feature()->create(['status' => Article::STATUS_PENDING]);
+
+    $this->actingAs($user)
+        ->get(route('admin.features.index'))
+        ->assertOk()
+        ->assertSee($article->title)
+        ->assertDontSee('View Article');
+});
+
 test('a user without view-features cannot view the list', function () {
     $user = userWithPermission('view-journals');
 

@@ -47,6 +47,29 @@ test('super admin can view the journals list', function () {
         ->assertSee($article->title);
 });
 
+test('an active journal entry shows a "View Blog" link to its public page, regardless of its category\'s status', function () {
+    $user = User::factory()->superAdmin()->create();
+    $category = Category::factory()->create(['type' => Category::TYPE_JOURNAL, 'status' => false]);
+    $article = Article::factory()->journal()->active()->create(['category_id' => $category->id]);
+
+    $this->actingAs($user)
+        ->get(route('admin.journals.index'))
+        ->assertOk()
+        ->assertSee('View Blog')
+        ->assertSee(route('journal.article', ['category' => $category->slug, 'article' => $article->slug]), false);
+});
+
+test('a pending journal entry has no "View Blog" link since it has no public page yet', function () {
+    $user = User::factory()->superAdmin()->create();
+    $article = Article::factory()->journal()->create(['status' => Article::STATUS_PENDING]);
+
+    $this->actingAs($user)
+        ->get(route('admin.journals.index'))
+        ->assertOk()
+        ->assertSee($article->title)
+        ->assertDontSee('View Blog');
+});
+
 test('a user without view-journals cannot view the list', function () {
     $user = userWithPermission('view-features');
 

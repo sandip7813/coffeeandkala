@@ -144,7 +144,7 @@
 }
 
 .admin-row-actions-menu .dropdown-item:active {
-    background-color: var(--bs-primary);
+    background-color: var(--ck-espresso);
 }
 
 .admin-row-actions-menu .dropdown-item.text-danger:active {
@@ -251,6 +251,278 @@
  */
 .modal-backdrop.show {
     opacity: 0.25;
+}
+
+/* ==========================================================================
+ * Coffee & Kala admin theme (v2) — brand palette applied over AdminLTE.
+ * The stock Bootstrap/AdminLTE look is preserved as `admin-ui-v1` (git tag);
+ * revert by checking that tag out if this theme doesn't work out.
+ * ========================================================================== */
+:root {
+    --ck-espresso: #5B3A29;
+    --ck-espresso-dark: #452a1d;
+    --ck-beige: #E7DDD2;
+    --ck-warm-paper: #F7F5F1;
+    --ck-black: #111111;
+}
+
+body.sidebar-mini,
+body.layout-fixed {
+    font-family: 'Plus Jakarta Sans', var(--bs-font-sans-serif);
+}
+
+/* Sidebar */
+.app-sidebar {
+    background-color: var(--ck-espresso) !important;
+}
+
+.app-sidebar .brand-link {
+    border-bottom-color: rgba(255, 255, 255, 0.12);
+}
+
+.app-sidebar .brand-text,
+.app-sidebar .nav-link,
+.app-sidebar .nav-header {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+.app-sidebar .nav-link:hover,
+.app-sidebar .nav-link:focus {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+}
+
+.app-sidebar .nav-link.active {
+    background-color: var(--ck-espresso-dark) !important;
+    color: #fff !important;
+    box-shadow: inset 3px 0 0 var(--ck-beige);
+}
+
+.app-sidebar .nav-icon {
+    color: inherit !important;
+}
+
+/* Topbar */
+.app-header.navbar {
+    background-color: var(--ck-warm-paper) !important;
+    border-bottom: 1px solid var(--border-light, rgba(91, 58, 41, 0.15));
+}
+
+.app-header .nav-link {
+    color: var(--ck-espresso) !important;
+}
+
+/* Content area */
+.app-main,
+.content-wrapper,
+body.bg-body-tertiary {
+    background-color: var(--ck-warm-paper) !important;
+}
+
+/* Primary brand color used across buttons, badges, focus states */
+.btn-primary {
+    --bs-btn-bg: var(--ck-espresso);
+    --bs-btn-border-color: var(--ck-espresso);
+    --bs-btn-hover-bg: var(--ck-espresso-dark);
+    --bs-btn-hover-border-color: var(--ck-espresso-dark);
+    --bs-btn-active-bg: var(--ck-espresso-dark);
+    --bs-btn-active-border-color: var(--ck-espresso-dark);
+}
+
+.text-primary {
+    color: var(--ck-espresso) !important;
+}
+
+.page-link,
+.form-check-input:checked,
+.nav-pills .nav-link.active {
+    background-color: var(--ck-espresso);
+    border-color: var(--ck-espresso);
+}
+
+/* ---- Dashboard v2 stat cards ---- */
+.ck-dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.ck-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.4rem;
+    border-radius: 1rem;
+    background: #fff;
+    border: 1px solid var(--border-light, rgba(91, 58, 41, 0.12));
+    box-shadow: 0 6px 18px rgba(26, 17, 12, 0.06);
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+a.ck-stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 26px rgba(26, 17, 12, 0.12);
+}
+
+.ck-stat-card__icon {
+    flex: 0 0 auto;
+    width: 3rem;
+    height: 3rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.85rem;
+    background: var(--ck-beige);
+    color: var(--ck-espresso);
+    font-size: 1.35rem;
+}
+
+.ck-stat-card__value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--ck-black);
+}
+
+.ck-stat-card__label {
+    font-size: 0.85rem;
+    color: var(--bs-secondary-color);
+}
+
+.ck-dashboard-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.ck-dashboard-header h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    color: var(--ck-espresso);
+}
+
+/* Recent journal/features/poetry list rows — keep long titles on one line */
+.ck-recent-item-text {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+.ck-recent-item-text .text-truncate {
+    max-width: 100%;
+}
+
+/* ---- Site-wide page header (every admin page, not just the dashboard) ---- */
+.app-content-header h1,
+.app-content-header h3 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 700;
+    color: var(--ck-espresso);
+}
+
+/* Cards */
+.card {
+    border-color: var(--border-light, rgba(91, 58, 41, 0.12));
+    border-radius: 0.85rem;
+    box-shadow: 0 6px 18px rgba(26, 17, 12, 0.05);
+}
+
+.card-header {
+    background-color: var(--ck-warm-paper);
+    border-bottom-color: var(--border-light, rgba(91, 58, 41, 0.12));
+    border-top-left-radius: 0.85rem !important;
+    border-top-right-radius: 0.85rem !important;
+}
+
+/* Outline buttons pick up brand tint instead of Bootstrap blue/teal */
+.btn-outline-primary,
+.btn-outline-info,
+.btn-outline-secondary {
+    --bs-btn-color: var(--ck-espresso);
+    --bs-btn-border-color: var(--ck-espresso);
+    --bs-btn-hover-bg: var(--ck-espresso);
+    --bs-btn-hover-border-color: var(--ck-espresso);
+    --bs-btn-active-bg: var(--ck-espresso-dark);
+    --bs-btn-active-border-color: var(--ck-espresso-dark);
+}
+
+/* Default links */
+a {
+    color: var(--ck-espresso);
+}
+
+a:hover,
+a:focus {
+    color: var(--ck-espresso-dark);
+}
+
+/* Tabs/pills used on edit & filter forms */
+.nav-tabs .nav-link {
+    color: var(--ck-espresso);
+}
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    color: var(--ck-espresso-dark);
+    border-color: var(--border-light, rgba(91, 58, 41, 0.12));
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--ck-espresso);
+    background-color: var(--ck-warm-paper);
+    border-bottom-color: var(--ck-warm-paper);
+}
+
+/* Accordion headers (Home Page Sections, Permissions, Meta Data) */
+.accordion-item,
+.accordion-button {
+    --bs-accordion-btn-color: var(--ck-espresso);
+    --bs-accordion-active-color: var(--ck-espresso);
+    --bs-accordion-bg: var(--ck-warm-paper);
+    --bs-accordion-active-bg: var(--ck-beige);
+    --bs-accordion-btn-focus-border-color: var(--ck-espresso);
+    --bs-accordion-btn-focus-box-shadow: 0 0 0 0.2rem rgba(91, 58, 41, 0.2);
+}
+
+.accordion-button:not(.collapsed) {
+    box-shadow: inset 0 -1px 0 var(--border-light, rgba(91, 58, 41, 0.12));
+}
+
+.accordion-button::after {
+    filter: sepia(1) saturate(2) hue-rotate(-10deg) brightness(0.7);
+}
+
+/* Badges */
+.badge.bg-primary,
+.badge.bg-info {
+    background-color: var(--ck-espresso) !important;
+}
+
+/* Table header tint to match the warm palette */
+.table > thead {
+    background-color: var(--ck-beige);
+}
+
+/* Form focus rings pick up the brand color instead of Bootstrap blue */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    border-color: var(--ck-espresso);
+    box-shadow: 0 0 0 0.2rem rgba(91, 58, 41, 0.15);
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background-color: var(--ck-espresso);
+    border-color: var(--ck-espresso);
+}
+
+.page-link {
+    color: var(--ck-espresso);
 }
 
 /*

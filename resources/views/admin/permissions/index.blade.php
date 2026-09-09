@@ -23,18 +23,18 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="{{ $panelId }}-heading">
                     <button
-                        class="accordion-button {{ $loop->first ? '' : 'collapsed' }}"
+                        class="accordion-button collapsed"
                         type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#{{ $panelId }}-collapse"
-                        aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
+                        aria-expanded="false"
                         aria-controls="{{ $panelId }}-collapse"
                     >
                         <span class="flex-grow-1">{{ $group }}</span>
                         <span class="badge text-bg-secondary me-2">{{ $permissions->count() }}</span>
                     </button>
                 </h2>
-                <div id="{{ $panelId }}-collapse" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="{{ $panelId }}-heading">
+                <div id="{{ $panelId }}-collapse" class="accordion-collapse collapse" aria-labelledby="{{ $panelId }}-heading">
                     <div class="accordion-body p-0">
                         <div class="table-responsive">
                             <table class="table table-hover mb-0 align-middle">

@@ -3,7 +3,7 @@
 @section('title', __('Our Story'))
 
 @section('content_header')
-    <h3 class="mb-0 text-center">{{ __('Our Story') }}</h3>
+    <h3 class="mb-0">{{ __('Our Story') }}</h3>
 @stop
 
 @section('content')

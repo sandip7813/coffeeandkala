@@ -124,10 +124,6 @@
 
 @section('css')
     <style>
-        .home-sections-accordion .accordion-button:not(.collapsed) {
-            background-color: var(--bs-primary-bg-subtle);
-        }
-
         .home-section-list {
             list-style: none;
             margin: 0;

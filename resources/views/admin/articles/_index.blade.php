@@ -5,6 +5,10 @@
     $canDelete = $user?->can("delete-{$type}");
     $canChangeStatus = $user?->can("change-{$type}-status");
     $canApprove = $user?->can("approve-{$type}");
+    // Public route names are singular for journals ('journal.article') but
+    // plural for features ('features.article'), unlike everything else
+    // here which is keyed off the plural $type ('features'|'journals').
+    $frontendArticleRoute = $type === 'features' ? 'features.article' : 'journal.article';
 @endphp
 
 <div class="collapse {{ $hasActiveFilters ? 'show' : '' }}" id="{{ $type }}Search">
@@ -150,6 +154,14 @@
                         </td>
                         <td class="text-end">
                             <x-admin.row-actions>
+                                @if ($article->status === 'active')
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route($frontendArticleRoute, ['category' => $article->category->slug, 'article' => $article->slug]) }}" target="_blank" rel="noopener">
+                                            <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                                            <span>{{ $type === 'features' ? __('View Article') : __('View Blog') }}</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 @if ($canEdit)
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route("admin.{$type}.edit", $article) }}">

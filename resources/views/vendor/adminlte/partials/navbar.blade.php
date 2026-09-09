@@ -6,9 +6,19 @@
                     <i class="bi bi-list" aria-hidden="true"></i>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('admin.dashboard') }}" aria-label="{{ __('Dashboard') }}">
+                    <i class="bi bi-house-door" aria-hidden="true"></i>
+                </a>
+            </li>
         </ul>
 
         <ul class="navbar-nav ms-auto">
+            <li class="nav-item d-flex align-items-center me-2">
+                <a href="{{ route('home') }}" class="btn btn-outline-secondary btn-sm" target="_blank" rel="noopener">
+                    <i class="bi bi-box-arrow-up-right me-1" aria-hidden="true"></i> {{ __('View site') }}
+                </a>
+            </li>
             @if (config('adminlte.usermenu_enabled', true))
                 @include('adminlte::partials.usermenu')
             @endif

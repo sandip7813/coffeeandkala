@@ -48,7 +48,13 @@
                                     @endif
                                 </td>
                                 <td class="text-end">
-                                    <form method="POST" action="{{ route('admin.quotes.schedule.update', $schedule->date->toDateString()) }}" class="d-flex gap-2 justify-content-end">
+                                    <form method="POST" action="{{ route('admin.quotes.schedule.update', $schedule->date->toDateString()) }}" class="d-flex gap-2 justify-content-end"
+                                          data-confirm-toggle
+                                          data-confirm-title="{{ __('Change the assigned quote?') }}"
+                                          data-confirm-text="{{ __('This will replace the quote scheduled for :date.', ['date' => $schedule->date->format('D, M j, Y')]) }}"
+                                          data-confirm-button="{{ __('Yes, assign it') }}"
+                                          data-cancel-button="{{ __('adminlte.cancel') }}"
+                                          data-loading-text="{{ __('Assigning…') }}">
                                         @csrf
                                         @method('PUT')
                                         <select name="quote_id" class="form-select form-select-sm" style="max-width: 16rem;" required>

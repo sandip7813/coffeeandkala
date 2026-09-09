@@ -101,12 +101,22 @@ class AdminLteRbacSeeder extends Seeder
                 'label' => 'Editor',
                 'permissions' => [
                     'view-dashboard',
+                    'view-gallery',
+                    'view-studio',
+                    'view-journals',
+                    'view-features',
+                    'view-poetry',
                 ],
             ],
             'viewer' => [
                 'label' => 'Viewer',
                 'permissions' => [
                     'view-dashboard',
+                    'view-gallery',
+                    'view-studio',
+                    'view-journals',
+                    'view-features',
+                    'view-poetry',
                 ],
             ],
         ];

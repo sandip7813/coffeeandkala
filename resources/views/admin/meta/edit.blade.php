@@ -36,17 +36,17 @@
                     <div class="accordion-item">
                         <h2 class="accordion-header" id="meta-{{ $key }}-heading">
                             <button
-                                class="accordion-button {{ $loop->first ? '' : 'collapsed' }}"
+                                class="accordion-button collapsed"
                                 type="button"
                                 data-bs-toggle="collapse"
                                 data-bs-target="#meta-{{ $key }}-collapse"
-                                aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
+                                aria-expanded="false"
                                 aria-controls="meta-{{ $key }}-collapse"
                             >
                                 {{ \App\Models\Meta::STATIC_PAGES[$key] }}
                             </button>
                         </h2>
-                        <div id="meta-{{ $key }}-collapse" class="accordion-collapse collapse {{ $loop->first ? 'show' : '' }}" aria-labelledby="meta-{{ $key }}-heading" data-bs-parent="#meta-main-accordion">
+                        <div id="meta-{{ $key }}-collapse" class="accordion-collapse collapse" aria-labelledby="meta-{{ $key }}-heading" data-bs-parent="#meta-main-accordion">
                             <div class="accordion-body">
                                 @include('admin.meta._page-form', ['key' => $key, 'meta' => $meta])
                             </div>

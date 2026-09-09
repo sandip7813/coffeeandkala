@@ -246,8 +246,8 @@
         }
 
         .settings-accordion .accordion-item:has(.accordion-button:not(.collapsed)) {
-            border-color: var(--bs-primary);
-            box-shadow: 0 .5rem 1.25rem rgba(var(--bs-primary-rgb), .08);
+            border-color: var(--ck-espresso);
+            box-shadow: 0 .5rem 1.25rem rgba(91, 58, 41, .08);
         }
 
         .settings-accordion .accordion-button {
@@ -264,7 +264,7 @@
         }
 
         .settings-accordion .accordion-button:focus {
-            box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .15);
+            box-shadow: 0 0 0 .2rem rgba(91, 58, 41, .15);
             z-index: 1;
         }
 
@@ -275,8 +275,8 @@
             width: 2.25rem;
             height: 2.25rem;
             border-radius: 50%;
-            background-color: rgba(var(--bs-primary-rgb), .1);
-            color: var(--bs-primary);
+            background-color: rgba(91, 58, 41, .1);
+            color: var(--ck-espresso);
             font-size: 1rem;
             flex-shrink: 0;
         }
@@ -315,8 +315,8 @@
         .brand-logo-option:hover,
         .brand-logo-option:focus-within,
         .brand-logo-option.is-selected {
-            border-color: var(--bs-primary);
-            box-shadow: 0 0 0 .2rem rgba(var(--bs-primary-rgb), .15);
+            border-color: var(--ck-espresso);
+            box-shadow: 0 0 0 .2rem rgba(91, 58, 41, .15);
         }
 
         .brand-logo-option__input {
