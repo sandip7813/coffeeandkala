@@ -6,14 +6,10 @@
     <div class="about-page">
         @include('frontend.partials.about.banner')
 
-        <section class="about-page-title">
-            <h1>Our Story</h1>
-        </section>
-
         {{-- Admin-authored content (Admin > Our Story), same section
              mechanism/partial/styling as Features/Journals article
              bodies — see App\Support\ArticleContentBuilder. --}}
-        @if (! empty($sections))
+        @if (!empty($sections))
             <div class="article-theme article-theme--our-story">
                 <div class="article-band article-lower">
                     <div class="article-sections">

@@ -26,6 +26,7 @@
                                     <div class="hero-banner-content">
                                         <span class="section-num-tag hero-banner-num">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}/{{ str_pad((string) $storyTotal, 2, '0', STR_PAD_LEFT) }}</span>
                                         <span class="section-tag">{{ Str::upper($story['tag']) }}</span>
+                                        <time class="hero-banner-date" datetime="{{ $story['date'] }}">{{ $story['date_label'] }}</time>
                                         <h2 class="hero-title">{{ $story['title'] }}</h2>
                                         <p class="hero-desc">{{ Str::limit($story['excerpt'], 160) }}</p>
                                         <a href="{{ $story['href'] }}" class="cta-link cta-dark">READ STORY <i class="fa-solid fa-arrow-right-long" aria-hidden="true"></i></a>

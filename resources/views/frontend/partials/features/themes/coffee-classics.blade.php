@@ -9,18 +9,18 @@
     <section class="fc-coffee-intro features-reveal features-reveal--up" aria-labelledby="fcCoffeeTitle">
         <p class="fc-coffee-kicker">{{ $category['eyebrow'] }} · Reading hour</p>
         <h1 id="fcCoffeeTitle">{{ $category['name'] }}</h1>
-        <p class="fc-coffee-tagline">{{ $category['tagline'] }}</p>
-        <p class="fc-coffee-lead">{{ $category['lead'] }}</p>
     </section>
 
     @if (count($category['articles']))
         <section class="fc-coffee-shelf" aria-label="Articles in {{ $category['name'] }}">
             <p class="fc-coffee-shelf-label" aria-hidden="true">On this shelf</p>
             @foreach ($category['articles'] as $article)
-                <article class="fc-coffee-spine features-reveal features-reveal--up" style="--portal-delay: {{ $loop->index * 0.1 }}s">
+                <article class="fc-coffee-spine features-reveal features-reveal--up"
+                    style="--portal-delay: {{ $loop->index * 0.1 }}s">
                     <a href="{{ $article['href'] }}">
                         <div class="fc-coffee-thumb">
-                            <img src="{{ $article['image'] }}" alt="" loading="lazy" width="320" height="420" decoding="async">
+                            <img src="{{ $article['image'] }}" alt="" loading="lazy" width="320"
+                                height="420" decoding="async">
                         </div>
                         <div class="fc-coffee-copy">
                             <div class="fc-coffee-meta">
@@ -29,7 +29,8 @@
                             </div>
                             <h2>{{ $article['title'] }}</h2>
                             <p>{{ Str::limit($article['excerpt'], 500) }}</p>
-                            <span class="fc-coffee-cta">Open chapter <i class="fa-solid fa-bookmark" aria-hidden="true"></i></span>
+                            <span class="fc-coffee-cta">Open chapter <i class="fa-solid fa-bookmark"
+                                    aria-hidden="true"></i></span>
                         </div>
                     </a>
                 </article>

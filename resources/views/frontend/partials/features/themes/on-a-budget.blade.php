@@ -9,18 +9,18 @@
     <div class="fc-budget-ruled">
         <p class="fc-budget-kicker">{{ $category['eyebrow'] }} · Travel checklist</p>
         <h1 id="fcBudgetTitle">{{ $category['name'] }}</h1>
-        <p class="fc-budget-tagline">{{ $category['tagline'] }}</p>
-        <p class="fc-budget-lead">{{ $category['lead'] }}</p>
     </div>
 </section>
 
 @if (count($category['articles']))
     <section class="fc-budget-grid" aria-label="Articles in {{ $category['name'] }}">
         @foreach ($category['articles'] as $article)
-            <article class="fc-budget-card features-reveal features-reveal--up" style="--portal-delay: {{ $loop->index * 0.08 }}s">
+            <article class="fc-budget-card features-reveal features-reveal--up"
+                style="--portal-delay: {{ $loop->index * 0.08 }}s">
                 <a href="{{ $article['href'] }}">
                     <div class="fc-budget-card-media">
-                        <img src="{{ $article['image'] }}" alt="" loading="lazy" width="700" height="480" decoding="async">
+                        <img src="{{ $article['image'] }}" alt="" loading="lazy" width="700" height="480"
+                            decoding="async">
                         <span class="fc-budget-pin" aria-hidden="true">{{ $article['tag'] }}</span>
                     </div>
                     <div class="fc-budget-card-body">

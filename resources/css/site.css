@@ -1025,6 +1025,7 @@ body.layout-no-sidebar .site-header {
 
 .hero-banner-content .hero-banner-num,
 .hero-banner-content .section-tag,
+.hero-banner-content .hero-banner-date,
 .hero-banner-content .hero-title,
 .hero-banner-content .hero-desc,
 .hero-banner-content .cta-link {
@@ -1045,6 +1046,14 @@ body.layout-no-sidebar .site-header {
 
 .hero-embla__slide.is-text-in .section-tag {
     opacity: 1;
+    transform: translateY(0);
+    transition:
+        opacity 3.4s cubic-bezier(0.22, 1, 0.36, 1) 0.55s,
+        transform 3.4s cubic-bezier(0.22, 1, 0.36, 1) 0.55s;
+}
+
+.hero-embla__slide.is-text-in .hero-banner-date {
+    opacity: 0.8;
     transform: translateY(0);
     transition:
         opacity 3.4s cubic-bezier(0.22, 1, 0.36, 1) 0.55s,
@@ -1085,6 +1094,15 @@ body.layout-no-sidebar .site-header {
     border-right: none;
     border-bottom: 1px solid rgba(231, 221, 210, 0.55);
     padding: 0 0 6px;
+}
+
+.hero-banner-date {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--coffee-beige);
+    margin-bottom: 12px;
 }
 
 .hero-title {
@@ -2759,6 +2777,22 @@ body.layout-no-sidebar .site-header {
     color: #1a1a1a;
 }
 
+.thought-quote-inner {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.thought-quote-signature {
+    margin-top: 10px;
+    font-family: 'STIX Two Text', 'Radley', var(--font-quote), Georgia, serif;
+    font-size: clamp(13px, 1.4vw, 15px);
+    font-style: italic;
+    letter-spacing: 0.02em;
+    color: #1a1a1a;
+    opacity: 0.75;
+}
+
 .thought-reveal-word {
     display: inline-block;
     overflow: hidden;
@@ -2794,6 +2828,11 @@ body.layout-no-sidebar .site-header {
 
     .thought-quote-text {
         white-space: normal;
+    }
+
+    .thought-quote-inner {
+        align-items: center;
+        width: 100%;
     }
 
     .gallery-story-header {

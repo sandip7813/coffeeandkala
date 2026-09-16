@@ -64,6 +64,29 @@
     --art-page-width: 1360px;
     color: var(--art-ink);
     background-color: var(--about-paper, #f1e8dc);
+    font-family: 'Crimson Text', var(--font-serif);
+}
+
+.article-theme--our-story .article-title,
+.article-theme--our-story .article-section-body h2 {
+    font-family: 'Crimson Text', var(--font-serif);
+    font-size: 30px;
+    text-transform: uppercase;
+}
+
+.article-theme--our-story .article-section-content,
+.article-theme--our-story .article-section-content p,
+.article-theme--our-story .article-section-content li,
+.article-theme--our-story .article-section-content h1,
+.article-theme--our-story .article-section-content h2,
+.article-theme--our-story .article-section-content h3,
+.article-theme--our-story .article-section-content h4 {
+    font-family: 'Crimson Text', var(--font-serif) !important;
+}
+
+.article-theme--our-story .article-section-content p {
+    font-size: 16px;
+    font-weight: 400;
 }
 
 .article-theme {
@@ -701,6 +724,10 @@
     background: var(--art-accent);
 }
 
+.article-theme--our-story .article-section-body h2::after {
+    display: none;
+}
+
 /* Video sections sit in the same two-column grid as image-left/right, but
    the title spans the full row above both columns instead of being
    squeezed into the text column alongside the companion content. */
@@ -898,7 +925,7 @@
     display: grid;
     grid-template-columns: minmax(220px, 380px) minmax(0, 1fr);
     gap: clamp(24px, 3vw, 40px);
-    align-items: center;
+    align-items: start;
 }
 
 .article-section--image-right {

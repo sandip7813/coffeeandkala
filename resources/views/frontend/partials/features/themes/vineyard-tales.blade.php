@@ -12,8 +12,6 @@
         </div>
         <p class="fc-vine-kicker">{{ $category['eyebrow'] }} · Sommelier’s flight</p>
         <h1 id="fcVineTitle">{{ $category['name'] }}</h1>
-        <p class="fc-vine-tagline">{{ $category['tagline'] }}</p>
-        <p class="fc-vine-lead">{{ $category['lead'] }}</p>
     </header>
 
     @if (count($category['articles']))
@@ -26,18 +24,18 @@
 
             <div class="fc-vine-rack">
                 @foreach ($category['articles'] as $article)
-                    <article
-                        class="fc-vine-pour features-reveal features-reveal--up"
-                        style="--portal-delay: {{ $loop->index * 0.08 }}s; --pour-index: {{ $loop->iteration }}"
-                    >
+                    <article class="fc-vine-pour features-reveal features-reveal--up"
+                        style="--portal-delay: {{ $loop->index * 0.08 }}s; --pour-index: {{ $loop->iteration }}">
                         <a href="{{ $article['href'] }}" class="fc-vine-pour-link">
                             <span class="fc-vine-foil" aria-hidden="true"></span>
                             <div class="fc-vine-neck">
-                                <span class="fc-vine-year">{{ \Illuminate\Support\Str::of($article['date'])->substr(0, 4) }}</span>
+                                <span
+                                    class="fc-vine-year">{{ \Illuminate\Support\Str::of($article['date'])->substr(0, 4) }}</span>
                                 <span class="fc-vine-tag">{{ $article['tag'] }}</span>
                             </div>
                             <div class="fc-vine-glass">
-                                <img src="{{ $article['image'] }}" alt="" loading="lazy" width="480" height="640" decoding="async">
+                                <img src="{{ $article['image'] }}" alt="" loading="lazy" width="480"
+                                    height="640" decoding="async">
                             </div>
                             <div class="fc-vine-labelcard">
                                 <h2>{{ $article['title'] }}</h2>
