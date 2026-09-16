@@ -28,17 +28,25 @@
                  above and outside the sidebar row, so the sidebar (Explore
                  the Sections / Recently Published) sits below this section
                  rather than beside it. --}}
-            <div class="article-band article-intro-row">
-                <div class="article-intro-row-text">
-                    @include('frontend.partials.article.intro')
-                </div>
+            <div class="article-band">
+                <div class="article-intro-card">
+                    <div class="article-editors-note-header">
+                        <p class="article-editors-note-label">Introduction</p>
+                    </div>
 
-                <figure class="article-featured-media">
-                    <span class="article-featured-media-accent" aria-hidden="true"></span>
-                    <a href="{{ $article['image'] }}" data-fancybox="article-featured">
-                        <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" loading="lazy">
-                    </a>
-                </figure>
+                    <div class="article-intro-row">
+                        <div class="article-intro-row-text">
+                            @include('frontend.partials.article.intro')
+                        </div>
+
+                        <figure class="article-featured-media">
+                            <span class="article-featured-media-accent" aria-hidden="true"></span>
+                            <a href="{{ $article['image'] }}" data-fancybox="article-featured">
+                                <img src="{{ $article['image'] }}" alt="{{ $article['title'] }}" loading="lazy">
+                            </a>
+                        </figure>
+                    </div>
+                </div>
             </div>
 
             {{-- Two real grid columns: column 1 carries the Table of
