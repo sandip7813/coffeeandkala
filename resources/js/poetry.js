@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             usePortrait: true,
             flippingTime: 1000,
             startPage,
-            mobileScrollSupport: false,
+            mobileScrollSupport: true,
         });
 
         pageFlip.loadFromHTML(pages);

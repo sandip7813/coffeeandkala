@@ -27,33 +27,6 @@ class PermissionController extends Controller
         return view('admin.permissions.index', compact('groupedPermissions'));
     }
 
-    public function create(): View
-    {
-        $this->authorizeManage();
-
-        return view('admin.permissions.create');
-    }
-
-    public function store(Request $request): RedirectResponse
-    {
-        $this->authorizeManage();
-
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'regex:/^[a-z0-9][a-z0-9._-]*$/i', 'unique:adminlte_permissions,name'],
-            'label' => ['nullable', 'string', 'max:255'],
-            'group' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        Permission::create([
-            'name' => $data['name'],
-            'label' => $data['label'] ?? null,
-            'group' => $data['group'] ?? null,
-        ]);
-
-        return redirect()->route('admin.permissions.index')
-            ->with('status', __('Permission created.'));
-    }
-
     public function edit(Permission $permission): View
     {
         $this->authorizeManage();

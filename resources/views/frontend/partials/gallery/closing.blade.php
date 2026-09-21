@@ -2,9 +2,7 @@
     <div class="gallery-closing-inner gallery-reveal gallery-reveal--up">
         <span class="gallery-ornament gallery-ornament--light" aria-hidden="true"></span>
         <p class="gallery-eyebrow gallery-eyebrow--muted">After the lights</p>
-        <blockquote class="gallery-closing-quote">
-            The story continues beyond the frame.
-        </blockquote>
+        <x-one-liner page="gallery" class="gallery-closing-quote" />
         <div class="gallery-closing-actions">
             <a href="{{ route('journal') }}" class="gallery-cta">
                 Return to the journal

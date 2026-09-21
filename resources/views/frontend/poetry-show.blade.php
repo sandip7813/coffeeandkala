@@ -55,7 +55,6 @@
 
                 {{-- Page 1 — Contents (left) --}}
                 <div class="poetry-book-page poetry-book-page--vined">
-                    @include('frontend.partials.poetry.vine')
                     <div class="poetry-book-page-inner">
                         <p class="poetry-eyebrow">Contents</p>
                         <h2 class="poetry-book-page-title">Where would you<br>like to begin?</h2>
@@ -86,8 +85,7 @@
                 {{-- Pages 3.. — a card + the poem itself, per poem --}}
                 @foreach ($poems as $i => $p)
                     <div class="poetry-book-page poetry-book-page--vined poetry-book-page--card" data-poem-slug="{{ $p['slug'] }}">
-                        @include('frontend.partials.poetry.vine')
-                        <div class="poetry-book-page-inner poetry-book-page-inner--index">
+                            <div class="poetry-book-page-inner poetry-book-page-inner--index">
 
                             @if (! empty($p['nearby']['prev']) || ! empty($p['nearby']['next']))
                                 <p class="poetry-eyebrow">From the shelf</p>

@@ -65,6 +65,8 @@ class AdminLteRbacSeeder extends Seeder
 
             'manage-our-story' => ['label' => 'Manage Our Story', 'group' => 'Our Story'],
 
+            'manage-page-content' => ['label' => 'Manage Closing One-Liners', 'group' => 'Closing One-Liners'],
+
             'manage-meta' => ['label' => 'Manage Meta Data', 'group' => 'Meta Data'],
 
             'manage-roles' => ['label' => 'Manage Roles', 'group' => 'Roles & Permissions'],

@@ -33,7 +33,7 @@ test('each feature category page returns a successful response', function (strin
     $response->assertSee(e($category['name']), false);
     $response->assertSee($category['lead'], false);
     $response->assertSee($category['tagline'], false);
-    $response->assertSee($category['quote'], false);
+    $response->assertDontSee('fc-closing-quote', false);
     $response->assertSee($article->title, false);
     $response->assertSee('features-theme--'.$slug, false);
     $response->assertDontSee(asset($category['banner']), false);

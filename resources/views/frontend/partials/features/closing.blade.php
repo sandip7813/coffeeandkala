@@ -2,9 +2,7 @@
     <div class="features-closing-inner features-reveal features-reveal--up">
         <span class="features-ornament" aria-hidden="true"></span>
         <p class="features-eyebrow features-eyebrow--muted">Keep wandering</p>
-        <blockquote class="features-closing-quote">
-            The best stories<br>arrive without a map.
-        </blockquote>
+        <x-one-liner page="features" class="features-closing-quote" />
         <p class="features-closing-copy">
             Return to the journal for shorter notes, or step into the gallery and studio
             when images want the last word.

@@ -1,6 +1,7 @@
 <section class="journal-closing">
     <div class="journal-closing-inner journal-reveal journal-reveal--up">
         <div class="journal-masthead-rule journal-masthead-rule--double" aria-hidden="true"></div>
+        <x-one-liner page="journal" class="journal-closing-quote" />
         <div class="journal-closing-actions">
             <a href="{{ route('features') }}" class="journal-cta">
                 Browse features

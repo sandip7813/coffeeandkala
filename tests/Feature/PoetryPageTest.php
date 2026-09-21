@@ -84,7 +84,7 @@ test('a poem page opens the book at that poem\'s page', function () {
     $response->assertSee('poetry-book-page--card', false);
     $response->assertSee('poetry-book-page--poem', false);
     $response->assertSee('poetry-book-page--closing', false);
-    $response->assertSee('poetry-book-vine', false);
+    $response->assertDontSee('poetry-book-vine', false);
     $response->assertSee('The Poetry Shelf', false);
     $response->assertSee('a bound collection, kept for slow reading', false);
     $response->assertSee('Lean into the book', false);

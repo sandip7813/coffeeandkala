@@ -23,6 +23,10 @@ class UpdateCategoryRequest extends FormRequest
         $this->merge([
             'status' => $this->boolean('status'),
         ]);
+
+        if (is_string($this->input('closing_line'))) {
+            $this->merge(['closing_line' => str_replace("\r\n", "\n", $this->input('closing_line'))]);
+        }
     }
 
     /**
@@ -44,6 +48,7 @@ class UpdateCategoryRequest extends FormRequest
                     ->ignore($this->route('category')->id),
             ],
             'description' => ['nullable', 'string'],
+            'closing_line' => ['nullable', 'string', 'max:150'],
             'sort_order' => ['required', 'integer', 'min:0'],
             'status' => ['required', 'boolean'],
 

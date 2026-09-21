@@ -26,6 +26,9 @@
                     <x-adminlte-input name="title" label="{{ __('adminlte.name') }} *" :value="new \Illuminate\Support\HtmlString(old('title', $category->title))" required />
                     <x-adminlte-input name="slug" label="{{ __('Slug') }} *" :value="new \Illuminate\Support\HtmlString(old('slug', $category->slug))" pattern="[a-z0-9]+(-[a-z0-9]+)*" title="{{ __('Lowercase letters, numbers, and single hyphens between words (e.g. art-culture).') }}" required />
                     <x-adminlte-textarea name="description" label="{{ __('Description') }}" rows="3">{{ old('description', $category->description) }}</x-adminlte-textarea>
+                    @if (in_array($category->type, [\App\Models\Category::TYPE_FEATURE, \App\Models\Category::TYPE_JOURNAL], true))
+                        <x-adminlte-textarea name="closing_line" label="{{ __('Closing one-liner') }}" rows="2" maxlength="150" placeholder="{{ __('Shown near the bottom of this category page. Leave empty to hide it.') }}">{{ old('closing_line', $category->closing_line) }}</x-adminlte-textarea>
+                    @endif
                     <x-adminlte-input type="number" name="sort_order" label="{{ __('Sort') }} *" :value="old('sort_order', $category->sort_order)" min="0" required />
                     <x-adminlte-input-switch name="status" label="{{ __('Active') }} *" value="1" :checked="old('status', $category->status)" />
                 </div>

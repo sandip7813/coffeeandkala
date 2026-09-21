@@ -1072,3 +1072,13 @@
     font-size: 1.05rem;
     color: var(--journal-muted);
 }
+
+.jc-closing-line {
+    margin: 0 0 28px;
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1.25;
+    text-align: center;
+}

@@ -25,9 +25,7 @@
         <section class="about-closing">
             <div class="about-closing-inner about-reveal about-reveal--up">
                 <span class="about-ornament about-ornament--light" aria-hidden="true"></span>
-                <blockquote class="about-closing-quote">
-                    Every cup holds a story.<br>What's yours?
-                </blockquote>
+                <x-one-liner page="our-story" class="about-closing-quote" />
             </div>
         </section>
     </div>

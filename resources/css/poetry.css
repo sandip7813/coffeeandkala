@@ -843,31 +843,6 @@
     flex-shrink: 0;
 }
 
-/* ─── The botanical vine — runs down the spine edge of every left-hand
-   page: contents, and each poem's preview card. A faint repeating sprig
-   pattern washes the whole page behind it, so the page reads as pressed
-   botanical stationery rather than plain paper. ─── */
-
-.poetry-book-page--vined {
-    padding-left: clamp(52px, 8.6vw, 84px);
-    background-image:
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%233c2a1a' stroke-width='1' opacity='0.22'%3E%3Cpath d='M18,150 C10,130 22,118 16,100'/%3E%3Cpath d='M16,128 C8,122 4,114 7,106'/%3E%3Cpath d='M18,116 C27,111 31,103 28,95'/%3E%3C/g%3E%3Cg fill='%233c2a1a' opacity='0.18'%3E%3Ccircle cx='180' cy='34' r='2.4'/%3E%3Ccircle cx='180' cy='25.8' r='3'/%3E%3Ccircle cx='188.2' cy='31.2' r='3'/%3E%3Ccircle cx='185.1' cy='40.7' r='3'/%3E%3Ccircle cx='174.9' cy='40.7' r='3'/%3E%3Ccircle cx='171.8' cy='31.2' r='3'/%3E%3C/g%3E%3C/svg%3E"),
-        url("data:image/svg+xml,%3Csvg viewBox='0 0 220 220' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
-    background-repeat: repeat, repeat;
-    background-size: 220px 220px, 220px 220px;
-}
-
-.poetry-book-vine {
-    position: absolute;
-    left: clamp(10px, 2.2vw, 24px);
-    top: 5%;
-    height: 90%;
-    width: clamp(22px, 3vw, 34px);
-    color: var(--poetry-ember);
-    opacity: 0.5;
-    pointer-events: none;
-}
-
 /* page-flip claims each .poetry-book-page for itself and forces its own
    `display: block` via an inline style (higher specificity than anything
    here), which quietly breaks `flex: 1` — that property only does
@@ -1248,17 +1223,8 @@
         height: 40px;
     }
 
-    .poetry-book-page--vined {
-        padding-left: clamp(38px, 11vw, 56px);
-    }
-
     .poetry-book-card-index {
         gap: 0;
-    }
-
-    .poetry-book-vine {
-        width: 18px;
-        left: 6px;
     }
 }
 

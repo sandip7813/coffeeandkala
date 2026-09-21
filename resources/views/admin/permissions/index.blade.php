@@ -7,11 +7,6 @@
         <div class="col-sm-6">
             <h1 class="m-0">{{ __('adminlte.permissions') }}</h1>
         </div>
-        <div class="col-sm-6 text-sm-end">
-            <a href="{{ route('admin.permissions.create') }}" class="btn btn-sm btn-primary">
-                <i class="bi bi-plus-lg me-1" aria-hidden="true"></i> {{ __('New Permission') }}
-            </a>
-        </div>
     </div>
 @stop
 

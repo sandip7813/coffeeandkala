@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\HomeSectionController;
 use App\Http\Controllers\Admin\JournalArticleController;
 use App\Http\Controllers\Admin\MetaController;
 use App\Http\Controllers\Admin\OurStoryController;
+use App\Http\Controllers\Admin\PageOneLinerController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PoemController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -158,8 +159,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
 
     Route::middleware('permission:manage-permissions')->group(function () {
         Route::get('permissions', [PermissionController::class, 'index'])->name('permissions.index');
-        Route::get('permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
-        Route::post('permissions', [PermissionController::class, 'store'])->name('permissions.store');
         Route::get('permissions/{permission}/edit', [PermissionController::class, 'edit'])->name('permissions.edit');
         Route::put('permissions/{permission}', [PermissionController::class, 'update'])->name('permissions.update');
         Route::delete('permissions/{permission}', [PermissionController::class, 'destroy'])->name('permissions.destroy');
@@ -206,6 +205,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
         Route::put('our-story/{article}/sections/reorder', [OurStoryController::class, 'reorderSections'])->name('our-story.sections.reorder');
         Route::put('our-story/{article}/sections/{section}/status', [OurStoryController::class, 'updateSectionStatus'])->name('our-story.sections.status.update');
         Route::put('our-story-meta', [OurStoryController::class, 'updateMeta'])->name('our-story.meta.update');
+    });
+
+    Route::middleware('can:manage-page-content')->group(function () {
+        Route::get('page-one-liners', [PageOneLinerController::class, 'edit'])->name('page-one-liners.edit');
+        Route::put('page-one-liners', [PageOneLinerController::class, 'update'])->name('page-one-liners.update');
     });
 
     Route::middleware('can:manage-meta')->group(function () {

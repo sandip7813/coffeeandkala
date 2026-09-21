@@ -31,6 +31,7 @@ class Category extends Model
         'slug',
         'type',
         'description',
+        'closing_line',
         'sort_order',
         'status',
     ];

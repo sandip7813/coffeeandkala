@@ -1,4 +1,5 @@
 <section class="jc-more journal-reveal journal-reveal--up" aria-label="More categories">
+    <x-one-liner type="journal" :slug="$category['id']" class="jc-closing-line" />
     <p class="jc-more-label">More from the Journal</p>
     <nav class="jc-more-links" aria-label="Other categories">
         @foreach ($categories as $sibling)

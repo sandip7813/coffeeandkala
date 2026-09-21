@@ -6,20 +6,15 @@ use App\Models\User;
 
 beforeEach(fn () => seedRbac());
 
-test('super admin can invent a new permission', function () {
+test('permissions can no longer be created from the admin panel', function () {
     $user = User::factory()->superAdmin()->create();
 
-    $response = $this->actingAs($user)->post(route('admin.permissions.store'), [
-        'name' => 'manage-articles',
-        'label' => 'Manage Articles',
-    ]);
+    $this->actingAs($user)->get(route('admin.permissions.index'))
+        ->assertOk()
+        ->assertDontSee('New Permission');
 
-    $response->assertRedirect(route('admin.permissions.index'));
-
-    $this->assertDatabaseHas('adminlte_permissions', [
-        'name' => 'manage-articles',
-        'label' => 'Manage Articles',
-    ]);
+    expect(Route::has('admin.permissions.create'))->toBeFalse()
+        ->and(Route::has('admin.permissions.store'))->toBeFalse();
 });
 
 test('invented permission can be assigned to a role', function () {
@@ -46,15 +41,6 @@ test('invented permission can be assigned to a role', function () {
     $editor = User::factory()->editor()->create();
 
     expect($editor->hasPermission('manage-gallery'))->toBeTrue();
-});
-
-test('editors cannot invent permissions', function () {
-    $user = User::factory()->editor()->create();
-
-    $this->actingAs($user)->post(route('admin.permissions.store'), [
-        'name' => 'manage-articles',
-        'label' => 'Manage Articles',
-    ])->assertForbidden();
 });
 
 test('system permissions cannot be deleted', function () {

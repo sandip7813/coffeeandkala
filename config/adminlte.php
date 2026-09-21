@@ -301,6 +301,13 @@ return [
             'active' => ['admin/quotes', 'admin/quotes/*'],
         ],
         [
+            'text' => 'Closing One-Liners',
+            'route' => 'admin.page-one-liners.edit',
+            'icon' => 'bi bi-quote',
+            'can' => 'manage-page-content',
+            'active' => ['admin/page-one-liners'],
+        ],
+        [
             'text' => 'Meta Data',
             'route' => 'admin.meta.edit',
             'icon' => 'bi bi-search',

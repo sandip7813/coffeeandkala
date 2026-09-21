@@ -25,7 +25,7 @@
 </nav>
 
 <section class="fc-closing features-reveal features-reveal--up">
-    <blockquote class="fc-closing-quote">{{ $category['quote'] }}</blockquote>
+    <x-one-liner type="feature" :slug="$category['id']" class="fc-closing-quote" />
     <div class="fc-closing-actions">
         <a href="{{ route('features') }}" class="fc-btn">All features</a>
         <a href="{{ route('journal') }}" class="fc-btn fc-btn--ghost">Journal</a>

@@ -536,3 +536,10 @@ a:focus {
  *
  * See https://adminlte.io/themes/v4/docs/customization.html
  */
+
+/* Auth pages (login etc.): the card's top accent matches the Sign in
+   button's hover colour rather than Bootstrap's default blue. */
+.login-box .card-outline.card-primary,
+.register-box .card-outline.card-primary {
+    border-top-color: var(--ck-espresso-dark);
+}
