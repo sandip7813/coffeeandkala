@@ -86,3 +86,50 @@ it('finds matches on the search results page even below the autocomplete minimum
     $response->assertViewHas('poetry', fn ($poetry) => $poetry->total() === 1);
     $response->assertDontSee('No results found');
 });
+
+it('excludes non-active content of every type from suggestions and the results page', function () {
+    Article::factory()->journal()->create(['title' => 'Pending Rainstorm Journal', 'status' => Article::STATUS_PENDING]);
+    Article::factory()->journal()->create(['title' => 'Draft Rainstorm Journal', 'status' => Article::STATUS_DRAFT]);
+    Article::factory()->journal()->create(['title' => 'Inactive Rainstorm Journal', 'status' => Article::STATUS_INACTIVE]);
+    Article::factory()->journal()->active()->create(['title' => 'Active Rainstorm Journal']);
+
+    Article::factory()->feature()->create(['title' => 'Pending Rainstorm Feature', 'status' => Article::STATUS_PENDING]);
+    Article::factory()->feature()->active()->create(['title' => 'Active Rainstorm Feature']);
+
+    Poem::factory()->pending()->create(['title' => 'Pending Rainstorm Poem']);
+    Poem::factory()->inactive()->create(['title' => 'Inactive Rainstorm Poem']);
+    Poem::factory()->active()->create(['title' => 'Active Rainstorm Poem']);
+
+    MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->pending()->create(['title' => 'Pending Rainstorm Gallery']);
+    MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->inactive()->create(['title' => 'Inactive Rainstorm Gallery']);
+    MediaFile::factory()->ofType(MediaFile::TYPE_GALLERY)->active()->create(['title' => 'Active Rainstorm Gallery']);
+
+    MediaFile::factory()->ofType(MediaFile::TYPE_STUDIO)->pending()->create(['title' => 'Pending Rainstorm Studio']);
+    MediaFile::factory()->ofType(MediaFile::TYPE_STUDIO)->active()->create(['title' => 'Active Rainstorm Studio']);
+
+    $suggestions = collect($this->getJson('/search/suggest?q=rainstorm')->json('sections'))->keyBy('key');
+
+    expect($suggestions['journal']['total'])->toBe(1);
+    expect($suggestions['journal']['items'][0]['title'])->toBe('Active Rainstorm Journal');
+
+    expect($suggestions['features']['total'])->toBe(1);
+    expect($suggestions['features']['items'][0]['title'])->toBe('Active Rainstorm Feature');
+
+    expect($suggestions['poetry']['total'])->toBe(1);
+    expect($suggestions['poetry']['items'][0]['title'])->toBe('Active Rainstorm Poem');
+
+    expect($suggestions['gallery']['total'])->toBe(1);
+    expect($suggestions['gallery']['items'][0]['title'])->toBe('Active Rainstorm Gallery');
+
+    expect($suggestions['studio']['total'])->toBe(1);
+    expect($suggestions['studio']['items'][0]['title'])->toBe('Active Rainstorm Studio');
+
+    $page = $this->get('/search?q=rainstorm');
+
+    $page->assertOk();
+    $page->assertViewHas('journal', fn ($p) => $p->total() === 1);
+    $page->assertViewHas('features', fn ($p) => $p->total() === 1);
+    $page->assertViewHas('poetry', fn ($p) => $p->total() === 1);
+    $page->assertViewHas('gallery', fn ($p) => $p->total() === 1);
+    $page->assertViewHas('studio', fn ($p) => $p->total() === 1);
+});
