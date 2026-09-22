@@ -26,7 +26,7 @@
             </p>
         </div>
         <p class="poetry-intro-aside">
-            {{ count($poems) }} poems, each a door left ajar
+            {{ $poems->total() }} poems, each a door left ajar
         </p>
     </div>
 </section>

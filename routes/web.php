@@ -31,6 +31,7 @@ use App\Http\Controllers\GalleryController as FrontendGalleryController;
 use App\Http\Controllers\JournalController;
 use App\Http\Controllers\OurStoryController as FrontendOurStoryController;
 use App\Http\Controllers\PoetryController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\StudioController as FrontendStudioController;
 use App\Models\HomeSectionArticle;
 use App\Models\HomeSectionMedia;
@@ -85,6 +86,9 @@ Route::get('/features/{category}/{article}', [FeatureController::class, 'showArt
 
 Route::get('/poetry', [PoetryController::class, 'index'])->name('poetry');
 Route::get('/poetry/{poem}', [PoetryController::class, 'show'])->name('poetry.show');
+
+Route::get('/search/suggest', [SearchController::class, 'suggest'])->name('search.suggest');
+Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // AdminLTE authentication routes (public registration disabled — admins are created by super admin)
 Route::middleware('guest')->group(function () {

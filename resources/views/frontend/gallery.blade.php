@@ -20,6 +20,7 @@
         }
 
         return [
+            'id' => $plate['id'],
             'image' => $plate['src'],
             'thumb' => $plate['thumb'],
             'title' => $plate['title'],

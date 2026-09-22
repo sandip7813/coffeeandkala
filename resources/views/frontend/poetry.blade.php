@@ -6,7 +6,7 @@
     <div class="poetry-page">
         @include('frontend.partials.poetry.hero')
         @include('frontend.partials.poetry.intro', ['poems' => $poems])
-        @if (! empty($poems))
+        @if ($poems->isNotEmpty())
             @include('frontend.partials.poetry.collection', ['poems' => $poems])
         @else
             <p class="poetry-empty">No poetry found.</p>

@@ -157,6 +157,16 @@ function initGalleryPage() {
         });
     });
 
+    const requestedId = new URLSearchParams(window.location.search).get('item');
+
+    if (requestedId) {
+        const requestedIndex = dataSource.findIndex((plate) => plate.id === requestedId);
+
+        if (requestedIndex !== -1) {
+            openGalleria(requestedIndex);
+        }
+    }
+
     closeBtn?.addEventListener('click', closeGalleria);
 
     document.addEventListener('keydown', (event) => {

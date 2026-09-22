@@ -5,14 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\Meta;
 use App\Models\Poem;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class PoetryController extends Controller
 {
+    private const PER_PAGE = 16;
+
     public function index(): View
     {
+        $poems = $this->poemsQuery()->paginate(self::PER_PAGE)->withQueryString();
+
+        $offset = $poems->firstItem() ?? 1;
+
+        /** @var LengthAwarePaginator<int, array<string, mixed>> $poems */
+        $poems = $poems->through(fn (Poem $poem, int $key): array => $this->buildCard($poem, $offset - 1 + $key));
+
         return view('frontend.poetry', [
-            'poems' => $this->poems(),
+            'poems' => $poems,
             'meta' => Meta::forPage('poetry'),
         ]);
     }
@@ -47,14 +58,19 @@ class PoetryController extends Controller
      */
     private function poems(): array
     {
-        return Poem::query()
-            ->active()
-            ->with('featuredImage')
-            ->latest()
+        return $this->poemsQuery()
             ->get()
             ->values()
             ->map(fn (Poem $poem, int $index): array => $this->buildCard($poem, $index))
             ->all();
+    }
+
+    private function poemsQuery(): Builder
+    {
+        return Poem::query()
+            ->active()
+            ->with('featuredImage')
+            ->latest();
     }
 
     /**

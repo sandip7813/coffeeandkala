@@ -26,6 +26,8 @@ export default defineConfig({
                 'resources/js/admin-home-section-toggles.js',
                 'resources/js/admin-meta.js',
                 'resources/css/error.css',
+                'resources/css/search.css',
+                'resources/js/search-results.js',
             ],
             refresh: true,
         }),

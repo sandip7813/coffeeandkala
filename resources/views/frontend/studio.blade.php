@@ -20,6 +20,7 @@
         }
 
         return [
+            'id' => $work['id'],
             'image' => $work['src'],
             'thumb' => $work['thumb'],
             'title' => $work['title'],
