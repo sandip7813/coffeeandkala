@@ -18,7 +18,7 @@ test('a feature article detail page returns a successful response', function () 
     $response->assertSuccessful();
     $response->assertSee(e($article->title), false);
     $response->assertSee('features-theme--on-a-budget', false);
-    $response->assertSee('Table of Contents', false);
+    $response->assertSee('WHAT YOU’LL DISCOVER', false);
     $response->assertSee('Editor&rsquo;s Note', false);
     $response->assertSee('Frequently Asked Questions', false);
     $response->assertSee('Author&rsquo;s Note', false);
@@ -55,7 +55,7 @@ test('a journal entry detail page returns a successful response', function () {
     $response->assertSuccessful();
     $response->assertSee(e($article->title), false);
     $response->assertSee('jc-theme--worth-knowing', false);
-    $response->assertSee('Table of Contents', false);
+    $response->assertSee('WHAT YOU’LL DISCOVER', false);
     $response->assertSee('Frequently Asked Questions', false);
 });
 

@@ -6,11 +6,11 @@
     `data-toc` on the wrapper is a hook so this list can be swapped for a
     dynamically fetched one later without touching the scroll behaviour.
 --}}
-<nav class="article-toc" aria-label="Table of contents" data-toc>
+<nav class="article-toc" aria-label="What you’ll discover" data-toc>
     <div class="article-toc-head">
         <p class="article-toc-label">
             <i class="fa-solid fa-list-ul" aria-hidden="true"></i>
-            Table of Contents
+            WHAT YOU’LL DISCOVER
         </p>
         <time class="article-toc-date" datetime="{{ $article['date'] }}">
             <i class="fa-solid fa-calendar-days" aria-hidden="true"></i>

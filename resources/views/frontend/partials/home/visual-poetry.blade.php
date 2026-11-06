@@ -22,9 +22,6 @@
                                 <div class="home-studio-card-frame">
                                     <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" loading="lazy" class="home-studio-card-media">
                                 </div>
-                                <div class="home-studio-card-body">
-                                    <h3 class="home-studio-card-title">{{ $slide['title'] }}</h3>
-                                </div>
                             </a>
                         </article>
                     @endforeach

@@ -89,6 +89,18 @@
     font-weight: 400;
 }
 
+/* On phones Our Story shows its images bare — no mat border and no offset
+   accent frame, which sat differently around the photo than on desktop. */
+@media (max-width: 720px) {
+    .article-theme--our-story .article-section-media {
+        border: none;
+    }
+
+    .article-theme--our-story .article-section-media-accent {
+        display: none;
+    }
+}
+
 .article-theme {
     position: relative;
     padding-bottom: clamp(48px, 7vw, 96px);

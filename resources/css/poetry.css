@@ -110,23 +110,23 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 24px 24px 4px;
+    padding: clamp(40px, 6vw, 72px) 24px 0;
     background: transparent;
 }
 
-.poetry-banner-divider-mark {
+.poetry-banner-divider-ornament {
     display: block;
-    width: 7px;
-    height: 7px;
-    transform: rotate(45deg);
-    background: var(--poetry-ember);
-    box-shadow: 0 0 0 9px rgba(156, 107, 63, 0.1);
+    flex: none;
+    width: 230px;
+    max-width: 60%;
+    height: auto;
+    color: var(--poetry-ink);
 }
 
 /* ─── Intro ─── */
 
 .poetry-intro {
-    padding: clamp(36px, 6vw, 72px) clamp(14px, 3vw, 36px) clamp(20px, 3vw, 36px);
+    padding: clamp(16px, 2.5vw, 28px) clamp(14px, 3vw, 36px) clamp(20px, 3vw, 36px);
     text-align: center;
 }
 
@@ -149,20 +149,6 @@
     font-style: italic;
     font-weight: 400;
     color: var(--poetry-ember);
-}
-
-.poetry-sprig {
-    display: block;
-    width: 96px;
-    margin: 0 auto 22px;
-    color: var(--poetry-ember);
-    opacity: 0.85;
-}
-
-.poetry-sprig svg {
-    width: 100%;
-    height: auto;
-    display: block;
 }
 
 .poetry-intro-copy {

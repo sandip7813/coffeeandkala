@@ -17,9 +17,11 @@ test('the poetry collection page returns a successful response', function () {
     $response->assertSee('The Poetry Collection — Coffee &amp; Kala', false);
     $response->assertSee('images/poetry/hero.png', false);
     $response->assertSee('poetryBannerZoom', false);
-    $response->assertSee('poetry-banner-divider-mark', false);
-    $response->assertSee('A home in every poem', false);
-    $response->assertSee('poems, each a door left ajar', false);
+    $response->assertSee('poetry-banner-divider-ornament', false);
+    $response->assertDontSee('poetry-sprig', false);
+    $response->assertSee('Life, <em>In Lines</em>', false);
+    $response->assertSee('A thought that takes shape, and words we come back to.', false);
+    $response->assertSee('Each door left ajar', false);
     $response->assertSee('poetry-collection', false);
     $response->assertSee('data-poetry-carousel', false);
     $response->assertSee('data-poetry-prev', false);

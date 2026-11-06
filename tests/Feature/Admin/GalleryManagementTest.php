@@ -70,6 +70,25 @@ test('a non-super-admin upload is pending and requires approval', function () {
     expect($media->approved_at)->toBeNull();
 });
 
+test('an image rejected by the server upload limit reports that it is too large', function () {
+    $user = userWithPermission(['view-gallery', 'upload-gallery']);
+    $rejected = UploadedFile::fake()->image('huge.jpg');
+
+    $response = $this->actingAs($user)->post(route('admin.gallery.store'), [
+        'title' => 'Too Big',
+        'caption' => 'Over the server limit.',
+        'image' => new UploadedFile($rejected->getPathname(), 'huge.jpg', 'image/jpeg', UPLOAD_ERR_INI_SIZE, true),
+    ]);
+
+    $expectedSize = round(UploadedFile::getMaxFilesize() / (1024 * 1024), 1).' MB';
+
+    $response->assertSessionHasErrors([
+        'image' => "The image is too large. The maximum allowed size is {$expectedSize}.",
+    ]);
+
+    expect(MediaFile::where('title', 'Too Big')->exists())->toBeFalse();
+});
+
 test('the upload form validates title, caption, and image', function () {
     $user = userWithPermission(['view-gallery', 'upload-gallery']);
 

@@ -1270,10 +1270,6 @@ body.layout-no-sidebar .site-header {
     color: var(--warm-paper);
 }
 
-.section-visual-poetry .home-studio-card-title {
-    color: var(--espresso);
-}
-
 .section-visual-poetry .home-studio-card-medium {
     color: rgba(91, 58, 41, 0.65);
 }
@@ -1282,6 +1278,7 @@ body.layout-no-sidebar .site-header {
     background: rgba(255, 255, 255, 0.35);
     border-color: rgba(91, 58, 41, 0.16);
     border-radius: 0;
+    margin-bottom: 0;
     overflow: hidden;
     box-shadow: var(--shadow-section-image);
 }
@@ -1813,51 +1810,9 @@ body.layout-no-sidebar .site-header {
     transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.gallery-story-card::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    background: linear-gradient(
-        180deg,
-        rgba(0, 0, 0, 0.05) 0%,
-        rgba(0, 0, 0, 0.1) 45%,
-        rgba(0, 0, 0, 0.72) 100%
-    );
-    pointer-events: none;
-}
-
 .gallery-story-card:hover .gallery-story-media,
 .gallery-story-card:focus-visible .gallery-story-media {
     transform: scale(1.04);
-}
-
-.gallery-story-caption {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 3;
-    padding: 28px 24px 24px;
-}
-
-.gallery-story-meta {
-    display: block;
-    margin-bottom: 8px;
-    font-size: 11px;
-    font-weight: 500;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.78);
-}
-
-.gallery-story-card-title {
-    margin: 0;
-    font-family: var(--font-serif);
-    font-size: clamp(22px, 2.2vw, 32px);
-    font-weight: 400;
-    line-height: 1.2;
-    color: #ffffff;
 }
 
 .gallery-story-nav {
@@ -3342,7 +3297,7 @@ body:has(.galleria-modal:not([hidden])) .site-header {
 
 .footer-bottom {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
     gap: 16px;
     padding: 22px 80px;

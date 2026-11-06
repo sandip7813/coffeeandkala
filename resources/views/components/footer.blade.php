@@ -11,7 +11,8 @@
                 >
             </a>
             <p class="footer-tagline">
-                An editorial journal of slow living, art, travel, and quiet stories — brewed with coffee and kala.
+                COFFEE AND KALA PRIVATE LIMITED <br />
+                — An independent magazine where perspective takes many forms.
             </p>
             @php($contactInfo = \App\Support\ContactInfo::filled())
             @if ($contactInfo !== [])
@@ -144,6 +145,5 @@
 
     <div class="footer-bottom">
         <p>&copy; {{ date('Y') }} Coffee &amp; Kala. All rights reserved.</p>
-        <p>Designed by Sandip Nandy.</p>
     </div>
 </footer>

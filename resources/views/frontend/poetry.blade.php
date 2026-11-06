@@ -5,7 +5,7 @@
 @section('content')
     <div class="poetry-page">
         @include('frontend.partials.poetry.hero')
-        @include('frontend.partials.poetry.intro', ['poems' => $poems])
+        @include('frontend.partials.poetry.intro')
         @if ($poems->isNotEmpty())
             @include('frontend.partials.poetry.collection', ['poems' => $poems])
         @else

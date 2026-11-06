@@ -3,6 +3,7 @@
 namespace App\Actions;
 
 use App\Models\User;
+use App\Support\ImageProcessingMemory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -25,6 +26,8 @@ class UpdateProfilePhoto
             Str::random(12),
             $file->getClientOriginalExtension(),
         );
+
+        ImageProcessingMemory::raise();
 
         $path = $file->storeAs($directory, $filename, $disk);
         $thumbnailPath = $this->storeThumbnail($file, $thumbnailDirectory, $filename, $disk);

@@ -38,9 +38,6 @@
                             <article class="gallery-story-slide">
                                 <a href="{{ route('gallery') }}" class="gallery-story-card">
                                     <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" loading="lazy" class="gallery-story-media">
-                                    <div class="gallery-story-caption">
-                                        <h3 class="gallery-story-card-title">{{ $slide['title'] }}</h3>
-                                    </div>
                                 </a>
                             </article>
                         @endforeach

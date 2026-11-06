@@ -4,6 +4,7 @@ namespace App\Actions;
 
 use App\Models\MediaFile;
 use App\Models\User;
+use App\Support\ImageProcessingMemory;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -74,6 +75,8 @@ class StoreMediaFile
         $thumbnailDirectory = config("media.{$type}.thumbnail_directory");
 
         $filename = sprintf('%s.%s', Str::random(20), $file->getClientOriginalExtension());
+
+        ImageProcessingMemory::raise();
 
         $originalPath = $file->storeAs($directory, $filename, $disk);
         $largePath = $this->storeResized(

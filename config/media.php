@@ -4,6 +4,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Image Processing Memory Limit
+    |--------------------------------------------------------------------------
+    |
+    | PHP memory limit applied while an uploaded image is being resized. GD
+    | keeps each decoded image uncompressed in memory, so a high-resolution
+    | photo needs far more than its file size — PHP's default 128M is not
+    | enough for a typical 12MP camera photo. Only ever raises the limit.
+    |
+    */
+
+    'processing_memory_limit' => env('MEDIA_PROCESSING_MEMORY_LIMIT', '512M'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Profile Photo
     |--------------------------------------------------------------------------
     |
