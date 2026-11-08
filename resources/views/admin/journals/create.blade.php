@@ -3,7 +3,7 @@
 @section('title', __('New Blog'))
 
 @section('content_header')
-    <h3 class="mb-0 text-center">{{ __('New Blog') }}</h3>
+    <h3 class="mb-0 text-center" data-edit-heading="{{ __('Edit Blog') }}">{{ __('New Blog') }}</h3>
 @stop
 
 @section('content')

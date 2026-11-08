@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\StoreFeatureArticleRequest;
 use App\Http\Requests\Admin\UpdateFeatureArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
 class FeatureArticleController extends AbstractArticleController
@@ -22,12 +23,12 @@ class FeatureArticleController extends AbstractArticleController
         return Category::TYPE_FEATURE;
     }
 
-    public function store(StoreFeatureArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    public function store(StoreFeatureArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         return $this->storeArticle($request, $storeMediaFile, $syncArticleSections);
     }
 
-    public function update(UpdateFeatureArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    public function update(UpdateFeatureArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         return $this->updateArticle($request, $article, $storeMediaFile, $syncArticleSections);
     }

@@ -11,9 +11,11 @@ use App\Models\Article;
 use App\Models\ArticleSection;
 use App\Models\Category;
 use App\Models\HomeSectionArticle;
+use App\Models\Meta;
 use App\Models\User;
 use App\Support\HomeSections;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -130,7 +132,7 @@ abstract class AbstractArticleController extends Controller
         return view("admin.{$this->type()}.create", ['categories' => $categories, 'article' => new Article]);
     }
 
-    protected function storeArticle(StoreArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    protected function storeArticle(StoreArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         $data = $request->validated();
         $user = $request->user();
@@ -162,6 +164,10 @@ abstract class AbstractArticleController extends Controller
             return $article;
         });
 
+        if ($saveAsDraft && $request->expectsJson()) {
+            return $this->draftSavedResponse($article);
+        }
+
         return redirect()->route("admin.{$this->type()}.index")
             ->with('status', $saveAsDraft ? __('Saved as draft.') : __('Article created.'));
     }
@@ -172,6 +178,18 @@ abstract class AbstractArticleController extends Controller
 
         abort_unless(auth()->user()?->can("edit-{$this->type()}"), 403);
 
+        return view("admin.{$this->type()}.edit", $this->editViewData($article));
+    }
+
+    /**
+     * Everything the shared edit form (admin.articles._form) needs for an
+     * existing article — used by edit() and by the AJAX "Save as Draft"
+     * response, which re-renders that same form in place.
+     *
+     * @return array{article: Article, categories: Collection<int, Category>, canManageHomeSections: bool, articleHomeSections: list<string>, meta: Meta}
+     */
+    private function editViewData(Article $article): array
+    {
         $article->load('sections.image', 'sections.galleryImages', 'sections.videoCompanionImage', 'faqs', 'featuredImage');
 
         $categories = Category::query()->ofType($this->categoryType())->active()->ordered()->get();
@@ -183,10 +201,32 @@ abstract class AbstractArticleController extends Controller
 
         $meta = $article->meta()->firstOrCreate([]);
 
-        return view("admin.{$this->type()}.edit", compact('article', 'categories', 'canManageHomeSections', 'articleHomeSections', 'meta'));
+        return compact('article', 'categories', 'canManageHomeSections', 'articleHomeSections', 'meta');
     }
 
-    protected function updateArticle(UpdateArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    /**
+     * An AJAX "Save as Draft" keeps the admin on the page they were editing
+     * (rather than redirecting to the list) — so instead of a redirect it
+     * returns the freshly re-rendered edit form, which admin-articles.js
+     * swaps in place. That picks up the ids of any sections/FAQs/gallery
+     * images just created, and turns a create form into an edit form, so
+     * the next save updates this article instead of creating another.
+     */
+    private function draftSavedResponse(Article $article): JsonResponse
+    {
+        $formHtml = view('admin.articles._form', [
+            ...$this->editViewData($article->fresh()),
+            'type' => $this->type(),
+        ])->render();
+
+        return response()->json([
+            'message' => __('Saved as draft.'),
+            'edit_url' => route("admin.{$this->type()}.edit", $article),
+            'form_html' => $formHtml,
+        ]);
+    }
+
+    protected function updateArticle(UpdateArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         $this->assertType($article);
 
@@ -249,6 +289,10 @@ abstract class AbstractArticleController extends Controller
                 'keywords' => $data['meta_keywords'] ?? null,
             ]);
         });
+
+        if ($saveAsDraft && $request->expectsJson()) {
+            return $this->draftSavedResponse($article);
+        }
 
         return redirect()->route("admin.{$this->type()}.index")
             ->with('status', $saveAsDraft ? __('Saved as draft.') : __('Article updated.'));

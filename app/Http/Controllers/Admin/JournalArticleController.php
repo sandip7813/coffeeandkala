@@ -8,6 +8,7 @@ use App\Http\Requests\Admin\StoreJournalArticleRequest;
 use App\Http\Requests\Admin\UpdateJournalArticleRequest;
 use App\Models\Article;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 
 class JournalArticleController extends AbstractArticleController
@@ -22,12 +23,12 @@ class JournalArticleController extends AbstractArticleController
         return Category::TYPE_JOURNAL;
     }
 
-    public function store(StoreJournalArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    public function store(StoreJournalArticleRequest $request, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         return $this->storeArticle($request, $storeMediaFile, $syncArticleSections);
     }
 
-    public function update(UpdateJournalArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse
+    public function update(UpdateJournalArticleRequest $request, Article $article, StoreMediaFile $storeMediaFile, SyncArticleSections $syncArticleSections): RedirectResponse|JsonResponse
     {
         return $this->updateArticle($request, $article, $storeMediaFile, $syncArticleSections);
     }

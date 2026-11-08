@@ -3,7 +3,7 @@
 @section('title', __('New Feature Article'))
 
 @section('content_header')
-    <h3 class="mb-0 text-center">{{ __('New Feature Article') }}</h3>
+    <h3 class="mb-0 text-center" data-edit-heading="{{ __('Edit Feature Article') }}">{{ __('New Feature Article') }}</h3>
 @stop
 
 @section('content')

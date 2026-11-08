@@ -1,6 +1,8 @@
 // Powers the Features/Journals article form:
 //  - AJAX validation + submission (no full-page reload, ever — errors are
-//    rendered inline and the page only navigates away on success).
+//    rendered inline and the page only navigates away on a successful
+//    Publish/Submit; "Save as Draft" stays on the same page and tab, with
+//    the form re-rendered in place as an edit form).
 //  - a loading overlay while the request is in flight.
 //  - the repeatable "Content" sections and "FAQs": adding/removing blocks
 //    from the <template> tags (with a slow, smooth slide-down entrance and
@@ -868,11 +870,116 @@ function wireAjaxForm(form) {
             return;
         }
 
+        // "Save as Draft" answers with JSON (the re-rendered edit form)
+        // instead of a redirect, so the admin stays right where they were.
+        if (response.headers.get('Content-Type')?.includes('application/json')) {
+            const data = await response.json();
+            swapInSavedDraftForm(form, data);
+            hideFormLoader();
+            await alertSuccess(data.message || 'Saved as draft.');
+            return;
+        }
+
         // Success: the server responded with a redirect, which fetch already
         // followed, so response.url is the final destination — navigate
         // there directly rather than reloading the current page.
         window.location.href = response.url;
     });
+}
+
+/**
+ * Marks $tabTarget (e.g. "#tab-content") as the active tab in a not-yet-
+ * mounted copy of the form, so it renders straight onto the tab the admin
+ * was on — no fade back from Essentials. Falls back to the markup's own
+ * default (Essentials) if that tab doesn't exist in the new form.
+ */
+function activateTabIn(root, tabTarget) {
+    const trigger = tabTarget ? root.querySelector(`[data-bs-toggle="tab"][data-bs-target="${tabTarget}"]`) : null;
+    const pane = tabTarget ? root.querySelector(tabTarget) : null;
+
+    if (!trigger || !pane) {
+        return;
+    }
+
+    root.querySelectorAll('[data-bs-toggle="tab"]').forEach((el) => {
+        el.classList.remove('active');
+        el.setAttribute('aria-selected', 'false');
+    });
+    root.querySelectorAll('.tab-content > .tab-pane').forEach((el) => el.classList.remove('show', 'active'));
+
+    trigger.classList.add('active');
+    trigger.setAttribute('aria-selected', 'true');
+    pane.classList.add('show', 'active');
+}
+
+/**
+ * Carries each section card's collapsed/expanded state over to the
+ * re-rendered form (matched by position, which the save preserves), so a
+ * draft save doesn't pop every collapsed section back open.
+ */
+function carryOverCollapsedSections(oldForm, newRoot) {
+    const oldBodies = oldForm.querySelectorAll('#article-sections > .article-section .collapse[id^="section-body-"]');
+    const newBodies = newRoot.querySelectorAll('#article-sections > .article-section .collapse[id^="section-body-"]');
+
+    if (oldBodies.length !== newBodies.length) {
+        return;
+    }
+
+    oldBodies.forEach((oldBody, index) => {
+        if (oldBody.classList.contains('show')) {
+            return;
+        }
+
+        const newBody = newBodies[index];
+        newBody.classList.remove('show');
+
+        const toggle = newRoot.querySelector(`[data-bs-target="#${newBody.id}"]`);
+        toggle?.setAttribute('aria-expanded', 'false');
+        const icon = toggle?.querySelector('[data-collapse-icon]');
+        icon?.classList.replace('bi-chevron-up', 'bi-chevron-down');
+    });
+}
+
+/**
+ * After an AJAX "Save as Draft", replaces the form's contents with the
+ * server's freshly rendered edit form — picking up the ids of any newly
+ * created sections/FAQs/gallery images and the uploaded images' previews —
+ * while keeping the same tab, collapsed sections and scroll position. On
+ * the create page this also turns the form into the edit form (action,
+ * PUT method, URL, heading), so the next save updates this same article
+ * instead of creating a second one. The <form> element itself is kept, so
+ * its submit handler (wireAjaxForm) stays attached.
+ */
+function swapInSavedDraftForm(form, data) {
+    const template = document.createElement('template');
+    template.innerHTML = data.form_html;
+    const newForm = template.content.querySelector('form');
+
+    if (!newForm) {
+        return;
+    }
+
+    const activeTab = form.querySelector('[data-bs-toggle="tab"].active')?.dataset.bsTarget;
+    const scrollY = window.scrollY;
+
+    activateTabIn(newForm, activeTab);
+    carryOverCollapsedSections(form, newForm);
+
+    form.setAttribute('action', newForm.getAttribute('action'));
+    form.innerHTML = newForm.innerHTML;
+    wireArticleFormContents(form);
+
+    window.scrollTo(0, scrollY);
+
+    if (data.edit_url && window.location.href !== data.edit_url) {
+        window.history.replaceState(null, '', data.edit_url);
+    }
+
+    const heading = document.querySelector('[data-edit-heading]');
+    if (heading && heading.textContent.trim() !== heading.dataset.editHeading) {
+        document.title = document.title.replace(heading.textContent.trim(), heading.dataset.editHeading);
+        heading.textContent = heading.dataset.editHeading;
+    }
 }
 
 // --- "This section has" (Image/Video/Gallery) switch guard -----------------
@@ -995,15 +1102,21 @@ function wireMediaTypeGuard(block) {
 
 // --- Boot --------------------------------------------------------------
 
-document.addEventListener('DOMContentLoaded', () => {
-    const essentialsTab = document.getElementById('tab-essentials');
+/**
+ * Wires every interactive part inside the article form — run once on page
+ * load, and again after an AJAX draft save swaps in re-rendered markup
+ * (see swapInSavedDraftForm). Each lookup is scoped to $form, so fresh
+ * markup never picks up a stale element.
+ */
+function wireArticleFormContents(form) {
+    const essentialsTab = form.querySelector('#tab-essentials');
     if (essentialsTab) {
         wireQuillEditor(essentialsTab);
     }
 
-    const sectionsContainer = document.getElementById('article-sections');
-    const sectionTemplate = document.getElementById('section-template');
-    const addSectionButton = document.getElementById('add-section');
+    const sectionsContainer = form.querySelector('#article-sections');
+    const sectionTemplate = form.querySelector('#section-template');
+    const addSectionButton = form.querySelector('#add-section');
 
     if (sectionsContainer) {
         sectionsContainer.querySelectorAll('.article-section').forEach(wireSectionBlock);
@@ -1025,9 +1138,9 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const faqsContainer = document.getElementById('article-faqs');
-    const faqTemplate = document.getElementById('faq-template');
-    const addFaqButton = document.getElementById('add-faq');
+    const faqsContainer = form.querySelector('#article-faqs');
+    const faqTemplate = form.querySelector('#faq-template');
+    const addFaqButton = form.querySelector('#add-faq');
 
     if (faqsContainer) {
         faqsContainer.querySelectorAll('.article-faq').forEach(wireFaqBlock);
@@ -1047,11 +1160,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    wireSaveActionButtons(form);
+    wireHomeSectionToggles();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
     const articleForm = document.querySelector('[data-ajax-form]');
     if (articleForm) {
+        wireArticleFormContents(articleForm);
         wireAjaxForm(articleForm);
-        wireSaveActionButtons(articleForm);
     }
-
-    wireHomeSectionToggles();
 });

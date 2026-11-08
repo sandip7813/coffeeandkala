@@ -147,7 +147,7 @@
                             @elseif ($article->status === 'pending')
                                 <span class="badge bg-warning text-dark">{{ __('Pending') }}</span>
                             @elseif ($article->status === 'draft')
-                                <span class="badge bg-info text-dark">{{ __('Draft') }}</span>
+                                <span class="badge bg-info">{{ __('Draft') }}</span>
                             @else
                                 <span class="badge bg-secondary">{{ __('Inactive') }}</span>
                             @endif

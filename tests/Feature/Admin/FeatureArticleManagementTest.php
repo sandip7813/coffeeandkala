@@ -130,6 +130,52 @@ test('a draft article can be saved as draft again, or submitted to leave draft',
     expect($article->approved_at)->toBeNull();
 });
 
+test('an ajax draft save on the create page returns the re-rendered edit form instead of redirecting', function () {
+    $user = userWithPermission(['view-features', 'create-features', 'edit-features']);
+    $category = Category::factory()->create(['type' => Category::TYPE_FEATURE]);
+
+    $response = $this->actingAs($user)
+        ->withHeaders(['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest'])
+        ->post(route('admin.features.store'), validFeatureArticlePayload($category->id, ['save_action' => 'draft']));
+
+    $article = Article::where('title', 'Letters from the Coast')->firstOrFail();
+
+    $response->assertOk()->assertJson([
+        'message' => 'Saved as draft.',
+        'edit_url' => route('admin.features.edit', $article),
+    ]);
+
+    // The swapped-in form must now update this article, not create another.
+    expect($response->json('form_html'))
+        ->toContain('action="'.route('admin.features.update', $article).'"')
+        ->toContain('name="_method" value="PUT"');
+    expect($article->status)->toBe('draft');
+});
+
+test('an ajax draft save on the edit page stays on the page, while an ajax submit still redirects', function () {
+    $user = userWithPermission(['view-features', 'create-features', 'edit-features']);
+    $category = Category::factory()->create(['type' => Category::TYPE_FEATURE]);
+    $article = Article::factory()->feature()->create(['category_id' => $category->id, 'status' => 'draft']);
+    $ajaxHeaders = ['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest'];
+
+    $draftPayload = validFeatureArticlePayload($category->id, ['save_action' => 'draft']);
+    unset($draftPayload['featured_image']);
+
+    $this->actingAs($user)->withHeaders($ajaxHeaders)
+        ->put(route('admin.features.update', $article), $draftPayload)
+        ->assertOk()
+        ->assertJsonPath('edit_url', route('admin.features.edit', $article))
+        ->assertJsonStructure(['form_html']);
+    expect($article->refresh()->status)->toBe('draft');
+
+    $submitPayload = validFeatureArticlePayload($category->id, ['save_action' => 'submit']);
+    unset($submitPayload['featured_image']);
+
+    $this->actingAs($user)->withHeaders($ajaxHeaders)
+        ->put(route('admin.features.update', $article), $submitPayload)
+        ->assertRedirect(route('admin.features.index'));
+});
+
 test('an article that has ever been active can no longer be moved to draft', function () {
     $user = userWithPermission(['view-features', 'create-features', 'edit-features']);
     $category = Category::factory()->create(['type' => Category::TYPE_FEATURE]);
