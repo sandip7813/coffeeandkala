@@ -16,19 +16,19 @@
 
                     <div class="row">
                         <div class="col-md-6">
-                            <x-adminlte-input name="first_name" label="First name" :value="$user->first_name" required />
+                            <x-adminlte-input name="first_name" label="First name" :value="new \Illuminate\Support\HtmlString($user->first_name)" required />
                         </div>
                         <div class="col-md-6">
-                            <x-adminlte-input name="last_name" label="Last name" :value="$user->last_name" required />
+                            <x-adminlte-input name="last_name" label="Last name" :value="new \Illuminate\Support\HtmlString($user->last_name)" required />
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6">
-                            <x-adminlte-input name="email" type="email" label="Email" :value="$user->email" disabled />
+                            <x-adminlte-input name="email" type="email" label="Email" :value="new \Illuminate\Support\HtmlString($user->email)" disabled />
                         </div>
                         <div class="col-md-6">
-                            <x-adminlte-input name="phone" type="tel" label="Phone number" :value="$user->phone"
+                            <x-adminlte-input name="phone" type="tel" label="Phone number" :value="new \Illuminate\Support\HtmlString($user->phone)"
                                               maxlength="10" inputmode="numeric" pattern="[0-9]{1,10}"
                                               placeholder="10 digits max" />
                         </div>

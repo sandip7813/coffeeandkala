@@ -189,9 +189,9 @@ test('a youtube section title spans the full width instead of sitting in the tex
     $response = $this->get(route('features.article', ['category' => 'on-a-budget', 'article' => $article->slug]));
 
     $response->assertSuccessful();
-    $response->assertSee('<h2 class="article-section-title-full">A Full-Width Video Title</h2>', false);
+    $response->assertSee('<h2 class="article-section-heading article-section-heading--h2 article-section-title-full">A Full-Width Video Title</h2>', false);
     // It must not be duplicated inside the two-column body as a plain <h2>.
-    $response->assertDontSee('<h2>A Full-Width Video Title</h2>', false);
+    $response->assertDontSee('<h2 class="article-section-heading article-section-heading--h2">A Full-Width Video Title</h2>', false);
 });
 
 test('a FAQ answer\'s line breaks are preserved as <br> tags', function () {

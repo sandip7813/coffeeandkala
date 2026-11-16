@@ -19,7 +19,8 @@
     </div>
     <ol class="article-toc-list">
         @foreach ($content['toc'] as $item)
-            <li>
+            {{-- H3/H4 section titles are indented beneath their H1/H2. --}}
+            <li @class(['article-toc-item', 'article-toc-item--depth-'.($item['depth'] ?? 0) => ($item['depth'] ?? 0) > 0])>
                 <a
                     href="javascript:void(0)"
                     class="article-toc-link"

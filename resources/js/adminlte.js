@@ -7,7 +7,7 @@
 
 // Bootstrap (provides dropdowns, modals, tooltips, offcanvas, etc.)
 import 'bootstrap'
-import { Collapse, Modal } from 'bootstrap'
+import { Collapse, Modal, Tab } from 'bootstrap'
 
 // OverlayScrollbars — AdminLTE uses it for the sidebar scroller (optional)
 import { OverlayScrollbars } from 'overlayscrollbars'
@@ -234,6 +234,11 @@ function showPageLoader(message = 'Deleting…') {
   document.body.style.overflow = 'hidden'
 }
 
+function hidePageLoader() {
+  document.getElementById('admin-page-loader')?.classList.remove('is-visible')
+  document.body.style.overflow = ''
+}
+
 function initCollapsibleSearchPanels() {
   document.querySelectorAll('[data-search-toggle]').forEach((toggle) => {
     const targetSelector = toggle.dataset.searchToggle || toggle.getAttribute('data-bs-target')
@@ -256,6 +261,11 @@ function initPageLoadingForms() {
     const form = event.target
 
     if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-page-loading')) {
+      return
+    }
+
+    // A Preview button opens a new tab — this page isn't going anywhere.
+    if (event.submitter?.hasAttribute('data-preview-button')) {
       return
     }
 
@@ -622,6 +632,10 @@ function initFlashToasts() {
     return
   }
 
+  showSuccessToast(message)
+}
+
+function showSuccessToast(message) {
   const Toast = Swal.mixin({
     toast: true,
     position: 'top-end',
@@ -682,6 +696,10 @@ function initValidationErrorAlert() {
     return
   }
 
+  showValidationAlert(messages)
+}
+
+function showValidationAlert(messages) {
   const escapeHtml = (value) => value.replace(/[&<>"']/g, (char) => ({
     '&': '&amp;',
     '<': '&lt;',
@@ -702,6 +720,184 @@ function initValidationErrorAlert() {
       popup: 'swal2-adminlte',
       confirmButton: 'btn btn-primary px-3',
     },
+  })
+}
+
+// --- AJAX save forms ----------------------------------------------------------
+// A form marked data-ajax-save="Saving…" saves without leaving the page: the
+// server answers JSON { message, form_html? }. Validation errors get the
+// usual red borders + summary alert; on success the form is swapped for the
+// server's re-rendered copy (if sent) on the same tab, and a toast confirms.
+// Delegated on document so it keeps working after the form is swapped.
+function initAjaxSaveForms() {
+  document.addEventListener('submit', async (event) => {
+    const form = event.target
+
+    if (!(form instanceof HTMLFormElement) || !form.hasAttribute('data-ajax-save')) {
+      return
+    }
+
+    // A Preview button posts natively to its own formaction in a new tab.
+    if (event.submitter?.hasAttribute('data-preview-button')) {
+      return
+    }
+
+    event.preventDefault()
+    form.querySelectorAll('.is-invalid').forEach((el) => el.classList.remove('is-invalid'))
+    showPageLoader(form.dataset.ajaxSave || 'Saving…')
+
+    let response
+    let data = {}
+
+    try {
+      response = await fetch(form.action, {
+        method: 'POST', // Laravel reads the spoofed _method (PUT) field itself
+        headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
+        body: new FormData(form),
+      })
+      data = await response.json().catch(() => ({}))
+    } catch {
+      hidePageLoader()
+      showErrorAlert('Network error', 'Please check your connection and try again.')
+      return
+    }
+
+    hidePageLoader()
+
+    if (response.status === 422) {
+      const messages = []
+      let firstInvalid = null
+
+      Object.entries(data.errors || {}).forEach(([key, fieldMessages]) => {
+        messages.push(...fieldMessages)
+        const [head, ...rest] = key.split('.')
+        const field = form.querySelector(`[name="${CSS.escape(head + rest.map((part) => `[${part}]`).join(''))}"]`)
+        field?.classList.add('is-invalid')
+        firstInvalid ??= field
+      })
+
+      if (firstInvalid) {
+        const pane = firstInvalid.closest('.tab-pane')
+        const trigger = pane?.id ? document.querySelector(`[data-bs-toggle="tab"][data-bs-target="#${pane.id}"]`) : null
+        if (trigger) {
+          Tab.getOrCreateInstance(trigger).show()
+        }
+        firstInvalid.focus({ preventScroll: true })
+        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      showValidationAlert(messages.length > 0 ? messages : [data.message || 'Some information is missing or invalid.'])
+      return
+    }
+
+    if (!response.ok) {
+      showErrorAlert('Error', data.message || 'Something went wrong. Please try again.')
+      return
+    }
+
+    if (data.form_html) {
+      swapFormContents(form, data.form_html)
+    }
+
+    showSuccessToast(data.message || 'Saved.')
+  })
+}
+
+/**
+ * Replaces $form's contents with the server's re-rendered copy, keeping the
+ * tab pane that was open (the tab buttons may live outside the form).
+ */
+function swapFormContents(form, html) {
+  const template = document.createElement('template')
+  template.innerHTML = html.trim()
+  const newForm = template.content.querySelector('form')
+
+  if (!newForm) {
+    return
+  }
+
+  const activePaneId = form.querySelector('.tab-pane.active')?.id
+
+  if (activePaneId && newForm.querySelector(`#${CSS.escape(activePaneId)}`)) {
+    newForm.querySelectorAll('.tab-pane').forEach((pane) => {
+      pane.classList.toggle('show', pane.id === activePaneId)
+      pane.classList.toggle('active', pane.id === activePaneId)
+    })
+  }
+
+  form.innerHTML = newForm.innerHTML
+
+  if (form.querySelector('[data-fancybox]')) {
+    loadFancybox()
+  }
+}
+
+function showErrorAlert(title, text) {
+  Swal.fire({
+    icon: 'error',
+    title,
+    text,
+    confirmButtonText: 'OK',
+    buttonsStyling: false,
+    customClass: {
+      popup: 'swal2-adminlte',
+      confirmButton: 'btn btn-primary px-3',
+    },
+  })
+}
+
+// --- Slug fields ------------------------------------------------------------
+// A slug input marked data-slug-from="title" is tidied into a valid slug when
+// the editor leaves it. With data-slug-auto too (Add Article / Add Poem
+// only), it also fills itself from that title field as the editor types —
+// until the editor types their own slug; clearing it resumes auto-fill.
+// Listeners are delegated on document so they survive the article form
+// being re-rendered in place after an AJAX "Save as Draft".
+function slugify(text) {
+  return text
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function initSlugFields() {
+  const autoSlugFieldsFor = (source) =>
+    source.form?.querySelectorAll(`input[data-slug-from="${CSS.escape(source.name)}"][data-slug-auto]`) ?? []
+
+  // A slug already filled in (e.g. re-shown after a validation error) that
+  // doesn't match its title was typed by hand — don't overwrite it.
+  document.querySelectorAll('input[data-slug-from][data-slug-auto]').forEach((slug) => {
+    const source = slug.form?.elements.namedItem(slug.dataset.slugFrom)
+    if (slug.value !== '' && source instanceof HTMLInputElement && slug.value !== slugify(source.value)) {
+      slug.dataset.slugManual = '1'
+    }
+  })
+
+  document.addEventListener('input', (event) => {
+    const el = event.target
+    if (!(el instanceof HTMLInputElement) || !el.name) {
+      return
+    }
+
+    if (el.matches('[data-slug-from]')) {
+      el.dataset.slugManual = el.value.trim() === '' ? '' : '1'
+      return
+    }
+
+    autoSlugFieldsFor(el).forEach((slug) => {
+      if (slug.dataset.slugManual !== '1') {
+        slug.value = slugify(el.value)
+      }
+    })
+  })
+
+  document.addEventListener('change', (event) => {
+    const el = event.target
+    if (el instanceof HTMLInputElement && el.matches('[data-slug-from]')) {
+      el.value = slugify(el.value)
+    }
   })
 }
 
@@ -948,9 +1144,11 @@ whenReady(() => {
     initArtisanSidebarUnlock,
     initArtisanGate,
     initPageLoadingForms,
+    initAjaxSaveForms,
     initFlashToasts,
     initValidationErrorAlert,
     initPasswordToggles,
+    initSlugFields,
     initPermissionGroupToggles,
     initReopenModal,
     initSelect2Search,

@@ -5,6 +5,7 @@
     $canDelete = $user?->can("delete-{$type}");
     $canChangeStatus = $user?->can("change-{$type}-status");
     $canApprove = $user?->can("approve-{$type}");
+    $canPreview = $canEdit || $canApprove || $user?->can("create-{$type}");
     // Public route names are singular for journals ('journal.article') but
     // plural for features ('features.article'), unlike everything else
     // here which is keyed off the plural $type ('features'|'journals').
@@ -154,6 +155,14 @@
                         </td>
                         <td class="text-end">
                             <x-admin.row-actions>
+                                @if ($canPreview)
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route("admin.{$type}.preview", $article) }}" target="_blank" rel="noopener">
+                                            <i class="bi bi-eye" aria-hidden="true"></i>
+                                            <span>{{ __('Preview') }}</span>
+                                        </a>
+                                    </li>
+                                @endif
                                 @if ($article->status === 'active')
                                     <li>
                                         <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route($frontendArticleRoute, ['category' => $article->category->slug, 'article' => $article->slug]) }}" target="_blank" rel="noopener">

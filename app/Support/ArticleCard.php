@@ -17,6 +17,7 @@ class ArticleCard
     /**
      * @return array{
      *     title: string,
+     *     subtitle: ?string,
      *     excerpt: string,
      *     tag: string,
      *     date: string,
@@ -35,6 +36,9 @@ class ArticleCard
 
         return [
             'title' => $article->title,
+            // Shown on the article page only (under the title) — the
+            // listing cards don't display it.
+            'subtitle' => $article->subtitle,
             'excerpt' => Str::of($article->introduction)->stripTags()->squish()->toString(),
             // No distinct "tag" concept exists on Article (the old catalog's
             // tag was an editorial label separate from its category, e.g.

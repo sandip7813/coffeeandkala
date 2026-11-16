@@ -114,7 +114,7 @@ test('a draft article can be saved as draft again, or submitted to leave draft',
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $draftAgainPayload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
     expect($article->refresh()->status)->toBe('draft');
 
     // Submitting for review leaves draft behind for good.
@@ -123,7 +123,7 @@ test('a draft article can be saved as draft again, or submitted to leave draft',
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $payload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     $article->refresh();
     expect($article->status)->toBe('pending');
@@ -152,7 +152,7 @@ test('an ajax draft save on the create page returns the re-rendered edit form in
     expect($article->status)->toBe('draft');
 });
 
-test('an ajax draft save on the edit page stays on the page, while an ajax submit still redirects', function () {
+test('an ajax save on the edit page stays on the page, whether saving as draft or submitting', function () {
     $user = userWithPermission(['view-features', 'create-features', 'edit-features']);
     $category = Category::factory()->create(['type' => Category::TYPE_FEATURE]);
     $article = Article::factory()->feature()->create(['category_id' => $category->id, 'status' => 'draft']);
@@ -173,7 +173,11 @@ test('an ajax draft save on the edit page stays on the page, while an ajax submi
 
     $this->actingAs($user)->withHeaders($ajaxHeaders)
         ->put(route('admin.features.update', $article), $submitPayload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertOk()
+        ->assertJsonPath('message', 'Article updated.')
+        ->assertJsonPath('edit_url', route('admin.features.edit', $article))
+        ->assertJsonStructure(['form_html']);
+    expect($article->refresh()->status)->toBe('pending');
 });
 
 test('an article that has ever been active can no longer be moved to draft', function () {
@@ -188,7 +192,7 @@ test('an article that has ever been active can no longer be moved to draft', fun
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $payload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     // The attempt to draft it is silently ignored — status is untouched.
     expect($article->refresh()->status)->toBe('active');
@@ -391,7 +395,7 @@ test('a section\'s gallery total is uncapped, but at most 4 new images can be ad
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $updatePayload)
         ->assertSessionDoesntHaveErrors()
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     expect($section->refresh()->galleryImages)->toHaveCount(8);
 
@@ -439,7 +443,7 @@ test('a gallery image can be updated in place — replacing its caption without 
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $payload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     $firstImage->refresh();
     expect($firstImage->caption)->toBe('Updated caption only.');
@@ -520,7 +524,7 @@ test('editing an article can update fields, replace the featured image, and sync
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $payload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     $article->refresh()->load('sections');
 
@@ -754,7 +758,7 @@ test('a section defaults active on create, and can be toggled inactive on update
 
     $this->actingAs($user)
         ->put(route('admin.features.update', $article), $payload)
-        ->assertRedirect(route('admin.features.index'));
+        ->assertRedirect(route('admin.features.edit', $article));
 
     expect($section->refresh()->is_active)->toBeFalse();
 });

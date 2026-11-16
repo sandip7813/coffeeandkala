@@ -52,6 +52,9 @@ class SyncArticleSections
             $attributes = [
                 'sort_order' => $index,
                 'title' => $data['title'] ?? null,
+                'title_level' => ArticleSection::headingLevel($data['title_level'] ?? null, ArticleSection::DEFAULT_TITLE_LEVEL),
+                'subtitle' => $data['subtitle'] ?? null,
+                'subtitle_level' => ArticleSection::headingLevel($data['subtitle_level'] ?? null, ArticleSection::DEFAULT_SUBTITLE_LEVEL),
                 'media_type' => $data['media_type'] ?? null,
                 'content' => $data['content'] ?? null,
                 // The column is NOT NULL (default 'none') — 'none' is no

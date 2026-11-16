@@ -12,7 +12,7 @@
                 @csrf
                 @method('PUT')
 
-                <x-adminlte-input name="title" label="{{ __('Title') }} *" maxlength="255" required :value="old('title', $media->title)" />
+                <x-adminlte-input name="title" label="{{ __('Title') }} *" maxlength="255" required :value="new \Illuminate\Support\HtmlString(old('title', $media->title))" />
                 <x-adminlte-textarea name="caption" label="{{ __('Caption') }} *" rows="4" required>{{ old('caption', $media->caption) }}</x-adminlte-textarea>
 
                 <div class="d-flex gap-2">

@@ -20,7 +20,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 /**
  * Shared Features/Journals article management. Both sections have identical
@@ -145,7 +144,9 @@ abstract class AbstractArticleController extends Controller
                 'category_id' => $data['category_id'],
                 'type' => $this->type(),
                 'title' => $data['title'],
-                'slug' => $this->slugFor($data['category_id'], $data['title']),
+                'subtitle' => $data['subtitle'] ?? null,
+                // Left empty, the model generates it from the title (see HasSlug).
+                'slug' => $data['slug'] ?? null,
                 'introduction' => $data['introduction'],
                 'editors_note' => $data['editors_note'],
                 'authors_note' => $data['authors_note'],
@@ -165,7 +166,7 @@ abstract class AbstractArticleController extends Controller
         });
 
         if ($saveAsDraft && $request->expectsJson()) {
-            return $this->draftSavedResponse($article);
+            return $this->savedFormResponse($article, __('Saved as draft.'));
         }
 
         return redirect()->route("admin.{$this->type()}.index")
@@ -183,8 +184,8 @@ abstract class AbstractArticleController extends Controller
 
     /**
      * Everything the shared edit form (admin.articles._form) needs for an
-     * existing article — used by edit() and by the AJAX "Save as Draft"
-     * response, which re-renders that same form in place.
+     * existing article — used by edit() and by the AJAX save response,
+     * which re-renders that same form in place.
      *
      * @return array{article: Article, categories: Collection<int, Category>, canManageHomeSections: bool, articleHomeSections: list<string>, meta: Meta}
      */
@@ -205,14 +206,15 @@ abstract class AbstractArticleController extends Controller
     }
 
     /**
-     * An AJAX "Save as Draft" keeps the admin on the page they were editing
-     * (rather than redirecting to the list) — so instead of a redirect it
-     * returns the freshly re-rendered edit form, which admin-articles.js
-     * swaps in place. That picks up the ids of any sections/FAQs/gallery
-     * images just created, and turns a create form into an edit form, so
-     * the next save updates this article instead of creating another.
+     * An AJAX save on the edit form (and "Save as Draft" on Add Article)
+     * keeps the admin on the page and tab they were on, rather than
+     * redirecting to the list — so instead of a redirect it returns the
+     * freshly re-rendered edit form, which admin-articles.js swaps in place.
+     * That picks up the ids of any sections/FAQs/gallery images just
+     * created, and turns a create form into an edit form, so the next save
+     * updates this article instead of creating another.
      */
-    private function draftSavedResponse(Article $article): JsonResponse
+    private function savedFormResponse(Article $article, string $message): JsonResponse
     {
         $formHtml = view('admin.articles._form', [
             ...$this->editViewData($article->fresh()),
@@ -220,7 +222,7 @@ abstract class AbstractArticleController extends Controller
         ])->render();
 
         return response()->json([
-            'message' => __('Saved as draft.'),
+            'message' => $message,
             'edit_url' => route("admin.{$this->type()}.edit", $article),
             'form_html' => $formHtml,
         ]);
@@ -240,14 +242,15 @@ abstract class AbstractArticleController extends Controller
         $saveAsDraft = ($data['save_action'] ?? 'submit') === 'draft' && $article->canBeDrafted();
 
         DB::transaction(function () use ($data, $article, $user, $saveAsDraft, $storeMediaFile, $syncArticleSections) {
-            $slug = $data['title'] !== $article->title || $data['category_id'] !== $article->category_id
-                ? $this->slugFor($data['category_id'], $data['title'], $article->id)
-                : $article->slug;
-
             $article->fill([
                 'category_id' => $data['category_id'],
                 'title' => $data['title'],
-                'slug' => $slug,
+                'subtitle' => $data['subtitle'] ?? null,
+                // The slug only changes when the editor changes it — or
+                // clears it, and the model regenerates it from the title —
+                // never as a side effect of editing the title. The old URL
+                // then 301s to the new one (see HasSlug).
+                'slug' => $data['slug'] ?? null,
                 'introduction' => $data['introduction'],
                 'editors_note' => $data['editors_note'],
                 'authors_note' => $data['authors_note'],
@@ -290,12 +293,14 @@ abstract class AbstractArticleController extends Controller
             ]);
         });
 
-        if ($saveAsDraft && $request->expectsJson()) {
-            return $this->draftSavedResponse($article);
+        $message = $saveAsDraft ? __('Saved as draft.') : __('Article updated.');
+
+        // Saving an edit keeps the admin on the edit page.
+        if ($request->expectsJson()) {
+            return $this->savedFormResponse($article, $message);
         }
 
-        return redirect()->route("admin.{$this->type()}.index")
-            ->with('status', $saveAsDraft ? __('Saved as draft.') : __('Article updated.'));
+        return redirect()->route("admin.{$this->type()}.edit", $article)->with('status', $message);
     }
 
     public function updateStatus(Article $article): RedirectResponse
@@ -463,28 +468,5 @@ abstract class AbstractArticleController extends Controller
     private function assertType(Article $article): void
     {
         abort_unless($article->type === $this->type(), 404);
-    }
-
-    /**
-     * A unique-per-category slug for the article, derived from its title.
-     */
-    private function slugFor(int $categoryId, string $title, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($title);
-        $slug = $base;
-        $suffix = 2;
-
-        while (
-            Article::query()
-                ->where('category_id', $categoryId)
-                ->where('slug', $slug)
-                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-                ->exists()
-        ) {
-            $slug = "{$base}-{$suffix}";
-            $suffix++;
-        }
-
-        return $slug;
     }
 }

@@ -12,6 +12,10 @@ Artisan::command('inspire', function () {
 // schedule page — admin-made assignments are never touched by this.
 Schedule::command('quotes:assign-schedules')->daily();
 
+// Removes the temporary images uploaded for admin previews (see
+// App\Support\Preview\PreviewUploads).
+Schedule::command('previews:prune')->hourly();
+
 // Temporary diagnostic: confirms the scheduler is actually running on prod.
 // Remove once verified.
 // Schedule::command('app:scheduler-heartbeat')->everyMinute();

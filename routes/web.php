@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OurStoryController;
 use App\Http\Controllers\Admin\PageOneLinerController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PoemController;
+use App\Http\Controllers\Admin\PreviewController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\QuoteController;
 use App\Http\Controllers\Admin\QuoteScheduleController;
@@ -269,6 +270,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     Route::put('studio/{media}/home-section', [StudioController::class, 'toggleHomeSection'])->name('studio.home-section.toggle');
     Route::delete('studio/{media}', [StudioController::class, 'destroy'])->name('studio.destroy');
 
+    // Previews (see PreviewController) — the saved version (GET, from the
+    // list), or what the create/edit form currently holds without saving it
+    // (the form's Preview button posts here; PUT too, as the edit form
+    // spoofs its method). Registered before the poem routes below.
+    Route::get('poetry/{poem}/preview', [PreviewController::class, 'savedPoem'])->name('poetry.preview');
+    Route::match(['post', 'put'], 'poetry/preview/{poem?}', [PreviewController::class, 'poemForm'])->name('poetry.preview.form');
+
     Route::get('poetry', [PoemController::class, 'index'])->name('poetry.index');
     Route::get('poetry/create', [PoemController::class, 'create'])->name('poetry.create');
     Route::post('poetry', [PoemController::class, 'store'])->name('poetry.store');
@@ -284,6 +292,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     // '*-features'/'*-journals' permission checked in the controller, and
     // approval is restricted to super admins directly (not a delegable
     // permission), so no route middleware is used here.
+    Route::get('features/{article}/preview', [PreviewController::class, 'savedArticle'])->name('features.preview');
+    Route::match(['post', 'put'], 'features/preview/{article?}', [PreviewController::class, 'articleForm'])->name('features.preview.form');
     Route::get('features/search-creators', [FeatureArticleController::class, 'searchCreators'])->name('features.search-creators');
     Route::get('features', [FeatureArticleController::class, 'index'])->name('features.index');
     Route::get('features/create', [FeatureArticleController::class, 'create'])->name('features.create');
@@ -297,6 +307,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'password.changed', 
     Route::put('features/{article}/home-sections/{section}', [FeatureArticleController::class, 'toggleHomeSection'])->name('features.home-sections.toggle');
     Route::delete('features/{article}', [FeatureArticleController::class, 'destroy'])->name('features.destroy');
 
+    Route::get('journals/{article}/preview', [PreviewController::class, 'savedArticle'])->name('journals.preview');
+    Route::match(['post', 'put'], 'journals/preview/{article?}', [PreviewController::class, 'articleForm'])->name('journals.preview.form');
     Route::get('journals/search-creators', [JournalArticleController::class, 'searchCreators'])->name('journals.search-creators');
     Route::get('journals', [JournalArticleController::class, 'index'])->name('journals.index');
     Route::get('journals/create', [JournalArticleController::class, 'create'])->name('journals.create');

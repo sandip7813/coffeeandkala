@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\ArticleSection;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Base validation for editing an existing Feature/Journal article. Extended
@@ -37,6 +39,15 @@ abstract class UpdateArticleRequest extends FormRequest
             'save_action' => ['nullable', 'in:draft,submit'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
+            'subtitle' => ['nullable', 'string', 'max:200'],
+            // Left empty, it's regenerated from the title; otherwise kept
+            // as-is even when the title changes, so the URL stays stable.
+            'slug' => [
+                'nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(-[a-z0-9]+)*$/',
+                Rule::unique('articles', 'slug')
+                    ->where('category_id', (int) $this->input('category_id'))
+                    ->ignore($this->route('article')),
+            ],
             'introduction' => ['required', 'string'],
             'featured_image' => ['nullable', 'image', "mimes:{$formats}", "max:{$maxSizeKb}"],
             'editors_note' => ['required', 'string'],
@@ -45,6 +56,9 @@ abstract class UpdateArticleRequest extends FormRequest
             'sections' => ['nullable', 'array'],
             'sections.*.id' => ['nullable', 'integer', 'exists:article_sections,id'],
             'sections.*.title' => ['nullable', 'string', 'max:255'],
+            'sections.*.subtitle' => ['nullable', 'string', 'max:200'],
+            'sections.*.title_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
+            'sections.*.subtitle_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
             'sections.*.media_type' => ['nullable', 'in:image,video,gallery'],
             'sections.*.is_active' => ['nullable', 'boolean'],
             'sections.*.content' => ['nullable', 'string'],
@@ -78,6 +92,16 @@ abstract class UpdateArticleRequest extends FormRequest
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:500'],
             'meta_keywords' => ['nullable', 'string', 'max:255'],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.regex' => __('The slug may only contain lowercase letters, numbers, and single hyphens between words (e.g. "the-weight-of-rain").'),
         ];
     }
 

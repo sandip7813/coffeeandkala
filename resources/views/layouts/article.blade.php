@@ -7,6 +7,9 @@
     <meta name="description" content="@yield('meta_description', 'Coffee & Kala — an editorial journal of coffee culture and visual storytelling.')">
     <meta name="keywords" content="@yield('meta_keywords', 'Coffee & Kala')">
     <x-favicon />
+    @isset($previewBar)
+        <meta name="robots" content="noindex, nofollow">
+    @endisset
 
     <x-site-fonts />
 
@@ -41,5 +44,8 @@
     <x-go-top />
 
     @stack('scripts')
+@isset($previewBar)
+    @include('frontend.partials.preview-bar')
+@endisset
 </body>
 </html>

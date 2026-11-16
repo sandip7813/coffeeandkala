@@ -6,9 +6,9 @@
     @csrf
     @method('PUT')
 
-    <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="old('meta_title', $meta->title)" />
+    <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="new \Illuminate\Support\HtmlString(old('meta_title', $meta->title))" />
     <x-adminlte-textarea name="meta_description" label="{{ __('Meta Description') }}" rows="3">{{ old('meta_description', $meta->description) }}</x-adminlte-textarea>
-    <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="old('meta_keywords', $meta->keywords)" />
+    <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="new \Illuminate\Support\HtmlString(old('meta_keywords', $meta->keywords))" />
 
     <button type="submit" class="btn btn-primary">{{ __('Save SEO') }}</button>
 </form>

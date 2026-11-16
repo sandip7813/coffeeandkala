@@ -42,10 +42,35 @@ class ArticleSection extends Model
 
     public const VIDEO_COMPANION_NONE = 'none';
 
+    // The element a section's title/subtitle renders as, chosen per field
+    // on the admin form — 'p' is offered as "Normal" (not a heading).
+    public const HEADING_LEVELS = [
+        'p' => 'Normal',
+        'h1' => 'H1',
+        'h2' => 'H2',
+        'h3' => 'H3',
+        'h4' => 'H4',
+    ];
+
+    public const DEFAULT_TITLE_LEVEL = 'h2';
+
+    public const DEFAULT_SUBTITLE_LEVEL = 'h3';
+
+    /**
+     * $level if it's one of HEADING_LEVELS, else $default.
+     */
+    public static function headingLevel(mixed $level, string $default): string
+    {
+        return is_string($level) && array_key_exists($level, self::HEADING_LEVELS) ? $level : $default;
+    }
+
     protected $fillable = [
         'article_id',
         'sort_order',
         'title',
+        'title_level',
+        'subtitle',
+        'subtitle_level',
         'media_type',
         'content',
         'image_position',

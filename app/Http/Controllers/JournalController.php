@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Article;
 use App\Models\Category;
 use App\Models\Meta;
+use App\Models\SlugRedirect;
 use App\Support\ArticleCard;
 use App\Support\ArticleContentBuilder;
 use App\Support\ArticleIndex;
 use App\Support\JournalCatalog;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -53,13 +55,11 @@ class JournalController extends Controller
         ]);
     }
 
-    public function showArticle(string $category, string $article): View
+    public function showArticle(string $category, string $article): View|RedirectResponse
     {
         $this->abortIfCategoryInactive($category);
 
-        $current = JournalCatalog::findCategory($category);
-
-        abort_if($current === null, 404);
+        abort_if(JournalCatalog::findCategory($category) === null, 404);
 
         $categoryModel = Category::query()->ofType(Category::TYPE_JOURNAL)->where('slug', $category)->active()->first();
 
@@ -71,7 +71,32 @@ class JournalController extends Controller
             ->with('sections.image', 'sections.galleryImages', 'sections.videoCompanionImage', 'faqs', 'featuredImage', 'category')
             ->first();
 
+        if ($articleModel === null && $categoryModel !== null) {
+            // An old URL from before the article's slug/category changed.
+            $moved = SlugRedirect::activeArticleFor(Article::TYPE_JOURNAL, $categoryModel->id, $article);
+
+            if ($moved !== null) {
+                return redirect()->route('journal.article', ['category' => $moved->category->slug, 'article' => $moved->slug], 301);
+            }
+        }
+
         abort_if($articleModel === null, 404);
+
+        return $this->renderArticle($articleModel, $articleModel->meta()->firstOrCreate([]));
+    }
+
+    /**
+     * The entry detail page for $articleModel — used by the public route
+     * above and by admin previews (see Admin\ArticlePreviewController),
+     * which may pass an unsaved, in-memory Article built from the edit form.
+     * Expects the article's category, featuredImage, sections (with their
+     * images) and faqs to be loaded/set.
+     */
+    public function renderArticle(Article $articleModel, ?Meta $meta): View
+    {
+        $current = JournalCatalog::findCategory((string) $articleModel->category?->slug);
+
+        abort_if($current === null, 404);
 
         $currentArticle = ArticleCard::build($articleModel, 'journal.article');
 
@@ -87,7 +112,7 @@ class JournalController extends Controller
             'categoryHref' => route('journal.category', $current['id']),
             'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
             'neighbors' => ArticleIndex::neighbors($this->entriesForCategory($current['id']), $currentArticle['slug']),
-            'meta' => $articleModel->meta()->firstOrCreate([]),
+            'meta' => $meta,
         ]);
     }
 

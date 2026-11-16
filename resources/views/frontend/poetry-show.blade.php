@@ -138,6 +138,9 @@
                     <div class="poetry-book-page poetry-book-page--poem">
                         <p class="poetry-book-number-mark" aria-hidden="true">{{ $p['number'] }}</p>
                         <h2 class="poetry-book-poem-title">{{ $p['title'] }}</h2>
+                        @if (filled($p['subtitle'] ?? null))
+                            <p class="poetry-book-poem-subtitle">{{ $p['subtitle'] }}</p>
+                        @endif
                         <span class="poetry-ornament"></span>
                         <div class="poetry-book-poem-body">
                             @foreach ($p['stanzas'] as $stanza)

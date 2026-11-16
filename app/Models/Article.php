@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Database\Factories\ArticleFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,8 @@ class Article extends Model
 {
     /** @use HasFactory<ArticleFactory> */
     use HasFactory;
+
+    use HasSlug;
 
     // Deliberately plural ('features'/'journals') — unlike Category::TYPE_*,
     // this matches the admin route names, permission suffixes, and
@@ -49,6 +52,7 @@ class Article extends Model
         'category_id',
         'type',
         'title',
+        'subtitle',
         'slug',
         'introduction',
         'editors_note',
@@ -74,6 +78,20 @@ class Article extends Model
                 $article->meta()->create([]);
             }
         });
+    }
+
+    /**
+     * An article's URL is /{type}/{category}/{slug}, so moving it to another
+     * category changes its URL too (see HasSlug).
+     */
+    protected function slugScopeColumn(): ?string
+    {
+        return 'category_id';
+    }
+
+    protected function slugFallback(): string
+    {
+        return 'article';
     }
 
     protected function casts(): array

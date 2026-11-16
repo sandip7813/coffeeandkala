@@ -1079,6 +1079,15 @@
     margin: 0 0 16px;
 }
 
+/* Optional subtitle under the poem's title. */
+.poetry-book-poem-subtitle {
+    margin: -8px 0 16px;
+    font-family: var(--font-serif);
+    font-size: clamp(14px, 1.5vw, 16px);
+    line-height: 1.45;
+    color: var(--poetry-muted);
+}
+
 .poetry-book-poem-body {
     display: grid;
     gap: clamp(16px, 2.6vw, 24px);

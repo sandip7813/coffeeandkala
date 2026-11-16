@@ -6,12 +6,14 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\HomeSectionArticle;
 use App\Models\Meta;
+use App\Models\SlugRedirect;
 use App\Support\ArticleCard;
 use App\Support\ArticleContentBuilder;
 use App\Support\ArticleIndex;
 use App\Support\FeatureCatalog;
 use App\Support\HomeSections;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -58,7 +60,7 @@ class FeatureController extends Controller
         ]);
     }
 
-    public function showArticle(string $category, string $article): View
+    public function showArticle(string $category, string $article): View|RedirectResponse
     {
         $this->abortIfCategoryInactive($category);
 
@@ -72,9 +74,33 @@ class FeatureController extends Controller
             ->with('sections.image', 'sections.galleryImages', 'sections.videoCompanionImage', 'faqs', 'featuredImage', 'category')
             ->first();
 
+        if ($articleModel === null && $categoryModel !== null) {
+            // An old URL from before the article's slug/category changed.
+            $moved = SlugRedirect::activeArticleFor(Article::TYPE_FEATURE, $categoryModel->id, $article);
+
+            if ($moved !== null) {
+                return redirect()->route('features.article', ['category' => $moved->category->slug, 'article' => $moved->slug], 301);
+            }
+        }
+
         abort_if($articleModel === null, 404);
 
-        $current = collect($this->categoriesWithArticles())->firstWhere('id', $category);
+        return $this->renderArticle($articleModel, $articleModel->meta()->firstOrCreate([]));
+    }
+
+    /**
+     * The article detail page for $articleModel — used by the public route
+     * above and by admin previews (see Admin\ArticlePreviewController),
+     * which may pass an unsaved, in-memory Article built from the edit form.
+     * Expects the article's category, featuredImage, sections (with their
+     * images) and faqs to be loaded/set.
+     */
+    public function renderArticle(Article $articleModel, ?Meta $meta): View
+    {
+        $current = collect($this->categoriesWithArticles())->firstWhere('id', $articleModel->category?->slug);
+
+        abort_if($current === null, 404);
+
         $currentArticle = ArticleCard::build($articleModel, 'features.article');
 
         return view('frontend.article-detail', [
@@ -89,7 +115,7 @@ class FeatureController extends Controller
             'categoryHref' => route('features.show', $current['id']),
             'sidebarPosition' => ArticleIndex::sidebarPosition($current['id']),
             'neighbors' => ArticleIndex::neighbors($current['articles'], $currentArticle['slug']),
-            'meta' => $articleModel->meta()->firstOrCreate([]),
+            'meta' => $meta,
         ]);
     }
 

@@ -16,9 +16,9 @@
                             @csrf
                             @method('PUT')
 
-                            <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="$itemMeta->title" />
+                            <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="new \Illuminate\Support\HtmlString($itemMeta->title)" />
                             <x-adminlte-textarea name="meta_description" label="{{ __('Meta Description') }}" rows="3">{{ $itemMeta->description }}</x-adminlte-textarea>
-                            <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="$itemMeta->keywords" />
+                            <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="new \Illuminate\Support\HtmlString($itemMeta->keywords)" />
 
                             <div class="d-flex gap-2">
                                 <a href="{{ route($editRoute, $record->id) }}" class="btn btn-outline-secondary btn-sm">{{ __('Open full edit page') }}</a>

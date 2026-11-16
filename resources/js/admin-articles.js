@@ -1,8 +1,9 @@
 // Powers the Features/Journals article form:
 //  - AJAX validation + submission (no full-page reload, ever — errors are
-//    rendered inline and the page only navigates away on a successful
-//    Publish/Submit; "Save as Draft" stays on the same page and tab, with
-//    the form re-rendered in place as an edit form).
+//    rendered inline. Saving an existing article, or "Save as Draft" on Add
+//    Article, stays on the same page and tab, with the form re-rendered in
+//    place as an edit form; only Publish/Submit on Add Article navigates
+//    back to the list).
 //  - a loading overlay while the request is in flight.
 //  - the repeatable "Content" sections and "FAQs": adding/removing blocks
 //    from the <template> tags (with a slow, smooth slide-down entrance and
@@ -821,6 +822,12 @@ function wireSaveActionButtons(form) {
 
 function wireAjaxForm(form) {
     form.addEventListener('submit', async (event) => {
+        // The Preview button posts the form natively to the preview URL in
+        // a new tab (its own formaction/formtarget) — nothing to save here.
+        if (event.submitter?.hasAttribute('data-preview-button')) {
+            return;
+        }
+
         event.preventDefault();
         clearErrors(form);
         showFormLoader(form.dataset.loadingText || 'Saving…');
@@ -870,13 +877,14 @@ function wireAjaxForm(form) {
             return;
         }
 
-        // "Save as Draft" answers with JSON (the re-rendered edit form)
-        // instead of a redirect, so the admin stays right where they were.
+        // Saving an edit (or "Save as Draft" on Add Article) answers with
+        // JSON (the re-rendered edit form) instead of a redirect, so the
+        // admin stays right where they were.
         if (response.headers.get('Content-Type')?.includes('application/json')) {
             const data = await response.json();
             swapInSavedDraftForm(form, data);
             hideFormLoader();
-            await alertSuccess(data.message || 'Saved as draft.');
+            await alertSuccess(data.message || 'Saved.');
             return;
         }
 
@@ -941,7 +949,7 @@ function carryOverCollapsedSections(oldForm, newRoot) {
 }
 
 /**
- * After an AJAX "Save as Draft", replaces the form's contents with the
+ * After an AJAX save, replaces the form's contents with the
  * server's freshly rendered edit form — picking up the ids of any newly
  * created sections/FAQs/gallery images and the uploaded images' previews —
  * while keeping the same tab, collapsed sections and scroll position. On

@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Meta;
 use App\Models\Poem;
+use App\Models\SlugRedirect;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
@@ -28,23 +30,65 @@ class PoetryController extends Controller
         ]);
     }
 
-    public function show(string $poem): View
+    public function show(string $poem): View|RedirectResponse
     {
         $poems = $this->poems();
         $currentIndex = collect($poems)->search(fn (array $p): bool => $p['slug'] === $poem);
 
-        abort_if($currentIndex === false, 404);
+        if ($currentIndex === false) {
+            // An old URL from before the poem's slug changed.
+            $moved = SlugRedirect::activePoemFor($poem);
 
+            abort_if($moved === null, 404);
+
+            return redirect()->route('poetry.show', $moved->slug, 301);
+        }
+
+        $poemModel = Poem::query()->active()->where('slug', $poem)->first();
+
+        return $this->renderShow($poems, $currentIndex, $poemModel?->meta()->firstOrCreate([]));
+    }
+
+    /**
+     * The poem page for an admin preview (see Admin\PoemPreviewController)
+     * — $poem may be unpublished, or an unsaved, in-memory Poem built from
+     * the edit form (with its featuredImage relation set). It's shown in its
+     * real place among the active poems, or first (as the newest) if it
+     * isn't one of them yet.
+     */
+    public function renderPreview(Poem $poem, ?Meta $meta): View
+    {
+        $models = $this->poemsQuery()->get();
+        $existingIndex = $poem->exists ? $models->search(fn (Poem $p): bool => $p->is($poem)) : false;
+
+        if ($existingIndex === false) {
+            $models->prepend($poem);
+            $currentIndex = 0;
+        } else {
+            $models->put($existingIndex, $poem);
+            $currentIndex = $existingIndex;
+        }
+
+        $poems = $models->values()
+            ->map(fn (Poem $p, int $index): array => $this->buildCard($p, $index))
+            ->all();
+
+        return $this->renderShow($poems, $currentIndex, $meta);
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $poems
+     */
+    private function renderShow(array $poems, int $currentIndex, ?Meta $meta): View
+    {
         $poemsWithNearby = collect($poems)
             ->map(fn (array $p): array => [...$p, 'nearby' => $this->nearby($poems, $p['slug'], 3)])
             ->all();
 
-        $poemModel = Poem::query()->active()->where('slug', $poem)->first();
-
         return view('frontend.poetry-show', [
             'poems' => $poemsWithNearby,
             'current' => $poems[$currentIndex],
-            'meta' => $poemModel?->meta()->firstOrCreate([]),
+            'meta' => $meta,
         ]);
     }
 
@@ -106,6 +150,7 @@ class PoetryController extends Controller
             'slug' => $poem->slug,
             'number' => str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT),
             'title' => $poem->title,
+            'subtitle' => $poem->subtitle,
             'excerpt' => Str::limit($firstLine, 100),
             'src' => $poem->featuredImage?->large_url,
             'thumb' => $poem->featuredImage?->thumbnail_url,

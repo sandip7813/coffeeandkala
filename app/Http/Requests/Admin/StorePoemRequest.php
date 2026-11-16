@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StorePoemRequest extends FormRequest
 {
@@ -21,8 +22,21 @@ class StorePoemRequest extends FormRequest
 
         return [
             'title' => ['required', 'string', 'max:255'],
+            'subtitle' => ['nullable', 'string', 'max:200'],
+            // Optional — left empty, it's generated from the title.
+            'slug' => ['nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(-[a-z0-9]+)*$/', Rule::unique('poems', 'slug')],
             'body' => ['required', 'string'],
             'featured_image' => ['required', 'image', "mimes:{$formats}", "max:{$maxSizeKb}"],
+        ];
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.regex' => __('The slug may only contain lowercase letters, numbers, and single hyphens between words (e.g. "the-weight-of-rain").'),
         ];
     }
 }

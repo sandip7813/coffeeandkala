@@ -3,8 +3,10 @@
 namespace App\Http\Requests\Admin;
 
 use App\Models\Article;
+use App\Models\ArticleSection;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Validation for the Our Story singleton's Content tab — sections only, no
@@ -32,6 +34,9 @@ class UpdateOurStoryRequest extends FormRequest
             'sections' => ['nullable', 'array'],
             'sections.*.id' => ['nullable', 'integer', 'exists:article_sections,id'],
             'sections.*.title' => ['nullable', 'string', 'max:255'],
+            'sections.*.subtitle' => ['nullable', 'string', 'max:200'],
+            'sections.*.title_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
+            'sections.*.subtitle_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
             'sections.*.media_type' => ['nullable', 'in:image,video,gallery'],
             'sections.*.is_active' => ['nullable', 'boolean'],
             'sections.*.content' => ['nullable', 'string'],

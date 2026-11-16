@@ -14,8 +14,8 @@
                     @csrf
                     @method('PUT')
 
-                    <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" :value="$role->name" @if ($role->name === 'super_admin') readonly @endif required />
-                    <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" :value="$role->label" />
+                    <x-adminlte-input name="name" label="{{ __('adminlte.name') }}" :value="new \Illuminate\Support\HtmlString($role->name)" @if ($role->name === 'super_admin') readonly @endif required />
+                    <x-adminlte-input name="label" label="{{ __('adminlte.label') }}" :value="new \Illuminate\Support\HtmlString($role->label)" />
 
                     <div class="mb-3">
                         <label class="form-label">{{ __('adminlte.permissions') }}</label>

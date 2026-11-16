@@ -9,9 +9,9 @@ use App\Http\Requests\Admin\UpdatePoemRequest;
 use App\Models\Meta;
 use App\Models\Poem;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 /**
  * Poetry management — a poem is its own record (title + body + one
@@ -83,7 +83,9 @@ class PoemController extends Controller
 
         $poem = Poem::create([
             'title' => $data['title'],
-            'slug' => $this->slugFor($data['title']),
+            'subtitle' => $data['subtitle'] ?? null,
+            // Left empty, the model generates it from the title (see HasSlug).
+            'slug' => $data['slug'] ?? null,
             'body' => $data['body'],
             'status' => $canApprove ? Poem::STATUS_ACTIVE : Poem::STATUS_PENDING,
             'created_by' => $user->id,
@@ -109,18 +111,19 @@ class PoemController extends Controller
         return view('admin.poetry.edit', compact('poem', 'meta'));
     }
 
-    public function update(UpdatePoemRequest $request, Poem $poem, StoreMediaFile $storeMediaFile): RedirectResponse
+    public function update(UpdatePoemRequest $request, Poem $poem, StoreMediaFile $storeMediaFile): RedirectResponse|JsonResponse
     {
         $data = $request->validated();
         $user = $request->user();
 
-        $slug = $data['title'] !== $poem->title
-            ? $this->slugFor($data['title'], $poem->id)
-            : $poem->slug;
-
         $poem->update([
             'title' => $data['title'],
-            'slug' => $slug,
+            'subtitle' => $data['subtitle'] ?? null,
+            // The slug only changes when the editor changes it — or clears
+            // it, and the model regenerates it from the title — never as a
+            // side effect of editing the title. The old URL then 301s to
+            // the new one (see HasSlug).
+            'slug' => $data['slug'] ?? null,
             'body' => $data['body'],
         ]);
 
@@ -143,7 +146,22 @@ class PoemController extends Controller
             'keywords' => $data['meta_keywords'] ?? null,
         ]);
 
-        return redirect()->route('admin.poetry.index')->with('status', __('Poem updated.'));
+        // Saving an edit keeps the admin on the edit page — an AJAX save
+        // (see initAjaxSaveForms in adminlte.js) gets the re-rendered form
+        // back to swap in place, picking up a new image/regenerated slug.
+        if ($request->expectsJson()) {
+            $poem->refresh()->load('featuredImage');
+
+            return response()->json([
+                'message' => __('Poem updated.'),
+                'form_html' => view('admin.poetry._edit-form', [
+                    'poem' => $poem,
+                    'meta' => $poem->meta()->firstOrCreate([]),
+                ])->render(),
+            ]);
+        }
+
+        return redirect()->route('admin.poetry.edit', $poem)->with('status', __('Poem updated.'));
     }
 
     public function updateStatus(Poem $poem): RedirectResponse
@@ -190,27 +208,5 @@ class PoemController extends Controller
         $poem->delete();
 
         return redirect()->route('admin.poetry.index')->with('status', __('Deleted.'));
-    }
-
-    /**
-     * A unique slug for the poem, derived from its title.
-     */
-    private function slugFor(string $title, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($title);
-        $slug = $base;
-        $suffix = 2;
-
-        while (
-            Poem::query()
-                ->where('slug', $slug)
-                ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
-                ->exists()
-        ) {
-            $slug = "{$base}-{$suffix}";
-            $suffix++;
-        }
-
-        return $slug;
     }
 }

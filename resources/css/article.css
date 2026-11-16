@@ -68,10 +68,14 @@
 }
 
 .article-theme--our-story .article-title,
-.article-theme--our-story .article-section-body h2 {
+.article-theme--our-story .article-section-heading {
     font-family: 'Crimson Text', var(--font-serif);
-    font-size: 30px;
     text-transform: uppercase;
+}
+
+.article-theme--our-story .article-title,
+.article-theme--our-story .article-section-heading--h2 {
+    font-size: 30px;
 }
 
 .article-theme--our-story .article-section-content,
@@ -368,6 +372,19 @@
     text-align: center;
 }
 
+/* Optional subtitle under the article title — quieter than the title,
+   sitting between it and the closing rule. */
+.article-subtitle {
+    max-width: 760px;
+    margin: calc(-1 * clamp(4px, 1vw, 10px)) auto clamp(16px, 2vw, 22px);
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(17px, 1.8vw, 22px);
+    line-height: 1.45;
+    color: var(--art-muted);
+}
+
 .article-mast-rule {
     display: block;
     height: 1px;
@@ -599,6 +616,30 @@
     flex: 1;
 }
 
+/* H3/H4 section titles, indented beneath the H1/H2 they belong to — the
+   index dot shrinks but stays centred on the list's connecting line. */
+.article-toc-item--depth-1 .article-toc-index,
+.article-toc-item--depth-2 .article-toc-index {
+    width: 18px;
+    height: 18px;
+    margin: 0 4px;
+    font-size: 10px;
+}
+
+.article-toc-item--depth-1 .article-toc-text,
+.article-toc-item--depth-2 .article-toc-text {
+    font-size: 14px;
+    color: var(--art-muted);
+}
+
+.article-toc-item--depth-1 .article-toc-text {
+    padding-left: 16px;
+}
+
+.article-toc-item--depth-2 .article-toc-text {
+    padding-left: 32px;
+}
+
 .article-toc-arrow {
     flex: none;
     font-size: 12px;
@@ -731,7 +772,11 @@
     transform: translateY(0);
 }
 
-.article-section-body h2 {
+/* A section's title — rendered as the heading level the admin picked
+   (H1–H4, or "Normal" = <p>), each sized so the hierarchy reads at a
+   glance: an H3 clearly continues the H2 above it. H2 is the default and
+   keeps the original look. */
+.article-section-heading {
     position: relative;
     margin: 0 0 20px;
     font-family: var(--font-serif);
@@ -742,17 +787,42 @@
     color: var(--art-ink);
 }
 
+.article-section-heading--h1 { font-size: clamp(30px, 3.4vw, 38px); }
+.article-section-heading--h2 { font-size: clamp(24px, 2.8vw, 30px); }
+.article-section-heading--h3 { font-size: clamp(21px, 2.2vw, 24px); }
+.article-section-heading--h4 { font-size: clamp(18px, 1.8vw, 20px); letter-spacing: 0.02em; }
+.article-section-heading--p { font-size: 18px; font-weight: 500; }
+
+/* Optional subtitle under a section's title — same level scale, but
+   quieter (italic, muted, regular weight) so it never competes with the
+   title it sits under. H3 is the default. */
+.article-section-subtitle {
+    margin: -8px 0 20px;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.45;
+    color: var(--art-muted);
+}
+
+.article-section-subtitle--h1 { font-size: clamp(24px, 2.6vw, 28px); }
+.article-section-subtitle--h2 { font-size: clamp(21px, 2.2vw, 24px); }
+.article-section-subtitle--h3 { font-size: 19px; }
+.article-section-subtitle--h4 { font-size: 17px; }
+.article-section-subtitle--p { font-size: 17px; }
+
 /* Video sections sit in the same two-column grid as image-left/right, but
-   the title spans the full row above both columns instead of being
-   squeezed into the text column alongside the companion content. */
+   the title (and subtitle) span the full row above both columns instead of
+   being squeezed into the text column alongside the companion content. */
 .article-section-title-full {
     grid-column: 1 / -1;
     margin: 0 0 clamp(18px, 2.2vw, 24px);
-    font-family: var(--font-serif);
-    font-weight: 500;
-    font-size: clamp(22px, 2.6vw, 30px);
-    line-height: 1.25;
-    color: var(--art-ink);
+}
+
+.article-section-subtitle--full {
+    grid-column: 1 / -1;
+    margin-top: calc(-1 * clamp(10px, 1.4vw, 16px));
 }
 
 /* Admin-authored content is sanitized server-side (see HtmlSanitizer) to

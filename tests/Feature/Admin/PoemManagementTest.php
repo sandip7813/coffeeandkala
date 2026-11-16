@@ -99,7 +99,7 @@ test('a user with edit-poetry can update title and body without replacing the im
             'title' => 'New Title',
             'body' => 'New body.',
         ])
-        ->assertRedirect(route('admin.poetry.index'));
+        ->assertRedirect(route('admin.poetry.edit', $poem));
 
     $this->assertDatabaseHas('poems', [
         'id' => $poem->id,
@@ -218,4 +218,31 @@ test('the poetry search filters by title and status', function () {
     $response->assertOk();
     $response->assertSee($match->title);
     $response->assertDontSee('Other Poem');
+});
+
+test('an ajax poem edit stays on the page and returns the re-rendered form', function () {
+    $user = User::factory()->superAdmin()->create();
+    $poem = Poem::factory()->create(['title' => 'Old Title', 'slug' => 'old-title']);
+
+    $response = $this->actingAs($user)
+        ->withHeaders(['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest'])
+        ->put(route('admin.poetry.update', $poem), ['title' => 'New Title', 'slug' => '', 'body' => 'New body.']);
+
+    $response->assertOk()->assertJsonPath('message', 'Poem updated.');
+
+    // The swapped-in form reflects the save — here, the slug regenerated from the new title.
+    expect($response->json('form_html'))
+        ->toContain('action="'.route('admin.poetry.update', $poem).'"')
+        ->toContain('value="new-title"');
+});
+
+test('an ajax poem edit with invalid data returns validation errors', function () {
+    $user = User::factory()->superAdmin()->create();
+    $poem = Poem::factory()->create();
+
+    $this->actingAs($user)
+        ->withHeaders(['Accept' => 'application/json', 'X-Requested-With' => 'XMLHttpRequest'])
+        ->put(route('admin.poetry.update', $poem), ['title' => '', 'body' => 'Body.'])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('title');
 });

@@ -25,6 +25,8 @@
     $youtubeUrl = old("sections.{$index}.youtube_url", $section->youtube_url ?? '');
     $youtubePosition = old("sections.{$index}.youtube_position", $section->youtube_position ?? '');
     $videoCompanionType = old("sections.{$index}.video_companion_type", $section->video_companion_type ?? '');
+    $titleLevel = old("sections.{$index}.title_level", $section->title_level ?? \App\Models\ArticleSection::DEFAULT_TITLE_LEVEL);
+    $subtitleLevel = old("sections.{$index}.subtitle_level", $section->subtitle_level ?? \App\Models\ArticleSection::DEFAULT_SUBTITLE_LEVEL);
     $maxSizeKb = config("media.{$type}.max_size_kb");
     $formats = implode(',', config("media.{$type}.formats"));
 @endphp
@@ -62,9 +64,32 @@
             <input type="hidden" name="sections[{{ $index }}][id]" value="{{ $section->id }}" data-section-id-field>
         @endif
 
+        {{-- Each field picks the element it renders as on the page
+             (Normal = plain text, or H1–H4) — the title defaults to H2, the
+             subtitle to H3. --}}
         <div class="mb-3">
             <label class="form-label">{{ __('Section Title') }}</label>
-            <input type="text" name="sections[{{ $index }}][title]" class="form-control" maxlength="255" value="{{ old("sections.{$index}.title", $section->title ?? '') }}">
+            <div class="input-group">
+                <input type="text" name="sections[{{ $index }}][title]" class="form-control" maxlength="255" value="{{ old("sections.{$index}.title", $section->title ?? '') }}">
+                <select name="sections[{{ $index }}][title_level]" class="form-select flex-grow-0 w-auto" aria-label="{{ __('Section title heading level') }}" title="{{ __('Heading level') }}">
+                    @foreach (\App\Models\ArticleSection::HEADING_LEVELS as $value => $label)
+                        <option value="{{ $value }}" @selected($titleLevel === $value)>{{ __($label) }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">{{ __('Section Subtitle') }}</label>
+            <div class="input-group">
+                <input type="text" name="sections[{{ $index }}][subtitle]" class="form-control" maxlength="200" value="{{ old("sections.{$index}.subtitle", $section->subtitle ?? '') }}">
+                <select name="sections[{{ $index }}][subtitle_level]" class="form-select flex-grow-0 w-auto" aria-label="{{ __('Section subtitle heading level') }}" title="{{ __('Heading level') }}">
+                    @foreach (\App\Models\ArticleSection::HEADING_LEVELS as $value => $label)
+                        <option value="{{ $value }}" @selected($subtitleLevel === $value)>{{ __($label) }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <p class="form-text mb-0">{{ __('Optional. A short line shown under the section title. The dropdowns set the heading level of the title and subtitle (e.g. H2 opens a topic, H3 continues it).') }}</p>
         </div>
 
         <div class="mb-3">

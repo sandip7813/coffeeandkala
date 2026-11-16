@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Models\ArticleSection;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Base validation for creating a new Feature/Journal article. Extended per
@@ -34,6 +36,12 @@ abstract class StoreArticleRequest extends FormRequest
             'save_action' => ['nullable', 'in:draft,submit'],
             'category_id' => ['required', 'integer', 'exists:categories,id'],
             'title' => ['required', 'string', 'max:255'],
+            'subtitle' => ['nullable', 'string', 'max:200'],
+            // Optional — left empty, it's generated from the title.
+            'slug' => [
+                'nullable', 'string', 'max:255', 'regex:/^[a-z0-9]+(-[a-z0-9]+)*$/',
+                Rule::unique('articles', 'slug')->where('category_id', (int) $this->input('category_id')),
+            ],
             'introduction' => ['required', 'string'],
             'featured_image' => ['required', 'image', "mimes:{$formats}", "max:{$maxSizeKb}"],
             'editors_note' => ['required', 'string'],
@@ -41,6 +49,9 @@ abstract class StoreArticleRequest extends FormRequest
 
             'sections' => ['nullable', 'array'],
             'sections.*.title' => ['nullable', 'string', 'max:255'],
+            'sections.*.subtitle' => ['nullable', 'string', 'max:200'],
+            'sections.*.title_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
+            'sections.*.subtitle_level' => ['nullable', Rule::in(array_keys(ArticleSection::HEADING_LEVELS))],
             'sections.*.media_type' => ['nullable', 'in:image,video,gallery'],
             'sections.*.is_active' => ['nullable', 'boolean'],
             'sections.*.content' => ['nullable', 'string'],
@@ -73,6 +84,7 @@ abstract class StoreArticleRequest extends FormRequest
     {
         return [
             'sections.*.gallery.max' => __('You can upload at most 4 new gallery images per edit.'),
+            'slug.regex' => __('The slug may only contain lowercase letters, numbers, and single hyphens between words (e.g. "the-weight-of-rain").'),
         ];
     }
 }

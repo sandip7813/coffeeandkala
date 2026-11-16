@@ -29,10 +29,22 @@
     ])
     style="--portal-delay: {{ $loop->index * 0.06 }}s"
 >
+    {{-- The title/subtitle tags are the admin's chosen heading level per
+         field ('p' = Normal, h1–h4 — whitelisted in ArticleContentBuilder);
+         the level modifier class sizes them to match. --}}
+    @php
+        $headingTag = $section['heading_tag'] ?? 'h2';
+        $subheadingTag = $section['subheading_tag'] ?? 'h3';
+    @endphp
+
     @if ($hasVideo && filled($section['heading']))
         {{-- Video sections put the title above the video/companion columns,
              spanning the full width, rather than squeezed into one side. --}}
-        <h2 class="article-section-title-full">{{ $section['heading'] }}</h2>
+        <{{ $headingTag }} class="article-section-heading article-section-heading--{{ $headingTag }} article-section-title-full">{{ $section['heading'] }}</{{ $headingTag }}>
+    @endif
+
+    @if ($hasVideo && filled($section['subheading'] ?? null))
+        <{{ $subheadingTag }} class="article-section-subtitle article-section-subtitle--{{ $subheadingTag }} article-section-subtitle--full">{{ $section['subheading'] }}</{{ $subheadingTag }}>
     @endif
 
     @if ($hasImage)
@@ -77,7 +89,11 @@
 
     <div class="article-section-body">
         @if (filled($section['heading']) && ! $hasVideo)
-            <h2>{{ $section['heading'] }}</h2>
+            <{{ $headingTag }} class="article-section-heading article-section-heading--{{ $headingTag }}">{{ $section['heading'] }}</{{ $headingTag }}>
+        @endif
+
+        @if (filled($section['subheading'] ?? null) && ! $hasVideo)
+            <{{ $subheadingTag }} class="article-section-subtitle article-section-subtitle--{{ $subheadingTag }}">{{ $section['subheading'] }}</{{ $subheadingTag }}>
         @endif
 
         @if ($hasVideo && $companionType === 'image' && filled($section['video_companion_image']))

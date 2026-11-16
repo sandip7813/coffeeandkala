@@ -15,6 +15,7 @@
     $canBeDrafted = ! $isEdit || $article->canBeDrafted();
     $canApprove = auth()->user()?->can("approve-{$type}");
     $submitLabel = $canApprove ? __('Publish') : __('Submit for Review');
+    $previewAction = $isEdit ? route("admin.{$type}.preview.form", $article) : route("admin.{$type}.preview.form");
 @endphp
 
 <style>
@@ -74,7 +75,25 @@
                     </select>
                 </div>
 
-                <x-adminlte-input name="title" label="{{ __('Title') }} *" maxlength="255" required :value="old('title', $article->title)" />
+                <x-adminlte-input name="title" label="{{ __('Title') }} *" maxlength="255" required :value="new \Illuminate\Support\HtmlString(old('title', $article->title))" />
+
+                <x-adminlte-input name="subtitle" label="{{ __('Subtitle') }}" maxlength="200" :value="new \Illuminate\Support\HtmlString(old('subtitle', $article->subtitle))">
+                    <p class="form-text mb-0">{{ __('Optional. A short line shown under the title on the page.') }}</p>
+                </x-adminlte-input>
+
+                {{-- Auto-fills from the title only on Add Article (see initSlugFields
+                     in adminlte.js) — once saved, the URL only changes when edited here. --}}
+                <x-adminlte-input name="slug" label="{{ __('Slug') }}" maxlength="255" :value="new \Illuminate\Support\HtmlString(old('slug', $article->slug))"
+                    pattern="[a-z0-9]+(-[a-z0-9]+)*" title="{{ __('Lowercase letters, numbers, and single hyphens between words.') }}"
+                    data-slug-from="title" :data-slug-auto="$isEdit ? null : true">
+                    <p class="form-text mb-0">
+                        @if ($isEdit)
+                            {{ __('Used in the page URL. Changing it keeps the old URL working — visitors are redirected to the new one. Leave empty to regenerate it from the title.') }}
+                        @else
+                            {{ __('Used in the page URL. Fills in from the title as you type — edit it to use your own. Lowercase letters, numbers and hyphens only.') }}
+                        @endif
+                    </p>
+                </x-adminlte-input>
 
                 <div class="mb-3">
                     <label class="form-label">{{ __('Introduction') }} *</label>
@@ -226,9 +245,9 @@
              this form. --}}
         @if ($isEdit)
             <div class="tab-pane fade" id="tab-seo">
-                <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="old('meta_title', $meta->title)" />
+                <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="new \Illuminate\Support\HtmlString(old('meta_title', $meta->title))" />
                 <x-adminlte-textarea name="meta_description" label="{{ __('Meta Description') }}" rows="3">{{ old('meta_description', $meta->description) }}</x-adminlte-textarea>
-                <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="old('meta_keywords', $meta->keywords)" />
+                <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="new \Illuminate\Support\HtmlString(old('meta_keywords', $meta->keywords))" />
             </div>
         @endif
     </div>
@@ -242,8 +261,15 @@
     {{-- Which button was clicked drives save_action — see admin-articles.js. --}}
     <input type="hidden" name="save_action" value="submit" data-save-action-field>
 
-    <div class="d-flex gap-2 mt-3">
+    <div class="d-flex flex-wrap gap-2 mt-3">
         <a href="{{ route("admin.{$type}.index") }}" class="btn btn-outline-secondary">{{ __('adminlte.cancel') }}</a>
+        {{-- Opens what this form currently holds in the real page design, in
+             a new tab, without saving anything (see PreviewController) — a
+             plain native submit to another URL, which admin-articles.js
+             deliberately lets through instead of AJAX-saving. --}}
+        <button type="submit" class="btn btn-outline-secondary" formaction="{{ $previewAction }}" formtarget="_blank" formnovalidate data-preview-button>
+            <i class="bi bi-eye me-1" aria-hidden="true"></i> {{ __('Preview') }}
+        </button>
         @if ($canBeDrafted)
             <button type="submit" class="btn btn-outline-primary" data-save-action-button="draft">
                 <i class="bi bi-file-earmark me-1" aria-hidden="true"></i> {{ __('Save as Draft') }}

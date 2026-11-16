@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasSlug;
 use Database\Factories\PoemFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +16,8 @@ class Poem extends Model
     /** @use HasFactory<PoemFactory> */
     use HasFactory;
 
+    use HasSlug;
+
     public const STATUS_PENDING = 'pending';
 
     public const STATUS_ACTIVE = 'active';
@@ -24,6 +27,7 @@ class Poem extends Model
     protected $fillable = [
         'uuid',
         'title',
+        'subtitle',
         'slug',
         'body',
         'status',
@@ -43,6 +47,11 @@ class Poem extends Model
         static::created(function (Poem $poem): void {
             $poem->meta()->create([]);
         });
+    }
+
+    protected function slugFallback(): string
+    {
+        return 'poem';
     }
 
     protected function casts(): array

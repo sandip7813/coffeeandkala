@@ -26,6 +26,7 @@
     $canDelete = $user?->can('delete-poetry');
     $canChangeStatus = $user?->can('change-poetry-status');
     $canApprove = $user?->can('approve-poetry');
+    $canPreview = $canEdit || $canApprove || $user?->can('upload-poetry');
 @endphp
 
 @section('content')
@@ -110,6 +111,22 @@
                             </td>
                             <td class="text-end">
                                 <x-admin.row-actions>
+                                    @if ($canPreview)
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.poetry.preview', $poem) }}" target="_blank" rel="noopener">
+                                                <i class="bi bi-eye" aria-hidden="true"></i>
+                                                <span>{{ __('Preview') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
+                                    @if ($poem->status === 'active')
+                                        <li>
+                                            <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('poetry.show', $poem->slug) }}" target="_blank" rel="noopener">
+                                                <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                                                <span>{{ __('View Poem') }}</span>
+                                            </a>
+                                        </li>
+                                    @endif
                                     @if ($canEdit)
                                         <li>
                                             <a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('admin.poetry.edit', $poem) }}">
@@ -189,9 +206,9 @@
                     @csrf
                     @method('PUT')
 
-                    <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="old('meta_title', $meta->title)" />
+                    <x-adminlte-input name="meta_title" label="{{ __('Meta Title') }}" :value="new \Illuminate\Support\HtmlString(old('meta_title', $meta->title))" />
                     <x-adminlte-textarea name="meta_description" label="{{ __('Meta Description') }}" rows="3">{{ old('meta_description', $meta->description) }}</x-adminlte-textarea>
-                    <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="old('meta_keywords', $meta->keywords)" />
+                    <x-adminlte-input name="meta_keywords" label="{{ __('Meta Keywords') }}" :value="new \Illuminate\Support\HtmlString(old('meta_keywords', $meta->keywords))" />
 
                     <button type="submit" class="btn btn-primary mt-3">{{ __('Save SEO') }}</button>
                 </form>
